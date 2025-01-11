@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider               = "zod-prisma-types"
+  output                 = "./generated/zod"
+  addIncludeTypes        = "false"
+  addInputTypeValidation = "false"
+  addSelectTypes         = "false"
+  createInputTypes       = "false"
+  createModelTypes       = "true"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Subject {
+  id                        String        @id @default(uuid())
+  title                     String
+  initiallyFamiliarConcepts String[]      @default([])
+  createdAt                 DateTime      @default(now())
+  updatedAt                 DateTime      @updatedAt
+  learningMaps              LearningMap[]
+}
+
+model LearningMap {
+  id        String    @id @default(uuid())
+  articles  Article[]
+  subjectId String
+  subject   Subject   @relation(fields: [subjectId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Article {
+  id            String      @id @default(uuid())
+  content       String
+  summary       String      @default("")
+  takeaways     String[]    @default([])
+  learningMapId String
+  tooltips      Json?
+  isRoot        Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  learningMap   LearningMap @relation(fields: [learningMapId], references: [id], onDelete: Cascade)
+}
