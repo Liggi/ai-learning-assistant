@@ -1,0 +1,164 @@
+{
+    "nodes": [
+        {
+            "id": "1",
+            "position": {
+                "x": 400,
+                "y": 0
+            },
+            "type": "normalNode",
+            "data": {
+                "label": "Jurassic Park Overview",
+                "description": "Understanding Jurassic Park as both a novel and film franchise"
+            }
+        },
+        {
+            "id": "2",
+            "position": {
+                "x": 200,
+                "y": 200
+            },
+            "type": "normalNode",
+            "data": {
+                "label": "Michael Crichton's Novel",
+                "description": "Study of the original 1990 novel and its scientific foundations"
+            }
+        },
+        {
+            "id": "3",
+            "position": {
+                "x": 600,
+                "y": 200
+            },
+            "type": "normalNode",
+            "data": {
+                "label": "Film Adaptation Analysis",
+                "description": "Examining Spielberg's 1993 adaptation and its impact"
+            }
+        },
+        {
+            "id": "4",
+            "position": {
+                "x": 0,
+                "y": 400
+            },
+            "type": "normalNode",
+            "data": {
+                "label": "Paleontology Basics",
+                "description": "Understanding real dinosaur science and fossil records"
+            }
+        },
+        {
+            "id": "5",
+            "position": {
+                "x": 300,
+                "y": 400
+            },
+            "type": "normalNode",
+            "data": {
+                "label": "Genetic Engineering Concepts",
+                "description": "Basic principles of DNA, cloning, and genetic modification"
+            }
+        },
+        {
+            "id": "6",
+            "position": {
+                "x": 600,
+                "y": 400
+            },
+            "type": "normalNode",
+            "data": {
+                "label": "Special Effects Analysis",
+                "description": "Study of practical and CGI effects in the film"
+            }
+        },
+        {
+            "id": "7",
+            "position": {
+                "x": 900,
+                "y": 400
+            },
+            "type": "normalNode",
+            "data": {
+                "label": "Themes and Philosophy",
+                "description": "Exploring ethical themes and philosophical questions"
+            }
+        },
+        {
+            "id": "8",
+            "position": {
+                "x": 200,
+                "y": 600
+            },
+            "type": "normalNode",
+            "data": {
+                "label": "Scientific Accuracy",
+                "description": "Comparing the franchise's science with reality"
+            }
+        },
+        {
+            "id": "9",
+            "position": {
+                "x": 600,
+                "y": 600
+            },
+            "type": "normalNode",
+            "data": {
+                "label": "Cultural Impact",
+                "description": "Understanding the franchise's influence on popular culture"
+            }
+        }
+    ],
+    "edges": [
+        {
+            "id": "e1-2",
+            "source": "1",
+            "target": "2"
+        },
+        {
+            "id": "e1-3",
+            "source": "1",
+            "target": "3"
+        },
+        {
+            "id": "e2-4",
+            "source": "2",
+            "target": "4"
+        },
+        {
+            "id": "e2-5",
+            "source": "2",
+            "target": "5"
+        },
+        {
+            "id": "e3-6",
+            "source": "3",
+            "target": "6"
+        },
+        {
+            "id": "e3-7",
+            "source": "3",
+            "target": "7"
+        },
+        {
+            "id": "e4-8",
+            "source": "4",
+            "target": "8"
+        },
+        {
+            "id": "e5-8",
+            "source": "5",
+            "target": "8"
+        },
+        {
+            "id": "e6-9",
+            "source": "6",
+            "target": "9"
+        },
+        {
+            "id": "e7-9",
+            "source": "7",
+            "target": "9"
+        }
+    ]
+}
