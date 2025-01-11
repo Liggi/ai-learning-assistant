@@ -30,6 +30,8 @@ function FlowWithProvider({
       nodesDraggable={false}
       nodesConnectable={false}
       elementsSelectable={false}
+      onNodeMouseEnter={() => {}}
+      onNodeMouseLeave={() => {}}
     >
       <Controls showInteractive={false} />
     </ReactFlow>
