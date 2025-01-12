@@ -8,7 +8,7 @@ import {
   Edge as ReactFlowEdge,
 } from "@xyflow/react";
 import Node from "@/components/react-flow/node";
-import { Loading } from "@/components/ui/loading";
+import Loading from "@/components/ui/loading";
 
 import "@xyflow/react/dist/style.css";
 

@@ -111,3 +111,33 @@
     { id: "e13-14", source: "13", target: "14" },
     { id: "e13-15", source: "13", target: "15" },
   ];
+
+  "use client"
+
+import { motion } from 'framer-motion'
+
+export default function SmoothMotionSpinner() {
+  return (
+    <div className="flex items-center justify-center h-screen bg-neutral-900">
+      <motion.div className="relative w-16 h-16">
+        <div className="absolute inset-0 border-4 border-neutral-700 rounded-full" />
+        <motion.div
+          className="absolute inset-0 border-4 border-neutral-300 rounded-full"
+          animate={{
+            opacity: [0.2, 1, 0.2],
+            scale: [0.8, 1.2, 0.8],
+            rotate: 360,
+          }}
+          transition={{
+            duration: 3,
+            ease: "sine",
+            times: [0, 0.5, 1],
+            repeat: Infinity,
+            repeatDelay: 0,
+          }}
+        />
+      </motion.div>
+    </div>
+  )
+}
+

@@ -34,7 +34,6 @@ function Node({ data }: NodeProps) {
       onMouseLeave={(e) => {
         setIsHovered(false);
       }}
-      onClick={() => console.log("Click event triggered")}
       className={`max-w-[280px] rounded-xl overflow-hidden flex flex-col border border-slate-700 
       shadow-lg shadow-slate-900/50 
       transition-all duration-300 ease-in-out 

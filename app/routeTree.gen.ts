@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as StaticImport } from './routes/static'
+import { Route as LoadingImport } from './routes/loading'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
@@ -19,6 +20,12 @@ import { Route as IndexImport } from './routes/index'
 const StaticRoute = StaticImport.update({
   id: '/static',
   path: '/static',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LoadingRoute = LoadingImport.update({
+  id: '/loading',
+  path: '/loading',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -39,6 +46,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/loading': {
+      id: '/loading'
+      path: '/loading'
+      fullPath: '/loading'
+      preLoaderRoute: typeof LoadingImport
+      parentRoute: typeof rootRoute
+    }
     '/static': {
       id: '/static'
       path: '/static'
@@ -53,36 +67,41 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/loading': typeof LoadingRoute
   '/static': typeof StaticRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/loading': typeof LoadingRoute
   '/static': typeof StaticRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/loading': typeof LoadingRoute
   '/static': typeof StaticRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/static'
+  fullPaths: '/' | '/loading' | '/static'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/static'
-  id: '__root__' | '/' | '/static'
+  to: '/' | '/loading' | '/static'
+  id: '__root__' | '/' | '/loading' | '/static'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LoadingRoute: typeof LoadingRoute
   StaticRoute: typeof StaticRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LoadingRoute: LoadingRoute,
   StaticRoute: StaticRoute,
 }
 
@@ -97,11 +116,15 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/loading",
         "/static"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/loading": {
+      "filePath": "loading.tsx"
     },
     "/static": {
       "filePath": "static.tsx"

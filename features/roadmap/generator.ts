@@ -4,17 +4,18 @@ import { createServerFn } from "@tanstack/start";
 
 export const generateRoadmap = createServerFn({ method: "POST" })
   .validator((data: { subject: string; priorKnowledge: string }) => {
-    console.log("Validator sees:", data);
     return data;
   })
   .handler(async ({ data }) => {
-    console.log("Handler sees:", data);
-    try {
-      const client = new Anthropic({
-        apiKey: process.env["ANTHROPIC_API_KEY"],
-      });
+    const maxRetries = 3;
+    let attempt = 0;
+    let parsedJSON;
 
-      const prompt = `You are a specialized assistant that can create structured data in JSON. I want you to generate a list of thoughtful learning steps in the form of an array of "nodes," and an array of "edges" connecting them. 
+    const client = new Anthropic({
+      apiKey: process.env["ANTHROPIC_API_KEY"],
+    });
+
+    const prompt = `You are a specialized assistant that can create structured data in JSON. I want you to generate a list of thoughtful learning steps in the form of an array of "nodes," and an array of "edges" connecting them. 
 
 The user wants to learn about ${data.subject} and has provided their current understanding:
 """
@@ -66,29 +67,42 @@ For example, follow the structure:
 
 Make sure the nodes and edges reflect a learning roadmap from fundamentals to more advanced steps.`;
 
-      const message = await client.messages.create({
-        max_tokens: 1024,
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        model: "claude-3-5-sonnet-latest",
-      });
+    while (attempt < maxRetries) {
+      try {
+        attempt++;
 
-      console.log("Anthropic response content:", message.content);
+        const message = await client.messages.create({
+          max_tokens: 1024,
+          messages: [
+            {
+              role: "user",
+              content: prompt,
+            },
+          ],
+          model: "claude-3-5-sonnet-latest",
+        });
 
-      const stringResponse = message.content
-        .filter((block): block is TextBlock => block.type === "text")
-        .map((block) => block.text)
-        .join("");
+        const stringResponse = message.content
+          .filter((block): block is TextBlock => block.type === "text")
+          .map((block) => block.text)
+          .join("");
 
-      const parsedJSON = JSON.parse(stringResponse);
+        parsedJSON = JSON.parse(stringResponse);
 
-      return parsedJSON;
-    } catch (err) {
-      console.error("Error in generateRoadmap:", err);
-      throw err;
+        // If parsing is successful, break out of the loop
+        break;
+      } catch (err) {
+        console.error(`Attempt ${attempt} failed:`, err);
+
+        if (attempt >= maxRetries) {
+          console.error("Error in generateRoadmap after maximum retries:", err);
+          throw err;
+        }
+
+        // Optionally, wait before retrying
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
     }
+
+    return parsedJSON;
   });
