@@ -211,11 +211,11 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack }) => {
               </div>
             ))}
             {isLoading && (
-              <div className="flex justify-center py-4">
-                <motion.div className="relative w-8 h-8">
-                  <div className="absolute inset-0 border-2 border-slate-700 rounded-full" />
+              <div className="flex justify-end pr-4">
+                <motion.div className="relative w-6 h-6">
+                  <div className="absolute inset-0 border-2 border-slate-700/50 rounded-full" />
                   <motion.div
-                    className="absolute inset-0 border-2 border-cyan-400 rounded-full"
+                    className="absolute inset-0 border-2 border-cyan-400/70 rounded-full"
                     animate={{
                       opacity: [0.2, 1, 0.2],
                       scale: [0.8, 1.2, 0.8],
