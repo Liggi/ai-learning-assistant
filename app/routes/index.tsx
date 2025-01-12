@@ -20,48 +20,6 @@ import "@xyflow/react/dist/style.css";
 
 const nodeTypes = { normalNode: Node };
 
-const stepVariants = {
-  initial: {
-    opacity: 0,
-    scale: 0.9,
-  },
-  animate: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.3,
-    },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.9,
-    transition: {
-      duration: 0.2,
-    },
-  },
-};
-
-const containerVariants = {
-  small: {
-    width: "400px",
-    height: "auto",
-    transition: {
-      duration: 0.3,
-      type: "spring",
-      stiffness: 100,
-    },
-  },
-  large: {
-    width: "600px",
-    height: "auto",
-    transition: {
-      duration: 0.3,
-      type: "spring",
-      stiffness: 100,
-    },
-  },
-};
-
 function FlowWithProvider({
   nodes,
   edges,
@@ -97,6 +55,7 @@ function Home() {
   const [nodes, setNodes] = useState<ReactFlowNode<NodeData>[]>([]);
   const [edges, setEdges] = useState<ReactFlowEdge[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [showForm, setShowForm] = useState(true);
   const [selectedNode, setSelectedNode] =
     useState<ReactFlowNode<NodeData> | null>(null);
@@ -123,7 +82,14 @@ function Home() {
 
   async function handleSubmit() {
     console.log("handleSubmit started");
+    setIsButtonLoading(true);
+
+    // Show button loading state first
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Then transition to full loading screen
     setIsLoading(true);
+
     try {
       console.log("Calling generateRoadmap");
       const roadmap = await generateRoadmap({
@@ -136,11 +102,16 @@ function Home() {
 
       setNodes(roadmap.nodes);
       setEdges(roadmap.edges);
-      setIsLoading(false);
+
+      // Add a delay before transitioning out
+      await new Promise((resolve) => setTimeout(resolve, 500));
       setShowForm(false);
+      setIsLoading(false);
+      setIsButtonLoading(false);
     } catch (error) {
       console.error("Error in handleSubmit:", error);
       setIsLoading(false);
+      setIsButtonLoading(false);
     }
   }
 
@@ -153,7 +124,15 @@ function Home() {
     <div style={{ width: "100vw", height: "100vh" }} className="bg-background">
       <AnimatePresence mode="wait">
         {isLoading ? (
-          <Loading />
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Loading />
+          </motion.div>
         ) : showForm ? (
           <div className="w-full h-full flex items-center justify-center">
             <motion.div
@@ -161,6 +140,7 @@ function Home() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
               className="bg-card rounded-lg shadow-lg p-8 overflow-hidden relative"
             >
               <AnimatePresence mode="wait">
@@ -223,21 +203,26 @@ function Home() {
                         variant="outline"
                         onClick={() => setStep(1)}
                         className="flex-1 h-11 bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-gray-200 transition-colors duration-300"
+                        disabled={isLoading}
                       >
                         Back
                       </Button>
-                      <Button
-                        onClick={handleSubmit}
-                        disabled={!userKnowledge.trim() || isLoading}
-                        className="flex-1 h-11 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white transition-all duration-300 ease-in-out flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(129,140,248,0.5)] relative overflow-hidden group"
-                      >
-                        <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-60 transition-opacity duration-300 ease-in-out"></span>
-                        <span className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 opacity-0 group-hover:opacity-40 blur-md transition-opacity duration-300 ease-in-out"></span>
-                        <BookOpen className="w-5 h-5 relative z-10" />
-                        <span className="relative z-10">
-                          Generate a roadmap
-                        </span>
-                      </Button>
+                      {isButtonLoading ? (
+                        <ButtonLoading className="flex-1 h-11 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white transition-all duration-300 ease-in-out flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(129,140,248,0.5)] relative overflow-hidden group" />
+                      ) : (
+                        <Button
+                          onClick={handleSubmit}
+                          disabled={!userKnowledge.trim() || isButtonLoading}
+                          className="flex-1 h-11 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white transition-all duration-300 ease-in-out flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(129,140,248,0.5)] relative overflow-hidden group"
+                        >
+                          <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-60 transition-opacity duration-300 ease-in-out"></span>
+                          <span className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 opacity-0 group-hover:opacity-40 blur-md transition-opacity duration-300 ease-in-out"></span>
+                          <BookOpen className="w-5 h-5 relative z-10" />
+                          <span className="relative z-10">
+                            Generate a roadmap
+                          </span>
+                        </Button>
+                      )}
                     </div>
                   </motion.div>
                 )}

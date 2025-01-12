@@ -11,11 +11,18 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as StaticChatImport } from './routes/static-chat'
 import { Route as StaticImport } from './routes/static'
 import { Route as LoadingImport } from './routes/loading'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const StaticChatRoute = StaticChatImport.update({
+  id: '/static-chat',
+  path: '/static-chat',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const StaticRoute = StaticImport.update({
   id: '/static',
@@ -60,6 +67,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaticImport
       parentRoute: typeof rootRoute
     }
+    '/static-chat': {
+      id: '/static-chat'
+      path: '/static-chat'
+      fullPath: '/static-chat'
+      preLoaderRoute: typeof StaticChatImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -69,12 +83,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/loading': typeof LoadingRoute
   '/static': typeof StaticRoute
+  '/static-chat': typeof StaticChatRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/loading': typeof LoadingRoute
   '/static': typeof StaticRoute
+  '/static-chat': typeof StaticChatRoute
 }
 
 export interface FileRoutesById {
@@ -82,14 +98,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/loading': typeof LoadingRoute
   '/static': typeof StaticRoute
+  '/static-chat': typeof StaticChatRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/loading' | '/static'
+  fullPaths: '/' | '/loading' | '/static' | '/static-chat'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/loading' | '/static'
-  id: '__root__' | '/' | '/loading' | '/static'
+  to: '/' | '/loading' | '/static' | '/static-chat'
+  id: '__root__' | '/' | '/loading' | '/static' | '/static-chat'
   fileRoutesById: FileRoutesById
 }
 
@@ -97,12 +114,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoadingRoute: typeof LoadingRoute
   StaticRoute: typeof StaticRoute
+  StaticChatRoute: typeof StaticChatRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoadingRoute: LoadingRoute,
   StaticRoute: StaticRoute,
+  StaticChatRoute: StaticChatRoute,
 }
 
 export const routeTree = rootRoute
@@ -117,7 +136,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/loading",
-        "/static"
+        "/static",
+        "/static-chat"
       ]
     },
     "/": {
@@ -128,6 +148,9 @@ export const routeTree = rootRoute
     },
     "/static": {
       "filePath": "static.tsx"
+    },
+    "/static-chat": {
+      "filePath": "static-chat.tsx"
     }
   }
 }

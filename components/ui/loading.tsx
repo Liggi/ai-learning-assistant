@@ -59,7 +59,7 @@ export default function Loading() {
             }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            <p className="text-neutral-300 text-center text-lg font-light tracking-wide">
+            <p className="text-neutral-300 text-center text-sm font-medium">
               {phrases[currentPhraseIndex]}
             </p>
           </motion.div>

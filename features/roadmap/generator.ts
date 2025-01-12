@@ -69,8 +69,10 @@ Make sure the nodes and edges reflect a learning roadmap from fundamentals to mo
 
     while (attempt < maxRetries) {
       try {
+        console.log(`\n🔄 Attempt ${attempt + 1} of ${maxRetries}`);
         attempt++;
 
+        console.log("📤 Sending request to Anthropic API...");
         const message = await client.messages.create({
           max_tokens: 1024,
           messages: [
@@ -82,27 +84,40 @@ Make sure the nodes and edges reflect a learning roadmap from fundamentals to mo
           model: "claude-3-5-sonnet-latest",
         });
 
+        console.log("📥 Received response from Anthropic API");
         const stringResponse = message.content
           .filter((block): block is TextBlock => block.type === "text")
           .map((block) => block.text)
           .join("");
 
+        console.log("\n📝 Raw response from API:");
+        console.log(stringResponse);
+
+        console.log("\n🔍 Attempting to parse JSON...");
         parsedJSON = JSON.parse(stringResponse);
+        console.log("✅ JSON parsed successfully!");
 
         // If parsing is successful, break out of the loop
         break;
       } catch (err) {
-        console.error(`Attempt ${attempt} failed:`, err);
+        console.error(`\n❌ Attempt ${attempt} failed with error:`, err);
+        console.error("Error details:", {
+          name: err.name,
+          message: err.message,
+          stack: err.stack,
+        });
 
         if (attempt >= maxRetries) {
-          console.error("Error in generateRoadmap after maximum retries:", err);
+          console.error("\n💥 All attempts failed after maximum retries");
           throw err;
         }
 
+        console.log(`\n⏳ Waiting before retry ${attempt + 1}...`);
         // Optionally, wait before retrying
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
+    console.log("\n🎯 Final parsed result:", parsedJSON);
     return parsedJSON;
   });

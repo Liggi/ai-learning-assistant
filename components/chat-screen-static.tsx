@@ -1,108 +1,34 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { ArrowLeft, Send } from "lucide-react";
-import { chat } from "@/features/chat/chat";
 import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import { LoadingBubble } from "./ui/loading-bubble";
 
-export interface NodeData extends Record<string, unknown> {
-  label: string;
-  description: string;
-  status?: "not-started" | "in-progress" | "completed";
-  progress?: number;
-}
+const SAMPLE_MESSAGES = [
+  {
+    text: "Hello! I'm your AI tutor for React Hooks. What specific aspects would you like to learn about?",
+    isUser: false,
+  },
+  {
+    text: "I'd like to understand useEffect better, especially with dependencies.",
+    isUser: true,
+  },
+  {
+    text: "Great choice! The useEffect hook can be tricky. Let me explain with an example:\n\n```javascript\nuseEffect(() => {\n  console.log('This runs when count changes');\n}, [count]);\n```\n\nThe dependency array `[count]` tells React to run the effect only when `count` changes. Would you like me to explain more about how this works?",
+    isUser: false,
+  },
+  {
+    text: "Yes, please! What happens if I leave the dependency array empty?",
+    isUser: true,
+  },
+  {
+    text: "An empty dependency array `[]` means the effect will only run once after the initial render. It's equivalent to componentDidMount in class components.\n\nHowever, be careful! If your effect uses any variables or props, ESLint will warn you to include them in the dependencies to prevent stale closure bugs.",
+    isUser: false,
+  },
+];
 
-interface Message {
-  text: string;
-  isUser: boolean;
-}
-
-interface ChatScreenProps {
-  node: NodeData;
-  onBack: () => void;
-}
-
-const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(scrollToBottom, [messages]);
-
-  const sendInitialMessage = async () => {
-    setIsLoading(true);
-    try {
-      const result = await chat({
-        data: {
-          subject: node.label,
-          message:
-            `You're discussing ${node.label}, specifically: "${node.description}". ` +
-            "Start your response directly with a brief but meaningful overview of the key concepts, " +
-            "explain why these concepts matter in the broader context, " +
-            "and then ask what specific aspect they'd like to explore further.",
-        },
-      });
-
-      setMessages((prev) => [
-        ...prev,
-        { text: result.response, isUser: false },
-      ]);
-    } catch (error) {
-      console.error("Error sending initial message:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: "Sorry, I encountered an error. Please try again.",
-          isUser: false,
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    sendInitialMessage();
-  }, [node.label]);
-
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
-
-    const userMessage = input.trim();
-    setInput("");
-    setMessages((prev) => [...prev, { text: userMessage, isUser: true }]);
-    setIsLoading(true);
-
-    try {
-      const result = await chat({
-        data: {
-          subject: node.label,
-          message: userMessage,
-        },
-      });
-
-      setMessages((prev) => [
-        ...prev,
-        { text: result.response, isUser: false },
-      ]);
-    } catch (error) {
-      console.error("Error:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: "Sorry, I encountered an error. Please try again.",
-          isUser: false,
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const ChatScreenStatic = () => {
+  const [isLoading] = useState(true);
 
   return (
     <div className="flex h-screen bg-slate-900 text-slate-300">
@@ -112,7 +38,6 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack }) => {
         <div className="w-64 relative z-10 bg-slate-800/30">
           <div className="h-full p-4">
             <button
-              onClick={onBack}
               className="mb-6 text-slate-400 hover:text-cyan-400 transition-colors focus:outline-none"
               aria-label="Back to Roadmap"
             >
@@ -120,32 +45,19 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack }) => {
             </button>
             <div className="space-y-4">
               <h2 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">
-                {node.label}
+                React Hooks
               </h2>
-              <p className="text-xs text-slate-400">{node.description}</p>
-              {node.status === "in-progress" && node.progress !== undefined && (
-                <div className="bg-slate-900/40 rounded-lg p-4 space-y-2 shadow-inner">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="text-slate-400">Progress</span>
-                    <span className="text-cyan-400 font-medium">
-                      {node.progress}%
-                    </span>
-                  </div>
-                  <div className="h-2 bg-slate-800/50 rounded-full overflow-hidden shadow-inner">
-                    <div
-                      className="h-full bg-gradient-to-r from-cyan-400 to-indigo-400 rounded-full shadow"
-                      style={{ width: `${node.progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-              )}
+              <p className="text-xs text-slate-400">
+                Learn about React's Hooks API and how to use them effectively in
+                your components.
+              </p>
             </div>
           </div>
         </div>
 
         <div className="flex-1 flex flex-col relative z-10">
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map((msg, index) => (
+            {SAMPLE_MESSAGES.map((msg, index) => (
               <div
                 key={index}
                 className={`flex ${msg.isUser ? "justify-start" : "justify-end"}`}
@@ -207,26 +119,17 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack }) => {
                 <LoadingBubble />
               </div>
             )}
-            <div ref={messagesEndRef} />
           </div>
 
           <div className="p-4 bg-slate-800/50 backdrop-blur-sm">
             <div className="flex items-center space-x-2 bg-slate-700 rounded-full shadow-inner ring-1 ring-slate-700">
               <input
                 type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleSend()}
                 className="flex-1 bg-transparent text-slate-300 rounded-l-full px-4 py-2 focus:outline-none text-sm"
                 placeholder="Type your message..."
-                disabled={isLoading}
               />
               <button
-                onClick={handleSend}
-                className={`text-cyan-400 hover:text-cyan-300 focus:outline-none focus:text-cyan-300 transition-colors p-2 pr-4 ${
-                  isLoading ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                disabled={isLoading}
+                className="text-cyan-400 hover:text-cyan-300 focus:outline-none focus:text-cyan-300 transition-colors p-2 pr-4"
                 aria-label="Send message"
               >
                 <Send size={18} />
@@ -239,4 +142,4 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack }) => {
   );
 };
 
-export default ChatScreen;
+export default ChatScreenStatic;

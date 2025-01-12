@@ -2,14 +2,6 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createServerFn } from "@tanstack/start";
 import { createSystemPrompt } from "@/lib/anthropic";
 
-interface ChatRequest {
-  data: {
-    subject: string;
-    message: string;
-    isSystemMessage?: boolean;
-  };
-}
-
 export const chat = createServerFn({ method: "POST" })
   .validator((data: { subject: string; message: string }) => {
     return data;
