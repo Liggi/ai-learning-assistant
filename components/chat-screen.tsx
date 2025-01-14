@@ -20,9 +20,10 @@ interface Message {
 interface ChatScreenProps {
   node: NodeData;
   onBack: () => void;
+  subject: string;
 }
 
-const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack }) => {
+const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -39,12 +40,10 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack }) => {
     try {
       const result = await chat({
         data: {
-          subject: node.label,
-          message:
-            `You're discussing ${node.label}, specifically: "${node.description}". ` +
-            "Start your response directly with a brief but meaningful overview of the key concepts, " +
-            "explain why these concepts matter in the broader context, " +
-            "and then ask what specific aspect they'd like to explore further.",
+          subject: subject,
+          moduleTitle: node.label,
+          moduleDescription: node.description,
+          message: "Let's begin our lesson.",
         },
       });
 
@@ -81,7 +80,9 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack }) => {
     try {
       const result = await chat({
         data: {
-          subject: node.label,
+          subject: subject,
+          moduleTitle: node.label,
+          moduleDescription: node.description,
           message: userMessage,
         },
       });

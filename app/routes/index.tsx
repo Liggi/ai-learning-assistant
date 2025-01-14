@@ -233,6 +233,7 @@ function Home() {
           <ChatScreen
             node={selectedNode.data}
             onBack={() => setSelectedNode(null)}
+            subject={userSubject}
           />
         ) : (
           <motion.div
