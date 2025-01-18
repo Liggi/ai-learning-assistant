@@ -210,6 +210,11 @@ function Home() {
                       value={userSubject}
                       onChange={(e) => setUserSubject(e.target.value)}
                       className="mb-4"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && userSubject.trim()) {
+                          handleNextStep();
+                        }
+                      }}
                     />
                     {isLoadingKnowledge ? (
                       <ButtonLoading className="w-full" />

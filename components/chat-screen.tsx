@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Send } from "lucide-react";
-import { chat } from "@/features/chat/chat";
+import { chat, generateSuggestionPills } from "@/features/chat/chat";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { LoadingBubble } from "./ui/loading-bubble";
@@ -27,6 +27,28 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
   const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
+
+  const generateSuggestions = async (message: string) => {
+    setIsSuggestionsLoading(true);
+    try {
+      const result = await generateSuggestionPills({
+        data: {
+          subject,
+          moduleTitle: node.label,
+          moduleDescription: node.description,
+          currentMessage: message,
+        },
+      });
+      setSuggestions(result.suggestions);
+    } catch (error) {
+      console.error("Error generating suggestions:", error);
+      setSuggestions([]);
+    } finally {
+      setIsSuggestionsLoading(false);
+    }
+  };
 
   const sendInitialMessage = async () => {
     setIsLoading(true);
@@ -36,11 +58,13 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
           subject: subject,
           moduleTitle: node.label,
           moduleDescription: node.description,
-          message: "Let's begin our lesson.",
+          message:
+            "Ignore this message, and continue as if you're in the middle of a conversation / lesson about the relevant subject.",
         },
       });
 
       setCurrentMessage({ text: result.response, isUser: false });
+      generateSuggestions(result.response);
     } catch (error) {
       console.error("Error sending initial message:", error);
       setCurrentMessage({
@@ -52,16 +76,13 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
     }
   };
 
-  useEffect(() => {
-    sendInitialMessage();
-  }, [node.label]);
+  const handleSend = async (message?: string) => {
+    if ((!message && !input.trim()) || isLoading) return;
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
-
-    const userMessage = input.trim();
+    const userMessage = message || input.trim();
     setInput("");
     setIsLoading(true);
+    setSuggestions([]);
 
     try {
       const result = await chat({
@@ -74,6 +95,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
       });
 
       setCurrentMessage({ text: result.response, isUser: false });
+      generateSuggestions(result.response);
     } catch (error) {
       console.error("Error:", error);
       setCurrentMessage({
@@ -84,6 +106,10 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    sendInitialMessage();
+  }, [node.label]);
 
   return (
     <div className="flex h-screen bg-slate-900 text-slate-300">
@@ -138,7 +164,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <div className="max-h-[60vh] overflow-y-auto">
+                        <div>
                           <ReactMarkdown
                             className="prose prose-invert prose-sm max-w-none [&>:first-child]:mt-0 [&>:last-child]:mb-0"
                             components={{
@@ -202,27 +228,67 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
 
                 <motion.div
                   layout
-                  className="flex items-center space-x-2 bg-slate-700 rounded-full shadow-inner ring-1 ring-slate-700 flex-shrink-0"
+                  className="flex flex-col space-y-3 flex-shrink-0"
                 >
-                  <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleSend()}
-                    className="flex-1 bg-transparent text-slate-300 rounded-l-full px-4 py-2 focus:outline-none text-sm"
-                    placeholder="Type your message..."
-                    disabled={isLoading}
-                  />
-                  <button
-                    onClick={handleSend}
-                    className={`text-cyan-400 hover:text-cyan-300 focus:outline-none focus:text-cyan-300 transition-colors p-2 pr-4 ${
-                      isLoading ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                    disabled={isLoading}
-                    aria-label="Send message"
+                  <motion.div
+                    layout
+                    className="flex items-center space-x-2 bg-slate-700 rounded-full shadow-inner ring-1 ring-slate-700"
                   >
-                    <Send size={18} />
-                  </button>
+                    <input
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyPress={(e) => e.key === "Enter" && handleSend()}
+                      className="flex-1 bg-transparent text-slate-300 rounded-l-full px-4 py-2 focus:outline-none text-sm"
+                      placeholder="Type your message..."
+                      disabled={isLoading}
+                    />
+                    <button
+                      onClick={() => handleSend()}
+                      className={`text-cyan-400 hover:text-cyan-300 focus:outline-none focus:text-cyan-300 transition-colors p-2 pr-4 ${
+                        isLoading ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                      disabled={isLoading}
+                      aria-label="Send message"
+                    >
+                      <Send size={18} />
+                    </button>
+                  </motion.div>
+
+                  {suggestions.length > 0 && (
+                    <motion.div
+                      layout
+                      className="flex flex-wrap gap-2 px-2"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      {suggestions.map((suggestion, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleSend(suggestion)}
+                          className="bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 text-sm px-3 py-1 rounded-full transition-colors"
+                          disabled={isLoading}
+                        >
+                          {suggestion}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+
+                  {isSuggestionsLoading && (
+                    <motion.div
+                      layout
+                      className="flex justify-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <div className="bg-slate-700/50 text-slate-400 text-sm px-3 py-1 rounded-full">
+                        Generating suggestions...
+                      </div>
+                    </motion.div>
+                  )}
                 </motion.div>
               </motion.div>
             </LayoutGroup>

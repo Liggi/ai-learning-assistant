@@ -71,5 +71,7 @@ Example output structure:
 [Open-ended prompt or question]
 \`\`\`
 
-Begin your first response by introducing the key concepts of the module, explaining their importance, and asking what specific aspect the user would like to explore further. Remember to keep your messages concise while still being informative and engaging.`;
+Begin your first response by introducing the key concepts of the module, explaining their importance, and asking what specific aspect the user would like to explore further. Remember to keep your messages concise while still being informative and engaging.
+
+VERY IMPORTANT: Begin as if your response is the first message in the conversation. Ensure it doesn't sound like you're responding to the prompt.`;
 };
