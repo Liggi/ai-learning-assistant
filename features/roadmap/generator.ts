@@ -121,3 +121,70 @@ Make sure the nodes and edges reflect a learning roadmap from fundamentals to mo
     console.log("\n🎯 Final parsed result:", parsedJSON);
     return parsedJSON;
   });
+
+export const generateKnowledgeNodes = createServerFn({ method: "POST" })
+  .validator((data: { subject: string }) => {
+    return data;
+  })
+  .handler(async ({ data }) => {
+    const client = new Anthropic({
+      apiKey: process.env["ANTHROPIC_API_KEY"],
+    });
+
+    const prompt = `You are a specialized assistant that helps assess a user's knowledge level in ${data.subject}. Generate a comprehensive set of knowledge nodes that represent key concepts, from basic to advanced.
+
+Each node should be a specific, testable piece of knowledge that someone learning ${data.subject} might understand. The nodes should progress from fundamental concepts to more advanced ones.
+
+Return a JSON object in the following format:
+
+For example:
+{ "nodes": [
+  "Basic concept", "Another basic concept", "Intermediate concept", "Reference to specific knowledge", "Unique piece of terminology",
+]
+}
+
+Generate at least 15-20 nodes covering the full spectrum of knowledge in ${data.subject}, ensuring there's a good mix of difficulty levels.`;
+
+    const message = await client.messages.create({
+      max_tokens: 1024,
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      model: "claude-3-5-sonnet-latest",
+    });
+
+    const stringResponse = message.content
+      .filter((block): block is TextBlock => block.type === "text")
+      .map((block) => block.text)
+      .join("");
+
+    try {
+      const parsed = JSON.parse(stringResponse);
+
+      // Validate that we received an object with nodes array
+      if (
+        !parsed ||
+        typeof parsed !== "object" ||
+        !Array.isArray(parsed.nodes)
+      ) {
+        throw new Error("Expected an object with nodes array from Anthropic");
+      }
+
+      // Validate that all items in nodes are strings
+      const validatedNodes = parsed.nodes.map((item) => {
+        if (typeof item !== "string") {
+          throw new Error("All items in nodes array must be strings");
+        }
+        return item;
+      });
+
+      return validatedNodes;
+    } catch (error) {
+      console.error("Error parsing knowledge nodes:", error);
+      // Return an empty array as fallback
+      return [];
+    }
+  });

@@ -11,10 +11,14 @@ import {
   Edge as ReactFlowEdge,
 } from "@xyflow/react";
 import Node from "@/components/react-flow/node";
-import { generateRoadmap } from "@/features/roadmap/generator";
+import {
+  generateRoadmap,
+  generateKnowledgeNodes,
+} from "@/features/roadmap/generator";
 import Loading from "@/components/ui/loading";
 import ChatScreen, { NodeData } from "@/components/chat-screen";
 import { BookOpen } from "lucide-react";
+import KnowledgeNodesStep from "@/components/knowledge-nodes-step";
 
 import "@xyflow/react/dist/style.css";
 
@@ -59,6 +63,11 @@ function Home() {
   const [showForm, setShowForm] = useState(true);
   const [selectedNode, setSelectedNode] =
     useState<ReactFlowNode<NodeData> | null>(null);
+  const [knowledgeNodes, setKnowledgeNodes] = useState<Array<string>>([]);
+  const [selectedKnowledgeNodes, setSelectedKnowledgeNodes] = useState<
+    Set<string>
+  >(new Set());
+  const [isLoadingKnowledge, setIsLoadingKnowledge] = useState(false);
 
   useEffect(() => {
     console.log("Component mounted");
@@ -120,6 +129,47 @@ function Home() {
     setSelectedNode(node);
   };
 
+  async function handleNextStep() {
+    if (step === 1) {
+      setIsLoadingKnowledge(true);
+      try {
+        const nodes = await generateKnowledgeNodes({
+          data: {
+            subject: userSubject,
+          },
+        });
+
+        console.log({ nodes });
+
+        if (nodes.length === 0) {
+          throw new Error("No knowledge nodes were generated");
+        }
+
+        setKnowledgeNodes(nodes);
+        setStep(1.5); // Using 1.5 for the intermediate step
+      } catch (error) {
+        console.error("Error generating knowledge nodes:", error);
+        // Stay on step 1 and show an error state
+        setIsLoadingKnowledge(false);
+        // TODO: Add error state UI
+      } finally {
+        setIsLoadingKnowledge(false);
+      }
+    }
+  }
+
+  function toggleKnowledgeNode(id: string) {
+    setSelectedKnowledgeNodes((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  }
+
   return (
     <div style={{ width: "100vw", height: "100vh" }} className="bg-background">
       <AnimatePresence mode="wait">
@@ -161,14 +211,37 @@ function Home() {
                       onChange={(e) => setUserSubject(e.target.value)}
                       className="mb-4"
                     />
-                    <Button
-                      className="w-full"
-                      onClick={() => setStep(2)}
-                      disabled={!userSubject.trim()}
-                    >
-                      Next
-                    </Button>
+                    {isLoadingKnowledge ? (
+                      <ButtonLoading className="w-full" />
+                    ) : (
+                      <Button
+                        className="w-full"
+                        onClick={handleNextStep}
+                        disabled={!userSubject.trim()}
+                      >
+                        Next
+                      </Button>
+                    )}
                   </motion.div>
+                )}
+
+                {step === 1.5 && (
+                  <KnowledgeNodesStep
+                    knowledgeNodes={knowledgeNodes}
+                    selectedKnowledgeNodes={selectedKnowledgeNodes}
+                    onToggleNode={toggleKnowledgeNode}
+                    onBack={() => {
+                      setStep(1);
+                      setKnowledgeNodes([]);
+                      setSelectedKnowledgeNodes(new Set());
+                    }}
+                    onNext={() => {
+                      setStep(2);
+                      setUserKnowledge(
+                        Array.from(selectedKnowledgeNodes).join("\n\n")
+                      );
+                    }}
+                  />
                 )}
 
                 {step === 2 && (
