@@ -11,14 +11,24 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as StaticFlowImport } from './routes/static-flow'
 import { Route as StaticChatImport } from './routes/static-chat'
 import { Route as StaticImport } from './routes/static'
 import { Route as PillTestImport } from './routes/pill-test'
 import { Route as LoadingImport } from './routes/loading'
 import { Route as KnowledgeNodesImport } from './routes/knowledge-nodes'
 import { Route as IndexImport } from './routes/index'
+import { Route as StaticFlowIndexImport } from './routes/static-flow.index'
+import { Route as StaticFlowRoadmapImport } from './routes/static-flow.roadmap'
+import { Route as StaticFlowChatImport } from './routes/static-flow.chat'
 
 // Create/Update Routes
+
+const StaticFlowRoute = StaticFlowImport.update({
+  id: '/static-flow',
+  path: '/static-flow',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const StaticChatRoute = StaticChatImport.update({
   id: '/static-chat',
@@ -54,6 +64,24 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const StaticFlowIndexRoute = StaticFlowIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StaticFlowRoute,
+} as any)
+
+const StaticFlowRoadmapRoute = StaticFlowRoadmapImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
+  getParentRoute: () => StaticFlowRoute,
+} as any)
+
+const StaticFlowChatRoute = StaticFlowChatImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => StaticFlowRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -102,10 +130,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaticChatImport
       parentRoute: typeof rootRoute
     }
+    '/static-flow': {
+      id: '/static-flow'
+      path: '/static-flow'
+      fullPath: '/static-flow'
+      preLoaderRoute: typeof StaticFlowImport
+      parentRoute: typeof rootRoute
+    }
+    '/static-flow/chat': {
+      id: '/static-flow/chat'
+      path: '/chat'
+      fullPath: '/static-flow/chat'
+      preLoaderRoute: typeof StaticFlowChatImport
+      parentRoute: typeof StaticFlowImport
+    }
+    '/static-flow/roadmap': {
+      id: '/static-flow/roadmap'
+      path: '/roadmap'
+      fullPath: '/static-flow/roadmap'
+      preLoaderRoute: typeof StaticFlowRoadmapImport
+      parentRoute: typeof StaticFlowImport
+    }
+    '/static-flow/': {
+      id: '/static-flow/'
+      path: '/'
+      fullPath: '/static-flow/'
+      preLoaderRoute: typeof StaticFlowIndexImport
+      parentRoute: typeof StaticFlowImport
+    }
   }
 }
 
 // Create and export the route tree
+
+interface StaticFlowRouteChildren {
+  StaticFlowChatRoute: typeof StaticFlowChatRoute
+  StaticFlowRoadmapRoute: typeof StaticFlowRoadmapRoute
+  StaticFlowIndexRoute: typeof StaticFlowIndexRoute
+}
+
+const StaticFlowRouteChildren: StaticFlowRouteChildren = {
+  StaticFlowChatRoute: StaticFlowChatRoute,
+  StaticFlowRoadmapRoute: StaticFlowRoadmapRoute,
+  StaticFlowIndexRoute: StaticFlowIndexRoute,
+}
+
+const StaticFlowRouteWithChildren = StaticFlowRoute._addFileChildren(
+  StaticFlowRouteChildren,
+)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -114,6 +186,10 @@ export interface FileRoutesByFullPath {
   '/pill-test': typeof PillTestRoute
   '/static': typeof StaticRoute
   '/static-chat': typeof StaticChatRoute
+  '/static-flow': typeof StaticFlowRouteWithChildren
+  '/static-flow/chat': typeof StaticFlowChatRoute
+  '/static-flow/roadmap': typeof StaticFlowRoadmapRoute
+  '/static-flow/': typeof StaticFlowIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -123,6 +199,9 @@ export interface FileRoutesByTo {
   '/pill-test': typeof PillTestRoute
   '/static': typeof StaticRoute
   '/static-chat': typeof StaticChatRoute
+  '/static-flow/chat': typeof StaticFlowChatRoute
+  '/static-flow/roadmap': typeof StaticFlowRoadmapRoute
+  '/static-flow': typeof StaticFlowIndexRoute
 }
 
 export interface FileRoutesById {
@@ -133,6 +212,10 @@ export interface FileRoutesById {
   '/pill-test': typeof PillTestRoute
   '/static': typeof StaticRoute
   '/static-chat': typeof StaticChatRoute
+  '/static-flow': typeof StaticFlowRouteWithChildren
+  '/static-flow/chat': typeof StaticFlowChatRoute
+  '/static-flow/roadmap': typeof StaticFlowRoadmapRoute
+  '/static-flow/': typeof StaticFlowIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -144,6 +227,10 @@ export interface FileRouteTypes {
     | '/pill-test'
     | '/static'
     | '/static-chat'
+    | '/static-flow'
+    | '/static-flow/chat'
+    | '/static-flow/roadmap'
+    | '/static-flow/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -152,6 +239,9 @@ export interface FileRouteTypes {
     | '/pill-test'
     | '/static'
     | '/static-chat'
+    | '/static-flow/chat'
+    | '/static-flow/roadmap'
+    | '/static-flow'
   id:
     | '__root__'
     | '/'
@@ -160,6 +250,10 @@ export interface FileRouteTypes {
     | '/pill-test'
     | '/static'
     | '/static-chat'
+    | '/static-flow'
+    | '/static-flow/chat'
+    | '/static-flow/roadmap'
+    | '/static-flow/'
   fileRoutesById: FileRoutesById
 }
 
@@ -170,6 +264,7 @@ export interface RootRouteChildren {
   PillTestRoute: typeof PillTestRoute
   StaticRoute: typeof StaticRoute
   StaticChatRoute: typeof StaticChatRoute
+  StaticFlowRoute: typeof StaticFlowRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -179,6 +274,7 @@ const rootRouteChildren: RootRouteChildren = {
   PillTestRoute: PillTestRoute,
   StaticRoute: StaticRoute,
   StaticChatRoute: StaticChatRoute,
+  StaticFlowRoute: StaticFlowRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -196,7 +292,8 @@ export const routeTree = rootRoute
         "/loading",
         "/pill-test",
         "/static",
-        "/static-chat"
+        "/static-chat",
+        "/static-flow"
       ]
     },
     "/": {
@@ -216,6 +313,26 @@ export const routeTree = rootRoute
     },
     "/static-chat": {
       "filePath": "static-chat.tsx"
+    },
+    "/static-flow": {
+      "filePath": "static-flow.tsx",
+      "children": [
+        "/static-flow/chat",
+        "/static-flow/roadmap",
+        "/static-flow/"
+      ]
+    },
+    "/static-flow/chat": {
+      "filePath": "static-flow.chat.tsx",
+      "parent": "/static-flow"
+    },
+    "/static-flow/roadmap": {
+      "filePath": "static-flow.roadmap.tsx",
+      "parent": "/static-flow"
+    },
+    "/static-flow/": {
+      "filePath": "static-flow.index.tsx",
+      "parent": "/static-flow"
     }
   }
 }

@@ -20,7 +20,6 @@ export const chat = createServerFn({ method: "POST" })
     }
   )
   .handler(async ({ data }) => {
-    console.log({ data });
     try {
       const client = new Anthropic({
         apiKey: process.env["ANTHROPIC_API_KEY"],
