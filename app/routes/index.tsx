@@ -104,7 +104,7 @@ function Home() {
       const roadmap = await generateRoadmap({
         data: {
           subject: userSubject,
-          priorKnowledge: userKnowledge,
+          priorKnowledge: Array.from(selectedKnowledgeNodes).join("\n\n"),
         },
       });
       console.log("Roadmap generated:", { nodeCount: roadmap.nodes.length });
@@ -235,12 +235,7 @@ function Home() {
                       setKnowledgeNodes([]);
                       setSelectedKnowledgeNodes(new Set());
                     }}
-                    onNext={() => {
-                      setStep(2);
-                      setUserKnowledge(
-                        Array.from(selectedKnowledgeNodes).join("\n\n")
-                      );
-                    }}
+                    onNext={handleSubmit}
                   />
                 )}
 

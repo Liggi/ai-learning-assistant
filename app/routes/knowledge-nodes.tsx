@@ -3,22 +3,22 @@ import { createFileRoute } from "@tanstack/react-router";
 import KnowledgeNodesStep from "@/components/knowledge-nodes-step";
 
 const SAMPLE_KNOWLEDGE_NODES = [
-  "JavaScript Fundamentals",
-  "React Components",
-  "State Management",
-  "TypeScript Basics",
-  "CSS and Styling",
-  "Web APIs",
-  "Testing Principles",
-  "Git Version Control",
-  "Node.js Basics",
-  "HTTP and REST",
-  "Database Concepts",
-  "Authentication",
-  "Performance Optimization",
-  "Responsive Design",
-  "Accessibility",
-  "Security Best Practices",
+  "React",
+  "Advanced State Management with Redux and Context API",
+  "Git",
+  "Building Responsive Layouts with CSS Grid and Flexbox",
+  "TypeScript",
+  "Implementing Authentication and Authorization Flows",
+  "API Design",
+  "Performance Optimization and Web Vitals",
+  "Jest",
+  "Understanding the JavaScript Event Loop and Asynchronous Programming",
+  "Docker",
+  "Microservices Architecture and Service Communication Patterns",
+  "Node.js",
+  "Cross-Browser Compatibility",
+  "RESTful APIs",
+  "Progressive Web Apps (PWAs) and Service Workers",
 ];
 
 export const Route = createFileRoute("/knowledge-nodes")({
@@ -39,7 +39,7 @@ function KnowledgeNodesRoute() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <KnowledgeNodesStep
         knowledgeNodes={SAMPLE_KNOWLEDGE_NODES}
         selectedKnowledgeNodes={selectedNodes}

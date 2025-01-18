@@ -63,10 +63,10 @@ export default function CalibrateHeader({
           Select concepts you're familiar with to help refine your learning
           roadmap.
         </CardDescription>
-        <div className="flex items-center justify-center space-x-3 mt-6">
-          <span className="text-base font-semibold text-gray-200">
-            Current calibration:
-          </span>
+        <div
+          className="flex
+         items-center justify-center space-x-3 mt-6"
+        >
           <div ref={pillContainerRef} className="relative">
             <motion.div
               className={cn(

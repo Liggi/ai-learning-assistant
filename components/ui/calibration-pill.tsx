@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 const levelColors = {
-  "Not set": "from-[#374151] to-[#1F2937]",
+  "No calibration": "from-[#374151] to-[#1F2937]",
   "Lightly Calibrated": "from-[#047857] to-[#065F46]",
   "Well Calibrated": "from-[#059669] to-[#047857]",
   "Finely Calibrated": "from-[#10B981] to-[#059669]",
