@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ButtonLoading } from "@/components/ui/button-loading";
-import KnowledgeNodesStep from "@/components/knowledge-nodes-step";
 import Loading from "@/components/ui/loading";
+import Calibration from "@/components/features/calibration";
 
 export const Route = createFileRoute("/static-flow/")({
   component: StaticFlowIndex,
@@ -126,7 +126,7 @@ function StaticFlowIndex() {
                 )}
 
                 {step === 1.5 && (
-                  <KnowledgeNodesStep
+                  <Calibration
                     knowledgeNodes={STATIC_KNOWLEDGE_NODES}
                     selectedKnowledgeNodes={selectedKnowledgeNodes}
                     onToggleNode={toggleKnowledgeNode}

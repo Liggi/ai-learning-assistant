@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+<<<<<<< HEAD
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -9,51 +10,39 @@ import {
   Edge as ReactFlowEdge,
 } from "@xyflow/react";
 import Node from "@/components/react-flow/node";
+=======
+import { ButtonLoading } from "@/components/ui/button-loading";
+import { Node as ReactFlowNode, Edge as ReactFlowEdge } from "@xyflow/react";
+>>>>>>> 1dbd97d (WIP refactor)
 import {
   generateRoadmap,
   generateKnowledgeNodes,
-} from "@/features/roadmap/generator";
+} from "@/resources/roadmap/generator";
 import Loading from "@/components/ui/loading";
 import ChatScreen, { NodeData } from "@/components/chat-screen";
+<<<<<<< HEAD
 import SelectSubjectStep from "@/components/select-subject-step";
 import KnowledgeNodesStep from "@/components/knowledge-nodes-step";
+=======
+import { BookOpen } from "lucide-react";
+import Calibration from "@/components/features/calibration";
+import LearningRoadmap from "@/components/features/learning-roadmap";
+import SubjectChoiceDialog from "@/components/features/subject-choice-dialog";
+import { useLearningContext } from "@/lib/context/learning-context";
+>>>>>>> 1dbd97d (WIP refactor)
 
 import "@xyflow/react/dist/style.css";
 import FeynnmanTechnique from "@/components/feynmann-technique-step";
-
-const nodeTypes = { normalNode: Node };
-
-function FlowWithProvider({
-  nodes,
-  edges,
-  onNodeClick,
-}: {
-  nodes: ReactFlowNode<NodeData>[];
-  edges: ReactFlowEdge[];
-  onNodeClick: (node: ReactFlowNode<NodeData>) => void;
-}) {
-  return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      fitView
-      nodeTypes={nodeTypes}
-      nodesDraggable={false}
-      nodesConnectable={false}
-      elementsSelectable={false}
-      onNodeClick={(_, node) => onNodeClick(node)}
-    ></ReactFlow>
-  );
-}
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
 function Home() {
+  const { subject, setSubject } = useLearningContext();
+
   const [isHydrated, setIsHydrated] = useState(false);
   const [step, setStep] = useState(1);
-  const [userSubject, setUserSubject] = useState("");
   const [userKnowledge, setUserKnowledge] = useState("");
   const [nodes, setNodes] = useState<ReactFlowNode<NodeData>[]>([]);
   const [edges, setEdges] = useState<ReactFlowEdge[]>([]);
@@ -66,21 +55,33 @@ function Home() {
   const [selectedKnowledgeNodes, setSelectedKnowledgeNodes] = useState<
     Set<string>
   >(new Set());
-  const [isLoadingKnowledge, setIsLoadingKnowledge] = useState(false);
 
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
+<<<<<<< HEAD
   useEffect(() => {}, [isLoading, showForm, step, nodes, selectedNode]);
 
+=======
+>>>>>>> 1dbd97d (WIP refactor)
   if (!isHydrated) {
     return <div className="w-screen h-screen bg-background" />;
   }
 
   async function handleSubmit() {
+<<<<<<< HEAD
     setIsButtonLoading(true);
 
+=======
+    if (!subject) {
+      throw new Error("Subject is not set");
+    }
+
+    setIsButtonLoading(true);
+
+    // Just to make the button loading state look better
+>>>>>>> 1dbd97d (WIP refactor)
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     setIsLoading(true);
@@ -88,7 +89,7 @@ function Home() {
     try {
       const roadmap = await generateRoadmap({
         data: {
-          subject: userSubject,
+          subject,
           priorKnowledge: Array.from(selectedKnowledgeNodes).join("\n\n"),
         },
       });
@@ -97,6 +98,7 @@ function Home() {
       setEdges(roadmap.edges);
 
       await new Promise((resolve) => setTimeout(resolve, 500));
+
       setShowForm(false);
     } catch (error) {
       console.error("Error in handleSubmit:", error);
@@ -106,17 +108,23 @@ function Home() {
     }
   }
 
+<<<<<<< HEAD
   const handleNodeClick = (node: ReactFlowNode<NodeData>) => {
     setSelectedNode(node);
   };
 
+=======
+>>>>>>> 1dbd97d (WIP refactor)
   async function handleNextStep() {
+    if (!subject) {
+      throw new Error("Subject is not set");
+    }
+
     if (step === 1) {
-      setIsLoadingKnowledge(true);
       try {
         const nodes = await generateKnowledgeNodes({
           data: {
-            subject: userSubject,
+            subject,
           },
         });
 
@@ -128,8 +136,12 @@ function Home() {
         setStep(1.5);
       } catch (error) {
         console.error("Error generating knowledge nodes:", error);
+<<<<<<< HEAD
       } finally {
         setIsLoadingKnowledge(false);
+=======
+        // Stay on step 1 and show an error state
+>>>>>>> 1dbd97d (WIP refactor)
       }
     }
   }
@@ -146,20 +158,26 @@ function Home() {
     });
   }
 
+  if (isLoading) {
+    return (
+      <AnimatePresence mode="wait">
+        <motion.div
+          key="loading"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Loading />
+        </motion.div>
+      </AnimatePresence>
+    );
+  }
+
   return (
     <div style={{ width: "100vw", height: "100vh" }} className="bg-background">
       <AnimatePresence mode="wait">
-        {isLoading ? (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Loading />
-          </motion.div>
-        ) : showForm ? (
+        {showForm ? (
           <div className="w-full h-full flex items-center justify-center">
             <motion.div
               style={{ minWidth: 400, minHeight: 300 }}
@@ -171,16 +189,20 @@ function Home() {
             >
               <AnimatePresence mode="wait">
                 {step === 1 && (
+<<<<<<< HEAD
                   <SelectSubjectStep
                     userSubject={userSubject}
                     onSubjectChange={(value: string) => setUserSubject(value)}
                     onNext={handleNextStep}
                     isLoadingKnowledge={isLoadingKnowledge}
                   />
+=======
+                  <SubjectChoiceDialog onConfirm={handleNextStep} />
+>>>>>>> 1dbd97d (WIP refactor)
                 )}
 
                 {step === 1.5 && (
-                  <KnowledgeNodesStep
+                  <Calibration
                     knowledgeNodes={knowledgeNodes}
                     selectedKnowledgeNodes={selectedKnowledgeNodes}
                     onToggleNode={toggleKnowledgeNode}
@@ -192,6 +214,7 @@ function Home() {
                     onNext={handleSubmit}
                   />
                 )}
+<<<<<<< HEAD
 
                 {step === 2 && (
                   <FeynnmanTechnique
@@ -203,6 +226,8 @@ function Home() {
                     handleSubmit={handleSubmit}
                   />
                 )}
+=======
+>>>>>>> 1dbd97d (WIP refactor)
               </AnimatePresence>
             </motion.div>
           </div>
@@ -210,7 +235,6 @@ function Home() {
           <ChatScreen
             node={selectedNode.data}
             onBack={() => setSelectedNode(null)}
-            subject={userSubject}
           />
         ) : (
           <motion.div
@@ -218,20 +242,13 @@ function Home() {
             animate={{ opacity: 1 }}
             className="w-full h-full"
           >
-            <ReactFlowProvider>
-              <FlowWithProvider
-                nodes={nodes}
-                edges={edges}
-                onNodeClick={handleNodeClick}
-              />
-            </ReactFlowProvider>
+            <LearningRoadmap roadmap={{ nodes, edges }} />
             <Button
               variant="outline"
               className="absolute top-4 left-4"
               onClick={() => {
                 setShowForm(true);
                 setStep(1);
-                setUserSubject("");
                 setUserKnowledge("");
               }}
             >

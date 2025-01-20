@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-router";
 import { Meta, Scripts } from "@tanstack/start";
 import type { ReactNode } from "react";
+import { LearningProvider } from "@/lib/context/learning-context";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -26,9 +27,11 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
+    <LearningProvider>
+      <RootDocument>
+        <Outlet />
+      </RootDocument>
+    </LearningProvider>
   );
 }
 

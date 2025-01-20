@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Send } from "lucide-react";
-import { chat, generateSuggestionPills } from "@/features/chat/chat";
+import {
+  chat,
+  generateSuggestionPills,
+  generateMessageSummary,
+} from "@/resources/chat/chat";
+import { useConversationStore } from "@/resources/chat/chat";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { LoadingBubble } from "./ui/loading-bubble";
+import Sidebar from "./sidebar";
+import { v4 as uuidv4 } from "uuid";
+import { useLearningContext } from "@/lib/context/learning-context";
 
 export interface NodeData extends Record<string, unknown> {
   label: string;
@@ -12,26 +20,38 @@ export interface NodeData extends Record<string, unknown> {
   progress?: number;
 }
 
-interface Message {
+export interface Message {
   text: string;
   isUser: boolean;
+  id?: string;
+  summary?: string;
 }
 
 interface ChatScreenProps {
   node: NodeData;
   onBack: () => void;
-  subject: string;
 }
 
-const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
+const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack }) => {
+  const { subject } = useLearningContext();
+
+  const [conversation, setConversation] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
+  const addMessageToFlow = useConversationStore(
+    (state) => state.addMessageToFlow
+  );
 
   const generateSuggestions = async (message: string) => {
+    if (!subject) {
+      throw new Error("Subject is not set");
+    }
+
     setIsSuggestionsLoading(true);
+
     try {
       const result = await generateSuggestionPills({
         data: {
@@ -51,11 +71,15 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
   };
 
   const sendInitialMessage = async () => {
+    if (!subject) {
+      throw new Error("Subject is not set");
+    }
+
     setIsLoading(true);
     try {
       const result = await chat({
         data: {
-          subject: subject,
+          subject,
           moduleTitle: node.label,
           moduleDescription: node.description,
           message:
@@ -63,14 +87,35 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
         },
       });
 
-      setCurrentMessage({ text: result.response, isUser: false });
+      const summaryResult = await generateMessageSummary({
+        data: {
+          text: result.response,
+          isUser: false,
+        },
+      });
+
+      const messageId = uuidv4();
+      const botMessage = {
+        id: messageId,
+        text: result.response,
+        isUser: false,
+        summary: summaryResult.summary,
+      };
+      setCurrentMessage(botMessage);
+      setConversation((prev) => [...prev, botMessage]);
+      addMessageToFlow(botMessage);
+
       generateSuggestions(result.response);
     } catch (error) {
       console.error("Error sending initial message:", error);
-      setCurrentMessage({
+      const errorMessage = {
+        id: uuidv4(),
         text: "Sorry, I encountered an error. Please try again.",
         isUser: false,
-      });
+        summary: "Error occurred",
+      };
+      setCurrentMessage(errorMessage);
+      addMessageToFlow(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -84,26 +129,97 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
     setIsLoading(true);
     setSuggestions([]);
 
+    const userSummaryResult = await generateMessageSummary({
+      data: {
+        text: userMessage,
+        isUser: true,
+      },
+    });
+
+    const userMsgId = uuidv4();
+    const userMsgObject = {
+      id: userMsgId,
+      text: userMessage,
+      isUser: true,
+      summary: userSummaryResult.summary,
+    };
+    setConversation((prev) => [...prev, userMsgObject]);
+    addMessageToFlow(userMsgObject);
+
+    if (!subject) {
+      throw new Error("Subject is not set");
+    }
+
     try {
       const result = await chat({
         data: {
-          subject: subject,
+          subject,
           moduleTitle: node.label,
           moduleDescription: node.description,
           message: userMessage,
         },
       });
 
-      setCurrentMessage({ text: result.response, isUser: false });
+      const botSummaryResult = await generateMessageSummary({
+        data: {
+          text: result.response,
+          isUser: false,
+        },
+      });
+
+      const botMsgId = uuidv4();
+      const botResponse = result.response;
+      const botMsgObject = {
+        id: botMsgId,
+        text: botResponse,
+        isUser: false,
+        parentId: userMsgId,
+        summary: botSummaryResult.summary,
+      };
+      setCurrentMessage(botMsgObject);
+      setConversation((prev) => [...prev, botMsgObject]);
+      addMessageToFlow(botMsgObject);
+
       generateSuggestions(result.response);
     } catch (error) {
       console.error("Error:", error);
-      setCurrentMessage({
+      const errorMessage = {
+        id: uuidv4(),
         text: "Sorry, I encountered an error. Please try again.",
         isUser: false,
-      });
+        parentId: userMsgId,
+        summary: "Error occurred",
+      };
+      setCurrentMessage(errorMessage);
+      addMessageToFlow(errorMessage);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleFlowNodeClick = (text: string, nodeId: string) => {
+    // If this is a user's question, find the corresponding answer
+    const messageIndex = conversation.findIndex((msg) => msg.id === nodeId);
+    if (
+      messageIndex !== -1 &&
+      conversation[messageIndex].isUser &&
+      messageIndex + 1 < conversation.length
+    ) {
+      // Get the next message (the answer)
+      const answer = conversation[messageIndex + 1];
+      setCurrentMessage(answer);
+      setSuggestions([]);
+      generateSuggestions(answer.text);
+    } else {
+      // If it's not a question or no answer found, just show the clicked message
+      setCurrentMessage({
+        id: uuidv4(),
+        text,
+        isUser: false,
+        summary: "Restored previous message",
+      });
+      setSuggestions([]);
+      generateSuggestions(text);
     }
   };
 
@@ -114,6 +230,11 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
   return (
     <div className="flex h-screen bg-slate-900 text-slate-300">
       <div className="flex flex-1 relative">
+        <Sidebar
+          conversation={conversation}
+          onNodeClick={handleFlowNodeClick}
+        />
+
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800" />
 
         <div className="relative z-10 flex flex-1">

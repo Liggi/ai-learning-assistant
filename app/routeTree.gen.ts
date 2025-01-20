@@ -14,12 +14,16 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as StaticFlowImport } from './routes/static-flow'
 import { Route as StaticChatImport } from './routes/static-chat'
 import { Route as StaticImport } from './routes/static'
-import { Route as PillTestImport } from './routes/pill-test'
 import { Route as LoadingImport } from './routes/loading'
 import { Route as KnowledgeNodesImport } from './routes/knowledge-nodes'
+import { Route as WizardRouteImport } from './routes/wizard/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as StaticFlowIndexImport } from './routes/static-flow.index'
+import { Route as WizardSubjectImport } from './routes/wizard/subject'
+import { Route as WizardRoadmapImport } from './routes/wizard/roadmap'
+import { Route as WizardCalibrationImport } from './routes/wizard/calibration'
 import { Route as StaticFlowRoadmapImport } from './routes/static-flow.roadmap'
+import { Route as StaticFlowMindmapImport } from './routes/static-flow.mindmap'
 import { Route as StaticFlowChatImport } from './routes/static-flow.chat'
 
 // Create/Update Routes
@@ -42,12 +46,6 @@ const StaticRoute = StaticImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const PillTestRoute = PillTestImport.update({
-  id: '/pill-test',
-  path: '/pill-test',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const LoadingRoute = LoadingImport.update({
   id: '/loading',
   path: '/loading',
@@ -57,6 +55,12 @@ const LoadingRoute = LoadingImport.update({
 const KnowledgeNodesRoute = KnowledgeNodesImport.update({
   id: '/knowledge-nodes',
   path: '/knowledge-nodes',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const WizardRouteRoute = WizardRouteImport.update({
+  id: '/wizard',
+  path: '/wizard',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -72,9 +76,33 @@ const StaticFlowIndexRoute = StaticFlowIndexImport.update({
   getParentRoute: () => StaticFlowRoute,
 } as any)
 
+const WizardSubjectRoute = WizardSubjectImport.update({
+  id: '/subject',
+  path: '/subject',
+  getParentRoute: () => WizardRouteRoute,
+} as any)
+
+const WizardRoadmapRoute = WizardRoadmapImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
+  getParentRoute: () => WizardRouteRoute,
+} as any)
+
+const WizardCalibrationRoute = WizardCalibrationImport.update({
+  id: '/calibration',
+  path: '/calibration',
+  getParentRoute: () => WizardRouteRoute,
+} as any)
+
 const StaticFlowRoadmapRoute = StaticFlowRoadmapImport.update({
   id: '/roadmap',
   path: '/roadmap',
+  getParentRoute: () => StaticFlowRoute,
+} as any)
+
+const StaticFlowMindmapRoute = StaticFlowMindmapImport.update({
+  id: '/mindmap',
+  path: '/mindmap',
   getParentRoute: () => StaticFlowRoute,
 } as any)
 
@@ -95,6 +123,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/wizard': {
+      id: '/wizard'
+      path: '/wizard'
+      fullPath: '/wizard'
+      preLoaderRoute: typeof WizardRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/knowledge-nodes': {
       id: '/knowledge-nodes'
       path: '/knowledge-nodes'
@@ -107,13 +142,6 @@ declare module '@tanstack/react-router' {
       path: '/loading'
       fullPath: '/loading'
       preLoaderRoute: typeof LoadingImport
-      parentRoute: typeof rootRoute
-    }
-    '/pill-test': {
-      id: '/pill-test'
-      path: '/pill-test'
-      fullPath: '/pill-test'
-      preLoaderRoute: typeof PillTestImport
       parentRoute: typeof rootRoute
     }
     '/static': {
@@ -144,12 +172,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaticFlowChatImport
       parentRoute: typeof StaticFlowImport
     }
+    '/static-flow/mindmap': {
+      id: '/static-flow/mindmap'
+      path: '/mindmap'
+      fullPath: '/static-flow/mindmap'
+      preLoaderRoute: typeof StaticFlowMindmapImport
+      parentRoute: typeof StaticFlowImport
+    }
     '/static-flow/roadmap': {
       id: '/static-flow/roadmap'
       path: '/roadmap'
       fullPath: '/static-flow/roadmap'
       preLoaderRoute: typeof StaticFlowRoadmapImport
       parentRoute: typeof StaticFlowImport
+    }
+    '/wizard/calibration': {
+      id: '/wizard/calibration'
+      path: '/calibration'
+      fullPath: '/wizard/calibration'
+      preLoaderRoute: typeof WizardCalibrationImport
+      parentRoute: typeof WizardRouteImport
+    }
+    '/wizard/roadmap': {
+      id: '/wizard/roadmap'
+      path: '/roadmap'
+      fullPath: '/wizard/roadmap'
+      preLoaderRoute: typeof WizardRoadmapImport
+      parentRoute: typeof WizardRouteImport
+    }
+    '/wizard/subject': {
+      id: '/wizard/subject'
+      path: '/subject'
+      fullPath: '/wizard/subject'
+      preLoaderRoute: typeof WizardSubjectImport
+      parentRoute: typeof WizardRouteImport
     }
     '/static-flow/': {
       id: '/static-flow/'
@@ -163,14 +219,32 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface WizardRouteRouteChildren {
+  WizardCalibrationRoute: typeof WizardCalibrationRoute
+  WizardRoadmapRoute: typeof WizardRoadmapRoute
+  WizardSubjectRoute: typeof WizardSubjectRoute
+}
+
+const WizardRouteRouteChildren: WizardRouteRouteChildren = {
+  WizardCalibrationRoute: WizardCalibrationRoute,
+  WizardRoadmapRoute: WizardRoadmapRoute,
+  WizardSubjectRoute: WizardSubjectRoute,
+}
+
+const WizardRouteRouteWithChildren = WizardRouteRoute._addFileChildren(
+  WizardRouteRouteChildren,
+)
+
 interface StaticFlowRouteChildren {
   StaticFlowChatRoute: typeof StaticFlowChatRoute
+  StaticFlowMindmapRoute: typeof StaticFlowMindmapRoute
   StaticFlowRoadmapRoute: typeof StaticFlowRoadmapRoute
   StaticFlowIndexRoute: typeof StaticFlowIndexRoute
 }
 
 const StaticFlowRouteChildren: StaticFlowRouteChildren = {
   StaticFlowChatRoute: StaticFlowChatRoute,
+  StaticFlowMindmapRoute: StaticFlowMindmapRoute,
   StaticFlowRoadmapRoute: StaticFlowRoadmapRoute,
   StaticFlowIndexRoute: StaticFlowIndexRoute,
 }
@@ -181,40 +255,52 @@ const StaticFlowRouteWithChildren = StaticFlowRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/wizard': typeof WizardRouteRouteWithChildren
   '/knowledge-nodes': typeof KnowledgeNodesRoute
   '/loading': typeof LoadingRoute
-  '/pill-test': typeof PillTestRoute
   '/static': typeof StaticRoute
   '/static-chat': typeof StaticChatRoute
   '/static-flow': typeof StaticFlowRouteWithChildren
   '/static-flow/chat': typeof StaticFlowChatRoute
+  '/static-flow/mindmap': typeof StaticFlowMindmapRoute
   '/static-flow/roadmap': typeof StaticFlowRoadmapRoute
+  '/wizard/calibration': typeof WizardCalibrationRoute
+  '/wizard/roadmap': typeof WizardRoadmapRoute
+  '/wizard/subject': typeof WizardSubjectRoute
   '/static-flow/': typeof StaticFlowIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/wizard': typeof WizardRouteRouteWithChildren
   '/knowledge-nodes': typeof KnowledgeNodesRoute
   '/loading': typeof LoadingRoute
-  '/pill-test': typeof PillTestRoute
   '/static': typeof StaticRoute
   '/static-chat': typeof StaticChatRoute
   '/static-flow/chat': typeof StaticFlowChatRoute
+  '/static-flow/mindmap': typeof StaticFlowMindmapRoute
   '/static-flow/roadmap': typeof StaticFlowRoadmapRoute
+  '/wizard/calibration': typeof WizardCalibrationRoute
+  '/wizard/roadmap': typeof WizardRoadmapRoute
+  '/wizard/subject': typeof WizardSubjectRoute
   '/static-flow': typeof StaticFlowIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/wizard': typeof WizardRouteRouteWithChildren
   '/knowledge-nodes': typeof KnowledgeNodesRoute
   '/loading': typeof LoadingRoute
-  '/pill-test': typeof PillTestRoute
   '/static': typeof StaticRoute
   '/static-chat': typeof StaticChatRoute
   '/static-flow': typeof StaticFlowRouteWithChildren
   '/static-flow/chat': typeof StaticFlowChatRoute
+  '/static-flow/mindmap': typeof StaticFlowMindmapRoute
   '/static-flow/roadmap': typeof StaticFlowRoadmapRoute
+  '/wizard/calibration': typeof WizardCalibrationRoute
+  '/wizard/roadmap': typeof WizardRoadmapRoute
+  '/wizard/subject': typeof WizardSubjectRoute
   '/static-flow/': typeof StaticFlowIndexRoute
 }
 
@@ -222,46 +308,58 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/wizard'
     | '/knowledge-nodes'
     | '/loading'
-    | '/pill-test'
     | '/static'
     | '/static-chat'
     | '/static-flow'
     | '/static-flow/chat'
+    | '/static-flow/mindmap'
     | '/static-flow/roadmap'
+    | '/wizard/calibration'
+    | '/wizard/roadmap'
+    | '/wizard/subject'
     | '/static-flow/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/wizard'
     | '/knowledge-nodes'
     | '/loading'
-    | '/pill-test'
     | '/static'
     | '/static-chat'
     | '/static-flow/chat'
+    | '/static-flow/mindmap'
     | '/static-flow/roadmap'
+    | '/wizard/calibration'
+    | '/wizard/roadmap'
+    | '/wizard/subject'
     | '/static-flow'
   id:
     | '__root__'
     | '/'
+    | '/wizard'
     | '/knowledge-nodes'
     | '/loading'
-    | '/pill-test'
     | '/static'
     | '/static-chat'
     | '/static-flow'
     | '/static-flow/chat'
+    | '/static-flow/mindmap'
     | '/static-flow/roadmap'
+    | '/wizard/calibration'
+    | '/wizard/roadmap'
+    | '/wizard/subject'
     | '/static-flow/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  WizardRouteRoute: typeof WizardRouteRouteWithChildren
   KnowledgeNodesRoute: typeof KnowledgeNodesRoute
   LoadingRoute: typeof LoadingRoute
-  PillTestRoute: typeof PillTestRoute
   StaticRoute: typeof StaticRoute
   StaticChatRoute: typeof StaticChatRoute
   StaticFlowRoute: typeof StaticFlowRouteWithChildren
@@ -269,9 +367,9 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  WizardRouteRoute: WizardRouteRouteWithChildren,
   KnowledgeNodesRoute: KnowledgeNodesRoute,
   LoadingRoute: LoadingRoute,
-  PillTestRoute: PillTestRoute,
   StaticRoute: StaticRoute,
   StaticChatRoute: StaticChatRoute,
   StaticFlowRoute: StaticFlowRouteWithChildren,
@@ -288,9 +386,9 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/wizard",
         "/knowledge-nodes",
         "/loading",
-        "/pill-test",
         "/static",
         "/static-chat",
         "/static-flow"
@@ -299,14 +397,19 @@ export const routeTree = rootRoute
     "/": {
       "filePath": "index.tsx"
     },
+    "/wizard": {
+      "filePath": "wizard/route.tsx",
+      "children": [
+        "/wizard/calibration",
+        "/wizard/roadmap",
+        "/wizard/subject"
+      ]
+    },
     "/knowledge-nodes": {
       "filePath": "knowledge-nodes.tsx"
     },
     "/loading": {
       "filePath": "loading.tsx"
-    },
-    "/pill-test": {
-      "filePath": "pill-test.tsx"
     },
     "/static": {
       "filePath": "static.tsx"
@@ -318,6 +421,7 @@ export const routeTree = rootRoute
       "filePath": "static-flow.tsx",
       "children": [
         "/static-flow/chat",
+        "/static-flow/mindmap",
         "/static-flow/roadmap",
         "/static-flow/"
       ]
@@ -326,9 +430,25 @@ export const routeTree = rootRoute
       "filePath": "static-flow.chat.tsx",
       "parent": "/static-flow"
     },
+    "/static-flow/mindmap": {
+      "filePath": "static-flow.mindmap.tsx",
+      "parent": "/static-flow"
+    },
     "/static-flow/roadmap": {
       "filePath": "static-flow.roadmap.tsx",
       "parent": "/static-flow"
+    },
+    "/wizard/calibration": {
+      "filePath": "wizard/calibration.tsx",
+      "parent": "/wizard"
+    },
+    "/wizard/roadmap": {
+      "filePath": "wizard/roadmap.tsx",
+      "parent": "/wizard"
+    },
+    "/wizard/subject": {
+      "filePath": "wizard/subject.tsx",
+      "parent": "/wizard"
     },
     "/static-flow/": {
       "filePath": "static-flow.index.tsx",

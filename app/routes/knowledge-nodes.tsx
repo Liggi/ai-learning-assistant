@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import KnowledgeNodesStep from "@/components/knowledge-nodes-step";
+import Calibration from "@/components/features/calibration";
 
 const SAMPLE_KNOWLEDGE_NODES = [
   "React",
@@ -40,7 +40,7 @@ function KnowledgeNodesRoute() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <KnowledgeNodesStep
+      <Calibration
         knowledgeNodes={SAMPLE_KNOWLEDGE_NODES}
         selectedKnowledgeNodes={selectedNodes}
         onToggleNode={handleToggleNode}
