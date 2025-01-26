@@ -1,78 +1,64 @@
 import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import {
-  ReactFlow,
-  ReactFlowProvider,
-  Node as ReactFlowNode,
-  Edge as ReactFlowEdge,
-} from "@xyflow/react";
-import Node from "@/components/react-flow/node";
-import {
-  generateRoadmap,
-  generateKnowledgeNodes,
-} from "@/features/roadmap/generator";
+import { Node as ReactFlowNode, Edge as ReactFlowEdge } from "@xyflow/react";
+import { generateRoadmap } from "@/features/roadmap/generator";
 import Loading from "@/components/ui/loading";
 import ChatScreen, { NodeData } from "@/components/chat-screen";
 import SelectSubjectStep from "@/components/select-subject-step";
 import KnowledgeNodesStep from "@/components/knowledge-nodes-step";
+import FeynmanTechnique from "@/components/feynman-technique-step";
+import RoadmapView from "@/components/roadmap-view";
 
 import "@xyflow/react/dist/style.css";
-import FeynnmanTechnique from "@/components/feynmann-technique-step";
 
-const nodeTypes = { normalNode: Node };
+console.log("[Debug] RoadmapView import:", {
+  type: typeof RoadmapView,
+  toString: RoadmapView.toString(),
+});
 
-function FlowWithProvider({
-  nodes,
-  edges,
-  onNodeClick,
-}: {
-  nodes: ReactFlowNode<NodeData>[];
-  edges: ReactFlowEdge[];
-  onNodeClick: (node: ReactFlowNode<NodeData>) => void;
-}) {
-  return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      fitView
-      nodeTypes={nodeTypes}
-      nodesDraggable={false}
-      nodesConnectable={false}
-      elementsSelectable={false}
-      onNodeClick={(_, node) => onNodeClick(node)}
-    ></ReactFlow>
-  );
-}
+type ViewState =
+  | "selectSubject"
+  | "calibrateWithExistingKnowledge"
+  | "feynmanTechnique"
+  | "roadmap"
+  | "chat";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
 function Home() {
+  const [currentView, setCurrentView] = useState<ViewState>("selectSubject");
   const [isHydrated, setIsHydrated] = useState(false);
-  const [step, setStep] = useState(1);
   const [userSubject, setUserSubject] = useState("");
   const [userKnowledge, setUserKnowledge] = useState("");
   const [nodes, setNodes] = useState<ReactFlowNode<NodeData>[]>([]);
   const [edges, setEdges] = useState<ReactFlowEdge[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
-  const [showForm, setShowForm] = useState(true);
-  const [selectedNode, setSelectedNode] =
-    useState<ReactFlowNode<NodeData> | null>(null);
-  const [knowledgeNodes, setKnowledgeNodes] = useState<Array<string>>([]);
   const [selectedKnowledgeNodes, setSelectedKnowledgeNodes] = useState<
     Set<string>
   >(new Set());
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [selectedNode, setSelectedNode] =
+    useState<ReactFlowNode<NodeData> | null>(null);
   const [isLoadingKnowledge, setIsLoadingKnowledge] = useState(false);
 
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  useEffect(() => {}, [isLoading, showForm, step, nodes, selectedNode]);
+  // Debug effect for roadmap data and view transitions
+  useEffect(() => {
+    if (currentView === "roadmap") {
+      console.log("[Debug] Roadmap View State:", {
+        hasNodes: nodes.length > 0,
+        hasEdges: edges.length > 0,
+        nodeCount: nodes.length,
+        edgeCount: edges.length,
+      });
+    }
+  }, [currentView, nodes, edges]);
 
   if (!isHydrated) {
     return <div className="w-screen h-screen bg-background" />;
@@ -80,12 +66,15 @@ function Home() {
 
   async function handleSubmit() {
     setIsButtonLoading(true);
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
     setIsLoading(true);
 
     try {
+      console.log("[Debug] Starting roadmap generation:", {
+        subject: userSubject,
+        knowledgeNodesCount: selectedKnowledgeNodes.size,
+        timestamp: new Date().toISOString(),
+      });
+
       const roadmap = await generateRoadmap({
         data: {
           subject: userSubject,
@@ -93,48 +82,42 @@ function Home() {
         },
       });
 
+      console.log("[Debug] Received roadmap data:", {
+        nodeCount: roadmap.nodes.length,
+        edgeCount: roadmap.edges.length,
+        nodes: roadmap.nodes.map((n) => ({
+          id: n.id,
+          position: n.position,
+          type: n.type,
+        })),
+        edges: roadmap.edges.map((e) => ({
+          id: e.id,
+          source: e.source,
+          target: e.target,
+        })),
+        timestamp: new Date().toISOString(),
+      });
+
       setNodes(roadmap.nodes);
       setEdges(roadmap.edges);
 
+      console.log("[Debug] State updated with roadmap data:", {
+        timestamp: new Date().toISOString(),
+      });
+
       await new Promise((resolve) => setTimeout(resolve, 500));
-      setShowForm(false);
     } catch (error) {
-      console.error("Error in handleSubmit:", error);
+      console.error("[Debug] Error in handleSubmit:", error);
     } finally {
       setIsLoading(false);
       setIsButtonLoading(false);
+      console.log("[Debug] handleSubmit completed", {
+        timestamp: new Date().toISOString(),
+      });
     }
   }
 
-  const handleNodeClick = (node: ReactFlowNode<NodeData>) => {
-    setSelectedNode(node);
-  };
-
-  async function handleNextStep() {
-    if (step === 1) {
-      setIsLoadingKnowledge(true);
-      try {
-        const nodes = await generateKnowledgeNodes({
-          data: {
-            subject: userSubject,
-          },
-        });
-
-        if (nodes.length === 0) {
-          throw new Error("No knowledge nodes were generated");
-        }
-
-        setKnowledgeNodes(nodes);
-        setStep(1.5);
-      } catch (error) {
-        console.error("Error generating knowledge nodes:", error);
-      } finally {
-        setIsLoadingKnowledge(false);
-      }
-    }
-  }
-
-  function toggleKnowledgeNode(id: string) {
+  const toggleKnowledgeNode = (id: string) => {
     setSelectedKnowledgeNodes((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
@@ -144,102 +127,149 @@ function Home() {
       }
       return newSet;
     });
-  }
+  };
+
+  const handleNodeClick = (node: ReactFlowNode<NodeData>) => {
+    setSelectedNode(node);
+    setCurrentView("chat");
+  };
+
+  const handleReset = () => {
+    setUserSubject("");
+    setUserKnowledge("");
+    setNodes([]);
+    setEdges([]);
+    setSelectedKnowledgeNodes(new Set());
+    setCurrentView("selectSubject");
+  };
+
+  const renderView = () => {
+    console.log("[Debug] renderView function called", currentView);
+    if (isLoading) {
+      return (
+        <motion.div
+          key="loading"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Loading />
+        </motion.div>
+      );
+    }
+
+    console.log("[Debug] Rendering view:", {
+      view: currentView,
+      hasNodes: nodes.length > 0,
+      hasEdges: edges.length > 0,
+      timestamp: new Date().toISOString(),
+    });
+
+    switch (currentView) {
+      case "selectSubject":
+        return (
+          <SelectSubjectStep
+            subject={userSubject}
+            onSubjectChange={setUserSubject}
+            onNext={() => setCurrentView("calibrateWithExistingKnowledge")}
+            isSubmitting={isLoadingKnowledge}
+          />
+        );
+
+      case "calibrateWithExistingKnowledge":
+        return (
+          <KnowledgeNodesStep
+            subject={userSubject}
+            selectedKnowledgeNodes={selectedKnowledgeNodes}
+            onCalibrationChange={toggleKnowledgeNode}
+            onBack={() => setCurrentView("selectSubject")}
+            onNext={async () => {
+              await handleSubmit();
+              setCurrentView("roadmap");
+            }}
+          />
+        );
+
+      case "feynmanTechnique":
+        return (
+          <FeynmanTechnique
+            userKnowledge={userKnowledge}
+            setUserKnowledge={setUserKnowledge}
+            setStep={(step) => {
+              if (step === 1) {
+                setCurrentView("calibrateWithExistingKnowledge");
+              }
+            }}
+            isLoading={isLoading}
+            isButtonLoading={isButtonLoading}
+            handleSubmit={async () => {
+              await handleSubmit();
+              setCurrentView("roadmap");
+            }}
+          />
+        );
+
+      case "roadmap":
+        console.log("[Debug] Rendering roadmap view - BEFORE CHECKS:", {
+          view: currentView,
+          hasNodes: nodes.length > 0,
+          hasEdges: edges.length > 0,
+          nodes, // Log actual nodes structure
+          edges, // Log actual edges structure
+          timestamp: new Date().toISOString(),
+        });
+
+        if (!nodes.length || !edges.length) {
+          console.log("[Debug] No nodes or edges available for roadmap");
+          return null;
+        }
+
+        console.log("[Debug] About to return RoadmapView component");
+        const roadmapComponent = (
+          <RoadmapView
+            nodes={nodes}
+            edges={edges}
+            onNodeClick={(node) => {
+              setSelectedNode(node);
+              setCurrentView("chat");
+            }}
+            onReset={handleReset}
+          />
+        );
+        console.log("[Debug] RoadmapView component created:", roadmapComponent);
+        return roadmapComponent;
+
+      case "chat":
+        return (
+          <ChatScreen
+            node={selectedNode?.data}
+            subject={userSubject}
+            onBack={() => setCurrentView("roadmap")}
+          />
+        );
+    }
+  };
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }} className="bg-background">
-      <AnimatePresence mode="wait">
-        {isLoading ? (
+    <div className="w-screen h-screen bg-background relative">
+      {/* Remove AnimatePresence wrapper for roadmap view */}
+      {currentView === "roadmap" ? (
+        <div className="absolute inset-0">{renderView()}</div>
+      ) : (
+        <AnimatePresence mode="wait">
           <motion.div
-            key="loading"
+            key={currentView}
+            className="absolute inset-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <Loading />
+            {renderView()}
           </motion.div>
-        ) : showForm ? (
-          <div className="w-full h-full flex items-center justify-center">
-            <motion.div
-              style={{ minWidth: 400, minHeight: 300 }}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className="bg-card rounded-lg shadow-lg p-8 overflow-hidden relative"
-            >
-              <AnimatePresence mode="wait">
-                {step === 1 && (
-                  <SelectSubjectStep
-                    userSubject={userSubject}
-                    onSubjectChange={(value: string) => setUserSubject(value)}
-                    onNext={handleNextStep}
-                    isLoadingKnowledge={isLoadingKnowledge}
-                  />
-                )}
-
-                {step === 1.5 && (
-                  <KnowledgeNodesStep
-                    knowledgeNodes={knowledgeNodes}
-                    selectedKnowledgeNodes={selectedKnowledgeNodes}
-                    onToggleNode={toggleKnowledgeNode}
-                    onBack={() => {
-                      setStep(1);
-                      setKnowledgeNodes([]);
-                      setSelectedKnowledgeNodes(new Set());
-                    }}
-                    onNext={handleSubmit}
-                  />
-                )}
-
-                {step === 2 && (
-                  <FeynnmanTechnique
-                    userKnowledge={userKnowledge}
-                    setUserKnowledge={setUserKnowledge}
-                    setStep={setStep}
-                    isLoading={isLoading}
-                    isButtonLoading={isButtonLoading}
-                    handleSubmit={handleSubmit}
-                  />
-                )}
-              </AnimatePresence>
-            </motion.div>
-          </div>
-        ) : selectedNode ? (
-          <ChatScreen
-            node={selectedNode.data}
-            onBack={() => setSelectedNode(null)}
-            subject={userSubject}
-          />
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="w-full h-full"
-          >
-            <ReactFlowProvider>
-              <FlowWithProvider
-                nodes={nodes}
-                edges={edges}
-                onNodeClick={handleNodeClick}
-              />
-            </ReactFlowProvider>
-            <Button
-              variant="outline"
-              className="absolute top-4 left-4"
-              onClick={() => {
-                setShowForm(true);
-                setStep(1);
-                setUserSubject("");
-                setUserKnowledge("");
-              }}
-            >
-              Create a new roadmap
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>
+      )}
     </div>
   );
 }

@@ -15,7 +15,7 @@ export const generateRoadmap = createServerFn({ method: "POST" })
       apiKey: process.env["ANTHROPIC_API_KEY"],
     });
 
-    const prompt = `You are a specialized assistant that can create structured data in JSON. I want you to generate a list of thoughtful learning steps in the form of an array of "nodes," and an array of "edges" connecting them. 
+    const prompt = `You are a specialized assistant that can create structured data in JSON. I want you to generate a list of thoughtful learning steps in the form of an array of "nodes," and an array of "edges" connecting them.
 
 The user wants to learn about ${data.subject} and has provided their current understanding:
 """
@@ -30,18 +30,22 @@ Using the Feynman Technique principles, analyze their explanation to identify kn
 
 Please precisely follow this format:
 
-1. Return a JSON object with two keys: "nodes" and "edges".  
+1. Return a JSON object with two keys: "nodes" and "edges".
 2. "nodes" should be an array of objects. Each node should have:
-   • an "id" as a string,  
-   • a "position" property with x and y coordinates (e.g. { x: 200, y: 400 }),  
-   • a "type" property set to "normalNode",  
-   • a "data" object that has a "label" describing the step name.  
-3. Ensure that the nodes are spaced with at least 200 units between them vertically, and 200 units horizontally (300-400 if a title on that row is long), and if there are nodes with longer names that you've accounted for horizontal spacing. Do not worry about running out of space on the screen, it will be handled.
+   • an "id" as a string,
+   • a "position" property with x and y coordinates (e.g. { x: 200, y: 400 }),
+   • a "type" property set to "normalNode",
+   • a "data" object that has:
+     - "label" describing the step name
+     - "description" providing a brief explanation
+     - "status" set to "not-started" (other possible values are "in-progress" and "completed")
+3. Ensure that the nodes are spaced with at least 200 units between them vertically, and 300-400 units horizontally. Start the first node at x: 400, y: 0.
 
-4. "edges" should be an array of objects. Each edge should have an:
-   • "id" in the format "eSOURCEID-TARGETID"  
-   • a "source" property matching a node's id  
-   • a "target" property matching a node's id  
+4. "edges" should be an array of objects. Each edge should have:
+   • "id" in the format "eSOURCEID-TARGETID"
+   • a "source" property matching a node's id
+   • a "target" property matching a node's id
+   • a "type" property set to "smoothstep"
 
 Please ensure your generated roadmap contains expertly crafted learning steps, connecting them logically from basic principles to more advanced ideas. Your output must strictly be valid JSON in the specified shape, with no extra commentary included.
 Ensure the roadmap has multiple branching paths, not just one single linear path unless that is the only way to sensibly cover the topics.
@@ -53,14 +57,19 @@ For example, follow the structure:
       "id": "1",
       "position": { "x": 400, "y": 0 },
       "type": "normalNode",
-      "data": { "label": "Sample Step", "description": "This is a short description of the same step and the subject matter therein" }
+      "data": { 
+        "label": "Sample Step",
+        "description": "This is a short description of the step",
+        "status": "not-started"
+      }
     }
   ],
   "edges": [
     {
       "id": "e1-2",
       "source": "1",
-      "target": "2"
+      "target": "2",
+      "type": "smoothstep"
     }
   ]
 }
@@ -74,7 +83,7 @@ Make sure the nodes and edges reflect a learning roadmap from fundamentals to mo
 
         console.log("📤 Sending request to Anthropic API...");
         const message = await client.messages.create({
-          max_tokens: 1024,
+          max_tokens: 4096,
           messages: [
             {
               role: "user",
@@ -90,30 +99,43 @@ Make sure the nodes and edges reflect a learning roadmap from fundamentals to mo
           .map((block) => block.text)
           .join("");
 
-        console.log("\n📝 Raw response from API:");
-        console.log(stringResponse);
-
         console.log("\n🔍 Attempting to parse JSON...");
         parsedJSON = JSON.parse(stringResponse);
-        console.log("✅ JSON parsed successfully!");
 
-        // If parsing is successful, break out of the loop
+        // Validate the structure
+        if (
+          !parsedJSON.nodes ||
+          !parsedJSON.edges ||
+          !Array.isArray(parsedJSON.nodes) ||
+          !Array.isArray(parsedJSON.edges)
+        ) {
+          throw new Error(
+            "Invalid JSON structure: missing nodes or edges arrays"
+          );
+        }
+
+        // Validate and fix nodes
+        parsedJSON.nodes = parsedJSON.nodes.map((node: any) => {
+          if (!node.data) node.data = {};
+          if (!node.data.status) node.data.status = "not-started";
+          if (!node.type) node.type = "normalNode";
+          return node;
+        });
+
+        // Validate and fix edges
+        parsedJSON.edges = parsedJSON.edges.map((edge: any) => {
+          if (!edge.type) edge.type = "smoothstep";
+          return edge;
+        });
+
+        console.log("✅ JSON parsed and validated successfully!");
         break;
       } catch (err) {
         console.error(`\n❌ Attempt ${attempt} failed with error:`, err);
-        console.error("Error details:", {
-          name: err.name,
-          message: err.message,
-          stack: err.stack,
-        });
-
         if (attempt >= maxRetries) {
           console.error("\n💥 All attempts failed after maximum retries");
           throw err;
         }
-
-        console.log(`\n⏳ Waiting before retry ${attempt + 1}...`);
-        // Optionally, wait before retrying
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
@@ -133,20 +155,24 @@ export const generateKnowledgeNodes = createServerFn({ method: "POST" })
 
     const prompt = `You are a specialized assistant that helps assess a user's knowledge level in ${data.subject}. Generate a comprehensive set of knowledge nodes that represent key concepts, from basic to advanced.
 
-Each node should be a specific, testable piece of knowledge that someone learning ${data.subject} might understand. The nodes should progress from fundamental concepts to more advanced ones.
+Each node should be a specific, testable piece of knowledge that someone learning about the subject: |${data.subject}| might understand. The nodes should progress from fundamental concepts to more advanced ones
+
+Word the nodes as if the person selecting them is speaking in the first person.'.
 
 Return a JSON object in the following format:
 
 For example:
 { "nodes": [
-  "Basic concept", "Another basic concept", "Intermediate concept", "Reference to specific knowledge", "Unique piece of terminology",
+ { name: "<node name>", depth_level: "<depth level (1-5)>"}
 ]
 }
 
-Generate at least 15-20 nodes covering the full spectrum of knowledge in ${data.subject}, ensuring there's a good mix of difficulty levels.`;
+Generate at least 15-20 nodes representing a breadth of understanding in the subject: |${data.subject}|, ensuring that the nodes are ideally placed to illuminate a learner's current level of understanding and comprehension.
+
+Include at least three nodes that only a person EXTREMELY well versed in the subject would know.`;
 
     const message = await client.messages.create({
-      max_tokens: 1024,
+      max_tokens: 4096,
       messages: [
         {
           role: "user",
@@ -173,10 +199,19 @@ Generate at least 15-20 nodes covering the full spectrum of knowledge in ${data.
         throw new Error("Expected an object with nodes array from Anthropic");
       }
 
-      // Validate that all items in nodes are strings
+      // Validate that all items in nodes have the correct structure
       const validatedNodes = parsed.nodes.map((item) => {
-        if (typeof item !== "string") {
-          throw new Error("All items in nodes array must be strings");
+        if (
+          !item ||
+          typeof item !== "object" ||
+          typeof item.name !== "string" ||
+          typeof item.depth_level !== "number" ||
+          item.depth_level < 1 ||
+          item.depth_level > 5
+        ) {
+          throw new Error(
+            "Each node must have a name (string) and depth_level (number between 1-5)"
+          );
         }
         return item;
       });

@@ -28,34 +28,39 @@ function Node({ data }: NodeProps) {
 
   return (
     <div
-      onMouseEnter={(e) => {
-        setIsHovered(true);
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`
+        max-w-[280px] rounded-xl overflow-hidden flex flex-col border 
+        shadow-lg backdrop-blur-sm 
+        transition-all duration-300 ease-in-out 
+        cursor-pointer
+        group
+        relative
+        ${
+          isHovered
+            ? "shadow-xl border-slate-500 scale-[1.02] bg-slate-800/90"
+            : "border-slate-700 bg-slate-900/90"
+        }
+      `}
+      style={{
+        minWidth: "200px",
+        minHeight: "100px",
       }}
-      onMouseLeave={(e) => {
-        setIsHovered(false);
-      }}
-      className={`max-w-[280px] rounded-xl overflow-hidden flex flex-col border border-slate-700 
-      shadow-lg shadow-slate-900/50 
-      transition-all duration-300 ease-in-out 
-      cursor-pointer
-      group
-      relative
-      ${
-        isHovered
-          ? "shadow-xl shadow-slate-900/70 border-slate-500 scale-[1.02] bg-slate-800"
-          : "bg-slate-900"
-      }`}
     >
       <Handle
         type="target"
         position={Position.Top}
         id="a"
-        style={{ background: "transparent", border: "none" }}
+        className="!bg-transparent !border-0"
       />
       <div className="px-5 py-3 border-b border-slate-700 group-hover:border-slate-600">
         <h3
-          className="font-bold text-base text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400
-            group-hover:from-cyan-300 group-hover:to-indigo-300"
+          className={`
+            font-bold text-base text-transparent bg-clip-text 
+            bg-gradient-to-r from-cyan-400 to-indigo-400
+            group-hover:from-cyan-300 group-hover:to-indigo-300
+          `}
           title={data.label}
         >
           {data.label}
@@ -82,7 +87,7 @@ function Node({ data }: NodeProps) {
         type="source"
         position={Position.Bottom}
         id="b"
-        style={{ background: "transparent", border: "none" }}
+        className="!bg-transparent !border-0"
       />
     </div>
   );

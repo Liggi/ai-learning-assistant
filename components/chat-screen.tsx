@@ -18,17 +18,22 @@ interface Message {
 }
 
 interface ChatScreenProps {
-  node: NodeData;
+  node?: NodeData;
   onBack: () => void;
   subject: string;
 }
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
+  console.log({ node, onBack, subject });
   const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
+
+  if (!node) {
+    return null;
+  }
 
   const generateSuggestions = async (message: string) => {
     setIsSuggestionsLoading(true);
@@ -112,7 +117,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
   }, [node.label]);
 
   return (
-    <div className="flex h-screen bg-slate-900 text-slate-300">
+    <div className="flex h-screen bg-slate-900 text-slate-300 z-50 relative">
       <div className="flex flex-1 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800" />
 

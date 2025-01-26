@@ -20,6 +20,7 @@ import { Route as KnowledgeNodesImport } from './routes/knowledge-nodes'
 import { Route as IndexImport } from './routes/index'
 import { Route as StaticFlowIndexImport } from './routes/static-flow.index'
 import { Route as StaticFlowRoadmapImport } from './routes/static-flow.roadmap'
+import { Route as StaticFlowMindmapImport } from './routes/static-flow.mindmap'
 import { Route as StaticFlowChatImport } from './routes/static-flow.chat'
 
 // Create/Update Routes
@@ -75,6 +76,12 @@ const StaticFlowIndexRoute = StaticFlowIndexImport.update({
 const StaticFlowRoadmapRoute = StaticFlowRoadmapImport.update({
   id: '/roadmap',
   path: '/roadmap',
+  getParentRoute: () => StaticFlowRoute,
+} as any)
+
+const StaticFlowMindmapRoute = StaticFlowMindmapImport.update({
+  id: '/mindmap',
+  path: '/mindmap',
   getParentRoute: () => StaticFlowRoute,
 } as any)
 
@@ -144,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaticFlowChatImport
       parentRoute: typeof StaticFlowImport
     }
+    '/static-flow/mindmap': {
+      id: '/static-flow/mindmap'
+      path: '/mindmap'
+      fullPath: '/static-flow/mindmap'
+      preLoaderRoute: typeof StaticFlowMindmapImport
+      parentRoute: typeof StaticFlowImport
+    }
     '/static-flow/roadmap': {
       id: '/static-flow/roadmap'
       path: '/roadmap'
@@ -165,12 +179,14 @@ declare module '@tanstack/react-router' {
 
 interface StaticFlowRouteChildren {
   StaticFlowChatRoute: typeof StaticFlowChatRoute
+  StaticFlowMindmapRoute: typeof StaticFlowMindmapRoute
   StaticFlowRoadmapRoute: typeof StaticFlowRoadmapRoute
   StaticFlowIndexRoute: typeof StaticFlowIndexRoute
 }
 
 const StaticFlowRouteChildren: StaticFlowRouteChildren = {
   StaticFlowChatRoute: StaticFlowChatRoute,
+  StaticFlowMindmapRoute: StaticFlowMindmapRoute,
   StaticFlowRoadmapRoute: StaticFlowRoadmapRoute,
   StaticFlowIndexRoute: StaticFlowIndexRoute,
 }
@@ -188,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/static-chat': typeof StaticChatRoute
   '/static-flow': typeof StaticFlowRouteWithChildren
   '/static-flow/chat': typeof StaticFlowChatRoute
+  '/static-flow/mindmap': typeof StaticFlowMindmapRoute
   '/static-flow/roadmap': typeof StaticFlowRoadmapRoute
   '/static-flow/': typeof StaticFlowIndexRoute
 }
@@ -200,6 +217,7 @@ export interface FileRoutesByTo {
   '/static': typeof StaticRoute
   '/static-chat': typeof StaticChatRoute
   '/static-flow/chat': typeof StaticFlowChatRoute
+  '/static-flow/mindmap': typeof StaticFlowMindmapRoute
   '/static-flow/roadmap': typeof StaticFlowRoadmapRoute
   '/static-flow': typeof StaticFlowIndexRoute
 }
@@ -214,6 +232,7 @@ export interface FileRoutesById {
   '/static-chat': typeof StaticChatRoute
   '/static-flow': typeof StaticFlowRouteWithChildren
   '/static-flow/chat': typeof StaticFlowChatRoute
+  '/static-flow/mindmap': typeof StaticFlowMindmapRoute
   '/static-flow/roadmap': typeof StaticFlowRoadmapRoute
   '/static-flow/': typeof StaticFlowIndexRoute
 }
@@ -229,6 +248,7 @@ export interface FileRouteTypes {
     | '/static-chat'
     | '/static-flow'
     | '/static-flow/chat'
+    | '/static-flow/mindmap'
     | '/static-flow/roadmap'
     | '/static-flow/'
   fileRoutesByTo: FileRoutesByTo
@@ -240,6 +260,7 @@ export interface FileRouteTypes {
     | '/static'
     | '/static-chat'
     | '/static-flow/chat'
+    | '/static-flow/mindmap'
     | '/static-flow/roadmap'
     | '/static-flow'
   id:
@@ -252,6 +273,7 @@ export interface FileRouteTypes {
     | '/static-chat'
     | '/static-flow'
     | '/static-flow/chat'
+    | '/static-flow/mindmap'
     | '/static-flow/roadmap'
     | '/static-flow/'
   fileRoutesById: FileRoutesById
@@ -318,12 +340,17 @@ export const routeTree = rootRoute
       "filePath": "static-flow.tsx",
       "children": [
         "/static-flow/chat",
+        "/static-flow/mindmap",
         "/static-flow/roadmap",
         "/static-flow/"
       ]
     },
     "/static-flow/chat": {
       "filePath": "static-flow.chat.tsx",
+      "parent": "/static-flow"
+    },
+    "/static-flow/mindmap": {
+      "filePath": "static-flow.mindmap.tsx",
       "parent": "/static-flow"
     },
     "/static-flow/roadmap": {
