@@ -24,7 +24,6 @@ interface ChatScreenProps {
 }
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
-  console.log({ node, onBack, subject });
   const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);

@@ -12,11 +12,6 @@ import RoadmapView from "@/components/roadmap-view";
 
 import "@xyflow/react/dist/style.css";
 
-console.log("[Debug] RoadmapView import:", {
-  type: typeof RoadmapView,
-  toString: RoadmapView.toString(),
-});
-
 type ViewState =
   | "selectSubject"
   | "calibrateWithExistingKnowledge"
@@ -48,18 +43,6 @@ function Home() {
     setIsHydrated(true);
   }, []);
 
-  // Debug effect for roadmap data and view transitions
-  useEffect(() => {
-    if (currentView === "roadmap") {
-      console.log("[Debug] Roadmap View State:", {
-        hasNodes: nodes.length > 0,
-        hasEdges: edges.length > 0,
-        nodeCount: nodes.length,
-        edgeCount: edges.length,
-      });
-    }
-  }, [currentView, nodes, edges]);
-
   if (!isHydrated) {
     return <div className="w-screen h-screen bg-background" />;
   }
@@ -69,12 +52,6 @@ function Home() {
     setIsLoading(true);
 
     try {
-      console.log("[Debug] Starting roadmap generation:", {
-        subject: userSubject,
-        knowledgeNodesCount: selectedKnowledgeNodes.size,
-        timestamp: new Date().toISOString(),
-      });
-
       const roadmap = await generateRoadmap({
         data: {
           subject: userSubject,
@@ -82,28 +59,8 @@ function Home() {
         },
       });
 
-      console.log("[Debug] Received roadmap data:", {
-        nodeCount: roadmap.nodes.length,
-        edgeCount: roadmap.edges.length,
-        nodes: roadmap.nodes.map((n) => ({
-          id: n.id,
-          position: n.position,
-          type: n.type,
-        })),
-        edges: roadmap.edges.map((e) => ({
-          id: e.id,
-          source: e.source,
-          target: e.target,
-        })),
-        timestamp: new Date().toISOString(),
-      });
-
       setNodes(roadmap.nodes);
       setEdges(roadmap.edges);
-
-      console.log("[Debug] State updated with roadmap data:", {
-        timestamp: new Date().toISOString(),
-      });
 
       await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (error) {
@@ -111,9 +68,6 @@ function Home() {
     } finally {
       setIsLoading(false);
       setIsButtonLoading(false);
-      console.log("[Debug] handleSubmit completed", {
-        timestamp: new Date().toISOString(),
-      });
     }
   }
 
@@ -144,132 +98,117 @@ function Home() {
   };
 
   const renderView = () => {
-    console.log("[Debug] renderView function called", currentView);
     if (isLoading) {
       return (
-        <motion.div
-          key="loading"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
+        <ViewWrapper>
           <Loading />
-        </motion.div>
+        </ViewWrapper>
       );
     }
-
-    console.log("[Debug] Rendering view:", {
-      view: currentView,
-      hasNodes: nodes.length > 0,
-      hasEdges: edges.length > 0,
-      timestamp: new Date().toISOString(),
-    });
 
     switch (currentView) {
       case "selectSubject":
         return (
-          <SelectSubjectStep
-            subject={userSubject}
-            onSubjectChange={setUserSubject}
-            onNext={() => setCurrentView("calibrateWithExistingKnowledge")}
-            isSubmitting={isLoadingKnowledge}
-          />
+          <ViewWrapper>
+            <SelectSubjectStep
+              subject={userSubject}
+              onSubjectChange={setUserSubject}
+              onNext={() => setCurrentView("calibrateWithExistingKnowledge")}
+              isSubmitting={isLoadingKnowledge}
+            />
+          </ViewWrapper>
         );
 
       case "calibrateWithExistingKnowledge":
         return (
-          <KnowledgeNodesStep
-            subject={userSubject}
-            selectedKnowledgeNodes={selectedKnowledgeNodes}
-            onCalibrationChange={toggleKnowledgeNode}
-            onBack={() => setCurrentView("selectSubject")}
-            onNext={async () => {
-              await handleSubmit();
-              setCurrentView("roadmap");
-            }}
-          />
+          <ViewWrapper>
+            <KnowledgeNodesStep
+              subject={userSubject}
+              selectedKnowledgeNodes={selectedKnowledgeNodes}
+              onCalibrationChange={toggleKnowledgeNode}
+              onBack={() => setCurrentView("selectSubject")}
+              onNext={async () => {
+                await handleSubmit();
+                setCurrentView("roadmap");
+              }}
+            />
+          </ViewWrapper>
         );
 
       case "feynmanTechnique":
         return (
-          <FeynmanTechnique
-            userKnowledge={userKnowledge}
-            setUserKnowledge={setUserKnowledge}
-            setStep={(step) => {
-              if (step === 1) {
-                setCurrentView("calibrateWithExistingKnowledge");
-              }
-            }}
-            isLoading={isLoading}
-            isButtonLoading={isButtonLoading}
-            handleSubmit={async () => {
-              await handleSubmit();
-              setCurrentView("roadmap");
-            }}
-          />
+          <ViewWrapper>
+            <FeynmanTechnique
+              userKnowledge={userKnowledge}
+              setUserKnowledge={setUserKnowledge}
+              setStep={(step) => {
+                if (step === 1) {
+                  setCurrentView("calibrateWithExistingKnowledge");
+                }
+              }}
+              isLoading={isLoading}
+              isButtonLoading={isButtonLoading}
+              handleSubmit={async () => {
+                await handleSubmit();
+                setCurrentView("roadmap");
+              }}
+            />
+          </ViewWrapper>
         );
 
       case "roadmap":
-        console.log("[Debug] Rendering roadmap view - BEFORE CHECKS:", {
-          view: currentView,
-          hasNodes: nodes.length > 0,
-          hasEdges: edges.length > 0,
-          nodes, // Log actual nodes structure
-          edges, // Log actual edges structure
-          timestamp: new Date().toISOString(),
-        });
-
         if (!nodes.length || !edges.length) {
-          console.log("[Debug] No nodes or edges available for roadmap");
           return null;
         }
 
-        console.log("[Debug] About to return RoadmapView component");
-        const roadmapComponent = (
-          <RoadmapView
-            nodes={nodes}
-            edges={edges}
-            onNodeClick={(node) => {
-              setSelectedNode(node);
-              setCurrentView("chat");
-            }}
-            onReset={handleReset}
-          />
+        return (
+          <ViewWrapper>
+            <RoadmapView
+              nodes={nodes}
+              edges={edges}
+              onNodeClick={(node) => {
+                setSelectedNode(node);
+                setCurrentView("chat");
+              }}
+              onReset={handleReset}
+            />
+          </ViewWrapper>
         );
-        console.log("[Debug] RoadmapView component created:", roadmapComponent);
-        return roadmapComponent;
 
       case "chat":
         return (
-          <ChatScreen
-            node={selectedNode?.data}
-            subject={userSubject}
-            onBack={() => setCurrentView("roadmap")}
-          />
+          <ViewWrapper>
+            <ChatScreen
+              node={selectedNode?.data}
+              subject={userSubject}
+              onBack={() => setCurrentView("roadmap")}
+            />
+          </ViewWrapper>
         );
     }
   };
 
   return (
     <div className="w-screen h-screen bg-background relative">
-      {/* Remove AnimatePresence wrapper for roadmap view */}
       {currentView === "roadmap" ? (
         <div className="absolute inset-0">{renderView()}</div>
       ) : (
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentView}
-            className="absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {renderView()}
-          </motion.div>
-        </AnimatePresence>
+        <AnimatePresence mode="wait">{renderView()}</AnimatePresence>
       )}
     </div>
+  );
+}
+
+function ViewWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.div
+      className="absolute inset-0"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      {children}
+    </motion.div>
   );
 }

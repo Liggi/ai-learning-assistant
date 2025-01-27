@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   ReactFlow,
@@ -8,11 +7,8 @@ import {
 } from "@xyflow/react";
 import Node from "@/components/react-flow/node";
 import { NodeData } from "@/components/chat-screen";
-import { useEffect, useRef } from "react";
 
 const nodeTypes = { normalNode: Node };
-
-console.log("[Debug] RoadmapView file is loaded in the JS bundle");
 
 function FlowWithProvider({
   nodes,
@@ -23,11 +19,6 @@ function FlowWithProvider({
   edges: ReactFlowEdge[];
   onNodeClick: (node: ReactFlowNode<NodeData>) => void;
 }) {
-  console.log("[Debug] FlowWithProvider render attempt", {
-    nodes,
-    edges,
-  });
-
   return (
     <ReactFlow
       nodes={nodes}
@@ -52,12 +43,6 @@ export default function RoadmapView({
   onNodeClick,
   onReset,
 }: RoadmapViewProps) {
-  console.log("[Debug] RoadmapView render attempt", {
-    hasNodes: nodes.length > 0,
-    hasEdges: edges.length > 0,
-    timestamp: new Date().toISOString(),
-  });
-
   return (
     <div className="absolute inset-0 bg-background">
       <ReactFlowProvider>
