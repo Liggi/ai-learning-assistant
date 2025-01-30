@@ -63,7 +63,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
           moduleTitle: node.label,
           moduleDescription: node.description,
           message:
-            "Ignore this message, and continue as if you're in the middle of a conversation / lesson about the relevant subject.",
+            "Ignore this message and dive into the topic immediately. No preamble at all, no 'as we were discussing', no 'let's continue'. Nothing. Just dive in.",
         },
       });
 
@@ -189,7 +189,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
                               ),
                               code({ className, children, ...props }) {
                                 const match = /language-(\w+)/.exec(
-                                  className || ""
+                                  className || "",
                                 );
                                 const isInline = !match;
                                 return (

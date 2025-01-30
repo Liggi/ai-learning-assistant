@@ -57,7 +57,7 @@ For example, follow the structure:
       "id": "1",
       "position": { "x": 400, "y": 0 },
       "type": "normalNode",
-      "data": { 
+      "data": {
         "label": "Sample Step",
         "description": "This is a short description of the step",
         "status": "not-started"
@@ -74,7 +74,10 @@ For example, follow the structure:
   ]
 }
 
-Make sure the nodes and edges reflect a learning roadmap from fundamentals to more advanced steps.`;
+Make sure the nodes and edges reflect a learning roadmap from fundamentals to more advanced steps.
+
+IMPORTANT: For the node positions, ensure that each node is at least 400 "units" in both directions from any other node.
+`;
 
     while (attempt < maxRetries) {
       try {
@@ -110,7 +113,7 @@ Make sure the nodes and edges reflect a learning roadmap from fundamentals to mo
           !Array.isArray(parsedJSON.edges)
         ) {
           throw new Error(
-            "Invalid JSON structure: missing nodes or edges arrays"
+            "Invalid JSON structure: missing nodes or edges arrays",
           );
         }
 
@@ -210,7 +213,7 @@ Include at least three nodes that only a person EXTREMELY well versed in the sub
           item.depth_level > 5
         ) {
           throw new Error(
-            "Each node must have a name (string) and depth_level (number between 1-5)"
+            "Each node must have a name (string) and depth_level (number between 1-5)",
           );
         }
         return item;
