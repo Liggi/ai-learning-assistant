@@ -14,14 +14,22 @@ export interface Message {
   parentId?: string; // Track which message this is responding to
 }
 
+export interface ConversationNodeData extends Record<string, unknown> {
+  id: string;
+  text: string;
+  content?: LearningContent;
+  summary: string;
+  isUser: boolean;
+}
+
 interface ConversationState {
   messages: Message[];
-  nodes: Node[];
+  nodes: Node<ConversationNodeData>[];
   edges: Edge[];
   activeNodeId: string | null;
   nodeHeights: Record<string, number>; // Map of node ID to its height
   addMessage: (message: Message) => void;
-  setNodes: (nodes: Node[]) => void;
+  setNodes: (nodes: Node<ConversationNodeData>[]) => void;
   setEdges: (edges: Edge[]) => void;
   setActiveNode: (nodeId: string) => void;
   setNodeHeight: (nodeId: string, height: number) => void;
@@ -51,11 +59,28 @@ const createEdge = (sourceId: string, targetId: string): Edge => ({
   animated: true,
 });
 
+// Helper function to convert a message to a conversation node
+const messageToNode = (
+  message: Message,
+  position: { x: number; y: number }
+): Node<ConversationNodeData> => ({
+  id: message.id!,
+  type: "conversationNode",
+  position,
+  data: {
+    id: message.id!,
+    text: message.text,
+    content: message.content,
+    summary: message.content?.summary || message.text,
+    isUser: message.isUser,
+  },
+});
+
 // Compute tree layout from messages and return nodes and edges arrays
 const computeTreeLayout = (
   messages: Message[],
   nodeHeights: Record<string, number>
-): { nodes: Node[]; edges: Edge[] } => {
+): { nodes: Node<ConversationNodeData>[]; edges: Edge[] } => {
   // Build tree nodes map, keyed by message id.
   const nodeMap: { [key: string]: TreeNode } = {};
   const roots: TreeNode[] = [];
@@ -126,30 +151,14 @@ const computeTreeLayout = (
   });
 
   // Flatten the tree into nodes and edges arrays.
-  const computedNodes: Node[] = [];
+  const computedNodes: Node<ConversationNodeData>[] = [];
   const computedEdges: Edge[] = [];
 
   function flattenTree(node: TreeNode) {
-    const { message, position } = node;
-    computedNodes.push({
-      id: message.id!,
-      type: "conversationNode",
-      position: position!,
-      data: {
-        id: message.id!,
-        text: message.text,
-        content: message.content,
-        summary:
-          message.content?.summary ||
-          (message.text.length > 50
-            ? message.text.slice(0, 50) + "..."
-            : message.text),
-        isUser: message.isUser,
-      },
-    });
+    computedNodes.push(messageToNode(node.message, node.position!));
 
     node.children.forEach((child) => {
-      computedEdges.push(createEdge(message.id!, child.message.id!));
+      computedEdges.push(createEdge(node.message.id!, child.message.id!));
       flattenTree(child);
     });
   }

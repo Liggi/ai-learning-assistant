@@ -2,6 +2,7 @@ import { ReactFlow, ReactFlowProvider, useReactFlow } from "@xyflow/react";
 import { useConversationStore, Message } from "@/features/chat/store";
 import ConversationNode from "./conversation-node";
 import { useEffect } from "react";
+import { LayoutGrid } from "lucide-react";
 
 const nodeTypes = {
   conversationNode: ConversationNode,
@@ -55,48 +56,58 @@ function ConversationFlowInner({
   }, [nodes, fitView]);
 
   return (
-    <ReactFlow
-      nodes={nodes.map((node) => ({
-        ...node,
-        position: node.position || {
-          x: 0,
-          y: node.data.isUser ? 0 : 100,
-        },
-        selected: node.id === selectedNodeId,
-        className: `node-${node.data.isUser ? "question" : "answer"}`,
-        style: {
-          width: 320,
-          padding: "16px",
-          borderRadius: "12px",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-        },
-        data: {
-          ...node.data,
-          onClick: (data: any) => onNodeClick?.(data.text, data.id),
-        },
-      }))}
-      edges={edges}
-      nodeTypes={nodeTypes}
-      defaultEdgeOptions={defaultEdgeOptions}
-      fitView
-      fitViewOptions={{ padding: 0.4 }}
-      nodesDraggable={false}
-      nodesConnectable={false}
-      elementsSelectable={false}
-      minZoom={0.6}
-      maxZoom={1.2}
-      zoomOnScroll={false}
-      onNodeMouseEnter={() => {}}
-      onNodeMouseLeave={() => {}}
-    />
+    <div className="relative w-full h-full">
+      <ReactFlow
+        nodes={nodes.map((node) => ({
+          ...node,
+          position: node.position || {
+            x: 0,
+            y: node.data.isUser ? 0 : 100,
+          },
+          selected: node.id === selectedNodeId,
+          className: `node-${node.data.isUser ? "question" : "answer"}`,
+          style: {
+            width: 320,
+            padding: "16px",
+            borderRadius: "12px",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+          },
+          data: {
+            ...node.data,
+            onClick: (data: any) => onNodeClick?.(data.text, data.id),
+          },
+        }))}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        fitView
+        fitViewOptions={{ padding: 0.4 }}
+        nodesDraggable={false}
+        nodesConnectable={false}
+        elementsSelectable={false}
+        minZoom={0.6}
+        maxZoom={1.2}
+        zoomOnScroll={false}
+        onNodeMouseEnter={() => {}}
+        onNodeMouseLeave={() => {}}
+      />
+    </div>
   );
 }
 
-export default function ConversationFlow(props: ConversationFlowProps) {
+export default function ConversationFlow({
+  conversation,
+  onNodeClick,
+  selectedNodeId,
+}: ConversationFlowProps) {
   return (
     <div className="w-full h-full">
       <ReactFlowProvider>
-        <ConversationFlowInner {...props} />
+        <ConversationFlowInner
+          conversation={conversation}
+          onNodeClick={onNodeClick}
+          selectedNodeId={selectedNodeId}
+        />
       </ReactFlowProvider>
     </div>
   );

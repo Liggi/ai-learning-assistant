@@ -10,6 +10,9 @@ import KnowledgeNodesStep from "@/components/knowledge-nodes-step";
 import FeynmanTechnique from "@/components/feynman-technique-step";
 import RoadmapView from "@/components/roadmap-view";
 import { useConversationStore } from "@/features/chat/store";
+import { useRoadmapStore, RoadmapNodeData } from "@/features/roadmap/store";
+import ConversationFlow from "@/components/conversation-flow";
+import ChatLayout from "@/components/chat-layout";
 
 import "@xyflow/react/dist/style.css";
 
@@ -25,13 +28,15 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { setNodes: setStoreNodes, setEdges: setStoreEdges } =
+  const { setNodes: setConversationNodes, setEdges: setConversationEdges } =
     useConversationStore();
+  const { setNodes: setRoadmapNodes, setEdges: setRoadmapEdges } =
+    useRoadmapStore();
   const [currentView, setCurrentView] = useState<ViewState>("selectSubject");
   const [isHydrated, setIsHydrated] = useState(false);
   const [userSubject, setUserSubject] = useState("");
   const [userKnowledge, setUserKnowledge] = useState("");
-  const [nodes, setNodes] = useState<ReactFlowNode<NodeData>[]>([]);
+  const [nodes, setNodes] = useState<ReactFlowNode<RoadmapNodeData>[]>([]);
   const [edges, setEdges] = useState<ReactFlowEdge[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedKnowledgeNodes, setSelectedKnowledgeNodes] = useState<
@@ -39,8 +44,9 @@ function Home() {
   >(new Set());
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [selectedNode, setSelectedNode] =
-    useState<ReactFlowNode<NodeData> | null>(null);
+    useState<ReactFlowNode<RoadmapNodeData> | null>(null);
   const [isLoadingKnowledge, setIsLoadingKnowledge] = useState(false);
+  const [conversation, setConversation] = useState([]);
 
   useEffect(() => {
     setIsHydrated(true);
@@ -62,12 +68,13 @@ function Home() {
         },
       });
 
+      // Update local state
       setNodes(roadmap.nodes);
       setEdges(roadmap.edges);
 
-      // Sync with conversation store
-      setStoreNodes(roadmap.nodes);
-      setStoreEdges(roadmap.edges);
+      // Sync with stores
+      setRoadmapNodes(roadmap.nodes);
+      setRoadmapEdges(roadmap.edges);
 
       await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (error) {
@@ -90,7 +97,7 @@ function Home() {
     });
   };
 
-  const handleNodeClick = (node: ReactFlowNode<NodeData>) => {
+  const handleNodeClick = (node: ReactFlowNode<RoadmapNodeData>) => {
     setSelectedNode(node);
     setCurrentView("chat");
   };
@@ -101,8 +108,8 @@ function Home() {
     setNodes([]);
     setEdges([]);
     // Clear conversation store state
-    setStoreNodes([]);
-    setStoreEdges([]);
+    setConversationNodes([]);
+    setConversationEdges([]);
     setSelectedKnowledgeNodes(new Set());
     setCurrentView("selectSubject");
   };
@@ -188,10 +195,15 @@ function Home() {
       case "chat":
         return (
           <ViewWrapper>
-            <ChatInterface
+            <ChatLayout
               node={selectedNode?.data}
               subject={userSubject}
               onBack={() => setCurrentView("roadmap")}
+              onShowRoadmap={() => {
+                console.log("Setting view to roadmap");
+                setCurrentView("roadmap");
+                console.log("New view state:", "roadmap");
+              }}
             />
           </ViewWrapper>
         );

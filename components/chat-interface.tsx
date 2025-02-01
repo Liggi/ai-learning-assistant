@@ -65,6 +65,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
   const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
+  const [currentView, setCurrentView] = useState<"roadmap" | "conversation">(
+    "conversation"
+  );
 
   if (!node) {
     return null;
@@ -215,187 +218,189 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [node.label]);
 
   return (
-    <div className="flex h-full bg-slate-900 text-slate-300 z-50 relative">
-      <div className="flex flex-1 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800" />
+    <div className="flex-1 flex flex-col h-screen bg-slate-900 text-slate-300">
+      {/* Header */}
+      <div className="flex-shrink-0 px-8 py-6 border-b border-slate-800">
+        <h2 className="text-lg font-medium text-slate-200">{node?.label}</h2>
+        <p className="text-sm text-slate-400/80 mt-1">{node?.description}</p>
+      </div>
 
-        <div className="relative z-10 flex flex-1">
-          <button
-            onClick={onBack}
-            className="absolute top-4 left-4 text-slate-400 hover:text-cyan-400 transition-colors focus:outline-none"
-            aria-label="Back to Roadmap"
-          >
-            <ArrowLeft size={20} />
-          </button>
-
-          <div className="flex-1 flex items-center justify-center p-8">
-            <LayoutGroup>
-              <motion.div
-                layout
-                className="bg-card rounded-lg shadow-lg p-8 max-w-4xl w-full max-h-[85vh] flex flex-col"
-              >
-                <motion.div layout className="mb-6 flex-shrink-0">
-                  <h2 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">
-                    {node.label}
-                  </h2>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {node.description}
-                  </p>
-                </motion.div>
-
+      {/* Scrollable Content Area */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        <div className="px-8">
+          <div className="max-w-3xl mx-auto w-full space-y-6 py-6">
+            <AnimatePresence mode="wait">
+              {isLoading ? (
                 <motion.div
-                  layout
-                  className="mb-6 overflow-y-auto flex-1 bg-slate-800/50 rounded-lg p-6 shadow-inner"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="w-full rounded-lg bg-gradient-to-br from-slate-800/50 to-slate-800/30
+                           border border-slate-700/50 backdrop-blur-sm
+                           p-6 shadow-lg"
                 >
-                  <AnimatePresence mode="wait">
-                    {isLoading ? (
-                      <motion.div
-                        key="loading"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="h-full flex items-center justify-center"
-                      >
-                        <LoadingBubble />
-                      </motion.div>
-                    ) : currentMessage ? (
-                      <motion.div
-                        key={currentMessage.text}
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div>
-                          <ReactMarkdown
-                            className="prose prose-invert prose-sm max-w-none [&>:first-child]:mt-0 [&>:last-child]:mb-0"
-                            components={{
-                              h2: ({ children }) => (
-                                <h2 className="text-lg font-bold text-white mt-6 mb-4">
-                                  {children}
-                                </h2>
-                              ),
-                              h3: ({ children }) => (
-                                <h3 className="text-base font-semibold text-white mt-5 mb-3">
-                                  {children}
-                                </h3>
-                              ),
-                              p: ({ children }) => (
-                                <p className="text-slate-200 leading-relaxed mb-4 text-[15px]">
-                                  {children}
-                                </p>
-                              ),
-                              code({ className, children, ...props }) {
-                                const match = /language-(\w+)/.exec(
-                                  className || ""
-                                );
-                                const isInline = !match;
-                                return (
-                                  <code
-                                    className={`${className} ${
-                                      isInline
-                                        ? "bg-slate-700/50 rounded px-1 py-0.5 text-[13px]"
-                                        : "block bg-slate-800 p-3 rounded-lg my-3 text-[13px] leading-relaxed"
-                                    }`}
-                                    {...props}
-                                  >
-                                    {children}
-                                  </code>
-                                );
-                              },
-                              ol: ({ children }) => (
-                                <ol className="list-decimal list-inside space-y-2 mb-4">
-                                  {children}
-                                </ol>
-                              ),
-                              li: ({ children }) => (
-                                <li className="text-slate-200 text-[15px]">
-                                  {children}
-                                </li>
-                              ),
-                              strong: ({ children }) => (
-                                <strong className="font-semibold text-white">
-                                  {children}
-                                </strong>
-                              ),
-                            }}
+                  <div className="space-y-4">
+                    <div className="h-4 bg-slate-700/50 rounded animate-pulse w-2/3" />
+                    <div className="space-y-2">
+                      <div className="h-3 bg-slate-700/50 rounded animate-pulse" />
+                      <div className="h-3 bg-slate-700/50 rounded animate-pulse w-5/6" />
+                      <div className="h-3 bg-slate-700/50 rounded animate-pulse w-3/4" />
+                    </div>
+                  </div>
+                </motion.div>
+              ) : currentMessage ? (
+                <motion.div
+                  key={currentMessage.text}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="w-full rounded-lg bg-gradient-to-br from-slate-800/50 to-slate-800/30
+                           border border-slate-700/50 backdrop-blur-sm
+                           p-6 shadow-lg"
+                >
+                  <ReactMarkdown
+                    className="prose prose-invert prose-sm max-w-none [&>:first-child]:mt-0 [&>:last-child]:mb-0"
+                    components={{
+                      h1: ({ children }) => (
+                        <h1 className="text-[17px] font-medium text-slate-100 mt-0 mb-4">
+                          {children}
+                        </h1>
+                      ),
+                      h2: ({ children }) => (
+                        <h2 className="text-[15px] font-medium text-slate-100 mt-5 mb-3">
+                          {children}
+                        </h2>
+                      ),
+                      h3: ({ children }) => (
+                        <h3 className="text-[14px] font-medium text-slate-200 mt-4 mb-2">
+                          {children}
+                        </h3>
+                      ),
+                      p: ({ children }) => (
+                        <p className="text-slate-300 leading-relaxed mb-3 text-[14px]">
+                          {children}
+                        </p>
+                      ),
+                      code({ className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || "");
+                        const isInline = !match;
+                        return (
+                          <code
+                            className={`${className} ${
+                              isInline
+                                ? "bg-slate-700/30 rounded px-1 py-0.5 text-[13px] text-slate-200"
+                                : "block bg-slate-800/50 p-3 rounded-lg my-3 text-[13px] leading-relaxed text-slate-200"
+                            }`}
+                            {...props}
                           >
-                            {currentMessage.text}
-                          </ReactMarkdown>
-                        </div>
-                      </motion.div>
-                    ) : null}
-                  </AnimatePresence>
-                </motion.div>
-
-                <motion.div
-                  layout
-                  className="flex flex-col space-y-3 flex-shrink-0"
-                >
-                  <motion.div
-                    layout
-                    className="flex items-center space-x-2 bg-slate-700 rounded-full shadow-inner ring-1 ring-slate-700"
+                            {children}
+                          </code>
+                        );
+                      },
+                      ol: ({ children }) => (
+                        <ol className="list-decimal list-inside space-y-1.5 mb-3 text-slate-300">
+                          {children}
+                        </ol>
+                      ),
+                      li: ({ children }) => (
+                        <li className="text-slate-300 text-[14px]">
+                          {children}
+                        </li>
+                      ),
+                      strong: ({ children }) => (
+                        <strong className="font-medium text-slate-100">
+                          {children}
+                        </strong>
+                      ),
+                    }}
                   >
-                    <input
-                      type="text"
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyPress={(e) => e.key === "Enter" && handleSend()}
-                      className="flex-1 bg-transparent text-slate-300 rounded-l-full px-4 py-2 focus:outline-none text-sm"
-                      placeholder="Type your message..."
-                      disabled={isLoading}
-                    />
-                    <button
-                      onClick={() => handleSend()}
-                      className={`text-cyan-400 hover:text-cyan-300 focus:outline-none focus:text-cyan-300 transition-colors p-2 pr-4 ${
-                        isLoading ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
-                      disabled={isLoading}
-                      aria-label="Send message"
-                    >
-                      <Send size={18} />
-                    </button>
-                  </motion.div>
-
-                  {suggestions.length > 0 && (
-                    <motion.div
-                      layout
-                      className="flex flex-wrap gap-2 px-2"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      {suggestions.map((suggestion, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleSend(suggestion)}
-                          className="bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 text-sm px-3 py-1 rounded-full transition-colors"
-                          disabled={isLoading}
-                        >
-                          {suggestion}
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-
-                  {isSuggestionsLoading && (
-                    <motion.div
-                      layout
-                      className="flex justify-center"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      <div className="bg-slate-700/50 text-slate-400 text-sm px-3 py-1 rounded-full">
-                        Generating suggestions...
-                      </div>
-                    </motion.div>
-                  )}
+                    {currentMessage.text}
+                  </ReactMarkdown>
                 </motion.div>
-              </motion.div>
-            </LayoutGroup>
+              ) : null}
+            </AnimatePresence>
           </div>
+        </div>
+      </div>
+
+      {/* Fixed Bottom Area */}
+      <div className="flex-shrink-0 border-t border-slate-800 bg-slate-900/80 backdrop-blur-sm">
+        <div className="px-8 py-4">
+          {/* Message input */}
+          <div
+            className="max-w-3xl mx-auto flex items-center space-x-2 rounded-lg 
+                      bg-gradient-to-r from-slate-800/50 to-slate-800/30
+                      border border-slate-700/50 backdrop-blur-sm
+                      shadow-lg mb-4"
+          >
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleSend()}
+              className="flex-1 bg-transparent text-slate-300 px-4 py-3.5
+                       focus:outline-none text-sm"
+              placeholder="Type your message..."
+              disabled={isLoading}
+            />
+            <button
+              onClick={() => handleSend()}
+              className={`text-cyan-400 hover:text-cyan-300 focus:outline-none 
+                        focus:text-cyan-300 transition-colors p-4 ${
+                          isLoading ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+              disabled={isLoading}
+              aria-label="Send message"
+            >
+              <Send size={18} />
+            </button>
+          </div>
+
+          {/* Suggestions */}
+          {suggestions.length > 0 && (
+            <motion.div
+              layout
+              className="max-w-3xl mx-auto flex flex-wrap gap-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {suggestions.map((suggestion, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSend(suggestion)}
+                  className="px-3 py-2 text-[13px] group text-left
+                           rounded-xl backdrop-blur-sm
+                           bg-orange-500/[0.07] hover:bg-orange-500/[0.12]
+                           border border-orange-500/[0.15]
+                           hover:shadow-[0_0_10px_rgba(251,146,60,0.07)]
+                           hover:text-white relative
+                           transition-all duration-200 ease-in-out"
+                  disabled={isLoading}
+                >
+                  <div className="font-medium text-orange-400/90 text-xs mb-0.5">
+                    Question
+                  </div>
+                  <div className="font-medium text-slate-200">{suggestion}</div>
+                </button>
+              ))}
+            </motion.div>
+          )}
+
+          {/* Loading indicator for suggestions */}
+          {isSuggestionsLoading && (
+            <motion.div
+              layout
+              className="max-w-3xl mx-auto flex justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <div className="text-sm text-slate-400">
+                Generating suggestions...
+              </div>
+            </motion.div>
+          )}
         </div>
       </div>
     </div>
