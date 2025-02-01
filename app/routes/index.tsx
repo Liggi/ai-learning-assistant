@@ -4,11 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Node as ReactFlowNode, Edge as ReactFlowEdge } from "@xyflow/react";
 import { generateRoadmap } from "@/features/roadmap/generator";
 import Loading from "@/components/ui/loading";
-import ChatScreen, { NodeData } from "@/components/chat-screen";
+import ChatInterface, { NodeData } from "@/components/chat-interface";
 import SelectSubjectStep from "@/components/select-subject-step";
 import KnowledgeNodesStep from "@/components/knowledge-nodes-step";
 import FeynmanTechnique from "@/components/feynman-technique-step";
 import RoadmapView from "@/components/roadmap-view";
+import { useConversationStore } from "@/features/chat/store";
 
 import "@xyflow/react/dist/style.css";
 
@@ -24,6 +25,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { setNodes: setStoreNodes, setEdges: setStoreEdges } =
+    useConversationStore();
   const [currentView, setCurrentView] = useState<ViewState>("selectSubject");
   const [isHydrated, setIsHydrated] = useState(false);
   const [userSubject, setUserSubject] = useState("");
@@ -62,6 +65,10 @@ function Home() {
       setNodes(roadmap.nodes);
       setEdges(roadmap.edges);
 
+      // Sync with conversation store
+      setStoreNodes(roadmap.nodes);
+      setStoreEdges(roadmap.edges);
+
       await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (error) {
       console.error("[Debug] Error in handleSubmit:", error);
@@ -93,6 +100,9 @@ function Home() {
     setUserKnowledge("");
     setNodes([]);
     setEdges([]);
+    // Clear conversation store state
+    setStoreNodes([]);
+    setStoreEdges([]);
     setSelectedKnowledgeNodes(new Set());
     setCurrentView("selectSubject");
   };
@@ -178,7 +188,7 @@ function Home() {
       case "chat":
         return (
           <ViewWrapper>
-            <ChatScreen
+            <ChatInterface
               node={selectedNode?.data}
               subject={userSubject}
               onBack={() => setCurrentView("roadmap")}

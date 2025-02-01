@@ -3,7 +3,7 @@ import {
   useSearch,
   createFileRoute,
 } from "@tanstack/react-router";
-import ChatScreenStatic from "@/components/chat-screen-static";
+import ChatInterfaceStatic from "@/components/chat-interface-static";
 
 export const Route = createFileRoute("/static-flow/chat")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -141,7 +141,7 @@ function StaticChatRoute() {
   };
 
   return (
-    <ChatScreenStatic
+    <ChatInterfaceStatic
       node={node}
       onBack={() => navigate({ to: "/static-flow/roadmap" })}
       staticResponses={staticResponses}

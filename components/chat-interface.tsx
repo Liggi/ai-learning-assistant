@@ -4,6 +4,7 @@ import { chat, generateSuggestionPills } from "@/features/chat/chat";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { LoadingBubble } from "./ui/loading-bubble";
+import { useConversationStore } from "@/features/chat/store";
 
 export interface NodeData extends Record<string, unknown> {
   label: string;
@@ -15,20 +16,55 @@ export interface NodeData extends Record<string, unknown> {
 interface Message {
   text: string;
   isUser: boolean;
+  id?: string;
+  parentId?: string;
+  content?: {
+    summary: string;
+    takeaways: string[];
+  };
 }
 
-interface ChatScreenProps {
+interface ChatInterfaceProps {
   node?: NodeData;
   onBack: () => void;
   subject: string;
+  selectedMessageId?: string;
 }
 
-const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
-  const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
+const generateLearningPrompt = (text: string) => {
+  return `Please take the following text about ${text} and produce the following:
+
+A concise, one-or-two-sentence high-level summary capturing the essential idea.
+Several short statements or 'takeaways' highlighting the main points, each on its own line.
+Keep it factual, clear, and succinct. Avoid unnecessary details or overly friendly tone. Focus on the key concepts.
+
+Return the response in this exact JSON format:
+{
+  "summary": "The high level summary goes here",
+  "takeaways": [
+    "First takeaway",
+    "Second takeaway",
+    "etc..."
+  ]
+}
+
+Here's the text to analyze:
+
+${text}`;
+};
+
+const ChatInterface: React.FC<ChatInterfaceProps> = ({
+  node,
+  onBack,
+  subject,
+  selectedMessageId,
+}) => {
+  const { addMessage } = useConversationStore();
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
+  const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
 
   if (!node) {
     return null;
@@ -67,14 +103,40 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
         },
       });
 
-      setCurrentMessage({ text: result.response, isUser: false });
+      // Generate learning content from the response
+      const learningResult = await chat({
+        data: {
+          subject: subject,
+          moduleTitle: node.label,
+          moduleDescription: node.description,
+          message: generateLearningPrompt(result.response),
+        },
+      });
+
+      // Parse the learning content
+      const content = JSON.parse(learningResult.response);
+
+      const message = {
+        text: result.response,
+        isUser: false,
+        id: Date.now().toString(),
+        content: {
+          summary: content.summary,
+          takeaways: content.takeaways,
+        },
+      };
+      addMessage(message);
+      setCurrentMessage(message);
       generateSuggestions(result.response);
     } catch (error) {
       console.error("Error sending initial message:", error);
-      setCurrentMessage({
+      const errorMessage = {
         text: "Sorry, I encountered an error. Please try again.",
         isUser: false,
-      });
+        id: Date.now().toString(),
+      };
+      addMessage(errorMessage);
+      setCurrentMessage(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -88,6 +150,15 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
     setIsLoading(true);
     setSuggestions([]);
 
+    // Add user message to conversation
+    const userMessageObj = {
+      text: userMessage,
+      isUser: true,
+      id: Date.now().toString(),
+      parentId: selectedMessageId,
+    };
+    addMessage(userMessageObj);
+
     try {
       const result = await chat({
         data: {
@@ -98,14 +169,42 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
         },
       });
 
-      setCurrentMessage({ text: result.response, isUser: false });
+      // Generate learning content from the response
+      const learningResult = await chat({
+        data: {
+          subject: subject,
+          moduleTitle: node.label,
+          moduleDescription: node.description,
+          message: generateLearningPrompt(result.response),
+        },
+      });
+
+      // Parse the learning content
+      const content = JSON.parse(learningResult.response);
+
+      const assistantMessage = {
+        text: result.response,
+        isUser: false,
+        id: (Date.now() + 1).toString(),
+        parentId: userMessageObj.id,
+        content: {
+          summary: content.summary,
+          takeaways: content.takeaways,
+        },
+      };
+      addMessage(assistantMessage);
+      setCurrentMessage(assistantMessage);
       generateSuggestions(result.response);
     } catch (error) {
       console.error("Error:", error);
-      setCurrentMessage({
+      const errorMessage = {
         text: "Sorry, I encountered an error. Please try again.",
         isUser: false,
-      });
+        id: Date.now().toString(),
+        parentId: userMessageObj.id,
+      };
+      addMessage(errorMessage);
+      setCurrentMessage(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -116,7 +215,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
   }, [node.label]);
 
   return (
-    <div className="flex h-screen bg-slate-900 text-slate-300 z-50 relative">
+    <div className="flex h-full bg-slate-900 text-slate-300 z-50 relative">
       <div className="flex flex-1 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800" />
 
@@ -189,7 +288,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
                               ),
                               code({ className, children, ...props }) {
                                 const match = /language-(\w+)/.exec(
-                                  className || "",
+                                  className || ""
                                 );
                                 const isInline = !match;
                                 return (
@@ -303,4 +402,4 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ node, onBack, subject }) => {
   );
 };
 
-export default ChatScreen;
+export default ChatInterface;

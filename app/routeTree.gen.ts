@@ -17,6 +17,7 @@ import { Route as StaticImport } from './routes/static'
 import { Route as PillTestImport } from './routes/pill-test'
 import { Route as LoadingImport } from './routes/loading'
 import { Route as KnowledgeNodesImport } from './routes/knowledge-nodes'
+import { Route as ChatImport } from './routes/chat'
 import { Route as IndexImport } from './routes/index'
 import { Route as StaticFlowIndexImport } from './routes/static-flow.index'
 import { Route as StaticFlowRoadmapImport } from './routes/static-flow.roadmap'
@@ -61,6 +62,12 @@ const KnowledgeNodesRoute = KnowledgeNodesImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ChatRoute = ChatImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
@@ -100,6 +107,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatImport
       parentRoute: typeof rootRoute
     }
     '/knowledge-nodes': {
@@ -197,6 +211,7 @@ const StaticFlowRouteWithChildren = StaticFlowRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
   '/knowledge-nodes': typeof KnowledgeNodesRoute
   '/loading': typeof LoadingRoute
   '/pill-test': typeof PillTestRoute
@@ -211,6 +226,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
   '/knowledge-nodes': typeof KnowledgeNodesRoute
   '/loading': typeof LoadingRoute
   '/pill-test': typeof PillTestRoute
@@ -225,6 +241,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
   '/knowledge-nodes': typeof KnowledgeNodesRoute
   '/loading': typeof LoadingRoute
   '/pill-test': typeof PillTestRoute
@@ -241,6 +258,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/chat'
     | '/knowledge-nodes'
     | '/loading'
     | '/pill-test'
@@ -254,6 +272,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/chat'
     | '/knowledge-nodes'
     | '/loading'
     | '/pill-test'
@@ -266,6 +285,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/chat'
     | '/knowledge-nodes'
     | '/loading'
     | '/pill-test'
@@ -281,6 +301,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChatRoute: typeof ChatRoute
   KnowledgeNodesRoute: typeof KnowledgeNodesRoute
   LoadingRoute: typeof LoadingRoute
   PillTestRoute: typeof PillTestRoute
@@ -291,6 +312,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChatRoute: ChatRoute,
   KnowledgeNodesRoute: KnowledgeNodesRoute,
   LoadingRoute: LoadingRoute,
   PillTestRoute: PillTestRoute,
@@ -310,6 +332,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/chat",
         "/knowledge-nodes",
         "/loading",
         "/pill-test",
@@ -320,6 +343,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/chat": {
+      "filePath": "chat.tsx"
     },
     "/knowledge-nodes": {
       "filePath": "knowledge-nodes.tsx"

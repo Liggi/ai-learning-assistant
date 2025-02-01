@@ -1,9 +1,6 @@
-import { Message } from "./chat-screen";
 import ConversationFlow from "./conversation-flow";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import ReactMarkdown from "react-markdown";
-import { useConversationStore } from "@/resources/chat/chat";
+import { useConversationStore, Message } from "@/features/chat/store";
 import { Node } from "@xyflow/react";
 
 interface ConversationNodeData extends Record<string, unknown> {
@@ -31,6 +28,12 @@ function isConversationNode(node: Node): node is Node<ConversationNodeData> {
 
 export default function Sidebar({ conversation, onNodeClick }: SidebarProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const store = useConversationStore.getState();
+  console.log("Conversation store state:", {
+    nodes: store.nodes,
+    edges: store.edges,
+    conversation,
+  });
 
   const handleNodeClick = (text: string, nodeId: string) => {
     setSelectedNodeId(nodeId);
@@ -67,11 +70,9 @@ export default function Sidebar({ conversation, onNodeClick }: SidebarProps) {
   };
 
   return (
-    <div className="w-1/3 bg-slate-800 p-4 flex flex-col z-50">
-      <h2 className="text-slate-300 font-semibold mb-2">Conversation Flow</h2>
-
+    <div className="w-1/2 bg-slate-800 flex flex-col z-50 h-screen">
       {/* Conversation Flow Visualization */}
-      <div className="flex-1 h-full mb-4 bg-slate-900 rounded-lg overflow-hidden">
+      <div className="flex-1 h-full bg-slate-900" style={{ height: "100vh" }}>
         <ConversationFlow
           onNodeClick={(text, nodeId) => handleNodeClick(text, nodeId)}
           selectedNodeId={selectedNodeId}

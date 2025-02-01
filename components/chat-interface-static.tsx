@@ -4,7 +4,7 @@ import { LoadingBubble } from "./ui/loading-bubble";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 
-interface ChatScreenStaticProps {
+interface ChatInterfaceStaticProps {
   node?: {
     label: string;
     description: string;
@@ -63,7 +63,7 @@ const RESPONSE_MESSAGES = [
   "## Understanding Time Complexity and Performance\n\nLet's break down the performance characteristics of different data structures and their real-world implications.\n\n### Comparative Analysis\n\n#### Basic Operations\n1. **Insertion Performance**\n   - Arrays: O(1) at end, O(n) at arbitrary position\n   - Linked Lists: O(1) with node reference, O(n) for position\n   - Binary Trees: O(log n) average, O(n) worst case\n\n2. **Search Operations**\n   ```typescript\n   interface Searchable<T> {\n     // O(log n) for balanced trees\n     search(value: T): boolean;\n     \n     // O(1) for hash tables\n     contains(value: T): boolean;\n     \n     // O(n) for unsorted arrays\n     find(predicate: (value: T) => boolean): T | undefined;\n   }\n   ```\n\n### Memory Usage Patterns\n| Structure | Space per Element | Overhead |\n|-----------|------------------|----------|\n| Array     | sizeof(T)        | Small    |\n| Linked List| sizeof(T) + ptr | Medium   |\n| Hash Table| sizeof(T) + ptr  | Large    |\n\n### Optimization Techniques\n1. **Lazy Loading**\n2. **Caching Strategies**\n3. **Memory Pooling**\n\nWould you like to explore any of these concepts in more detail?",
 ];
 
-const ChatScreenStatic: React.FC<ChatScreenStaticProps> = ({
+const ChatInterfaceStatic: React.FC<ChatInterfaceStaticProps> = ({
   node = DEFAULT_NODE,
   onBack = () => {},
   initialMessage = "Let's begin our lesson.",
@@ -238,4 +238,4 @@ const ChatScreenStatic: React.FC<ChatScreenStaticProps> = ({
   );
 };
 
-export default ChatScreenStatic;
+export default ChatInterfaceStatic;
