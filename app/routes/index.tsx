@@ -13,7 +13,10 @@ import { useConversationStore } from "@/features/chat/store";
 import { useRoadmapStore, RoadmapNodeData } from "@/features/roadmap/store";
 import ConversationFlow from "@/components/conversation-flow";
 import ChatLayout from "@/components/chat-layout";
-import { getBadgesForModule } from "@/features/badges/badges";
+import {
+  generateRoadmapBadges,
+  ModuleBadge,
+} from "@/features/badges/generator";
 
 import "@xyflow/react/dist/style.css";
 
@@ -47,7 +50,7 @@ function Home() {
   const [selectedNode, setSelectedNode] =
     useState<ReactFlowNode<RoadmapNodeData> | null>(null);
   const [isLoadingKnowledge, setIsLoadingKnowledge] = useState(false);
-  const [conversation, setConversation] = useState([]);
+  const [roadmapBadges, setRoadmapBadges] = useState<ModuleBadge[]>([]);
 
   useEffect(() => {
     setIsHydrated(true);
@@ -77,6 +80,22 @@ function Home() {
       setRoadmapNodes(roadmap.nodes);
       setRoadmapEdges(roadmap.edges);
 
+      // Generate badges for the entire roadmap
+      try {
+        const badges = await generateRoadmapBadges({
+          data: {
+            subject: userSubject,
+            nodes: roadmap.nodes,
+            selectedKnowledgeNodes: Array.from(selectedKnowledgeNodes),
+          },
+        });
+        console.log("Generated badges for learning journey:");
+        console.log(badges);
+        setRoadmapBadges(badges);
+      } catch (error) {
+        console.error("Error generating badges:", error);
+      }
+
       await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (error) {
       console.error("[Debug] Error in handleSubmit:", error);
@@ -102,10 +121,12 @@ function Home() {
     setSelectedNode(node);
     setCurrentView("chat");
 
-    // Log out badges for this module
-    const badges = getBadgesForModule(node.data.label);
+    // Log out badges for this module using our dynamically generated badges
+    const moduleBadges = roadmapBadges.filter(
+      (badge) => badge.moduleId === node.id
+    );
     console.log("Available badges for module:", node.data.label);
-    console.log(badges);
+    console.log(moduleBadges);
   };
 
   const handleReset = () => {
@@ -113,6 +134,7 @@ function Home() {
     setUserKnowledge("");
     setNodes([]);
     setEdges([]);
+    setRoadmapBadges([]);
     // Clear conversation store state
     setConversationNodes([]);
     setConversationEdges([]);

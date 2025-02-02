@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Send } from "lucide-react";
 import { chat, generateSuggestionPills } from "@/features/chat/chat";
-import { generateBadges } from "@/features/badges/generator";
+import {
+  generateRoadmapBadges,
+  ModuleBadge,
+} from "@/features/badges/generator";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { LoadingBubble } from "./ui/loading-bubble";
@@ -99,10 +102,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     try {
       // Generate badges for this module
       try {
-        const badges = await generateBadges({
+        const badges = await generateRoadmapBadges({
           data: {
-            moduleTitle: node.label,
-            moduleDescription: node.description,
+            subject,
+            nodes: [
+              {
+                id: node.label,
+                data: {
+                  label: node.label,
+                  description: node.description,
+                },
+              },
+            ],
+            selectedKnowledgeNodes: [],
           },
         });
         console.log("Generated badges for module:", node.label);
