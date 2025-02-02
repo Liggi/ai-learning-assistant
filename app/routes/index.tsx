@@ -13,6 +13,7 @@ import { useConversationStore } from "@/features/chat/store";
 import { useRoadmapStore, RoadmapNodeData } from "@/features/roadmap/store";
 import ConversationFlow from "@/components/conversation-flow";
 import ChatLayout from "@/components/chat-layout";
+import { getBadgesForModule } from "@/features/badges/badges";
 
 import "@xyflow/react/dist/style.css";
 
@@ -100,6 +101,11 @@ function Home() {
   const handleNodeClick = (node: ReactFlowNode<RoadmapNodeData>) => {
     setSelectedNode(node);
     setCurrentView("chat");
+
+    // Log out badges for this module
+    const badges = getBadgesForModule(node.data.label);
+    console.log("Available badges for module:", node.data.label);
+    console.log(badges);
   };
 
   const handleReset = () => {

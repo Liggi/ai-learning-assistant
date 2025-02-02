@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Send } from "lucide-react";
 import { chat, generateSuggestionPills } from "@/features/chat/chat";
+import { generateBadges } from "@/features/badges/generator";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { LoadingBubble } from "./ui/loading-bubble";
@@ -96,6 +97,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const sendInitialMessage = async () => {
     setIsLoading(true);
     try {
+      // Generate badges for this module
+      try {
+        const badges = await generateBadges({
+          data: {
+            moduleTitle: node.label,
+            moduleDescription: node.description,
+          },
+        });
+        console.log("Generated badges for module:", node.label);
+        console.log(badges);
+      } catch (error) {
+        console.error("Error generating badges:", error);
+      }
+
       const result = await chat({
         data: {
           subject: subject,
@@ -239,12 +254,44 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                            border border-slate-700/50 backdrop-blur-sm
                            p-6 shadow-lg"
                 >
-                  <div className="space-y-4">
-                    <div className="h-4 bg-slate-700/50 rounded animate-pulse w-2/3" />
-                    <div className="space-y-2">
-                      <div className="h-3 bg-slate-700/50 rounded animate-pulse" />
-                      <div className="h-3 bg-slate-700/50 rounded animate-pulse w-5/6" />
-                      <div className="h-3 bg-slate-700/50 rounded animate-pulse w-3/4" />
+                  <div className="space-y-8">
+                    {/* Title section */}
+                    <div className="space-y-4">
+                      <div className="h-4 bg-slate-700/50 rounded animate-pulse w-1/3" />
+                      <div className="space-y-2">
+                        <div className="h-3 bg-slate-700/50 rounded animate-pulse" />
+                        <div className="h-3 bg-slate-700/50 rounded animate-pulse w-5/6" />
+                      </div>
+                    </div>
+
+                    {/* Content section */}
+                    <div className="space-y-4">
+                      <div className="h-4 bg-slate-700/50 rounded animate-pulse w-1/4" />
+                      <div className="space-y-2">
+                        <div className="h-3 bg-slate-700/50 rounded animate-pulse" />
+                        <div className="h-3 bg-slate-700/50 rounded animate-pulse w-11/12" />
+                        <div className="h-3 bg-slate-700/50 rounded animate-pulse w-4/5" />
+                      </div>
+                    </div>
+
+                    {/* Code block section */}
+                    <div className="space-y-3">
+                      <div className="h-3 bg-slate-700/50 rounded animate-pulse w-1/5" />
+                      <div className="space-y-2 bg-slate-700/20 rounded-lg p-4">
+                        <div className="h-3 bg-slate-700/50 rounded animate-pulse w-11/12" />
+                        <div className="h-3 bg-slate-700/50 rounded animate-pulse w-4/5" />
+                        <div className="h-3 bg-slate-700/50 rounded animate-pulse w-2/3" />
+                      </div>
+                    </div>
+
+                    {/* List section */}
+                    <div className="space-y-3">
+                      <div className="h-3 bg-slate-700/50 rounded animate-pulse w-1/6" />
+                      <div className="space-y-2 pl-4">
+                        <div className="h-3 bg-slate-700/50 rounded animate-pulse w-5/6" />
+                        <div className="h-3 bg-slate-700/50 rounded animate-pulse w-4/5" />
+                        <div className="h-3 bg-slate-700/50 rounded animate-pulse w-3/4" />
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -259,25 +306,35 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                            p-6 shadow-lg"
                 >
                   <ReactMarkdown
-                    className="prose prose-invert prose-sm max-w-none [&>:first-child]:mt-0 [&>:last-child]:mb-0"
+                    className="prose prose-invert prose-sm max-w-none [&>:first-child]:mt-0 [&>:last-child]:mb-0 prose-pre:bg-transparent
+                             [&>h1+h2]:mt-3 [&>h2+h3]:mt-2"
                     components={{
                       h1: ({ children }) => (
-                        <h1 className="text-[17px] font-medium text-slate-100 mt-0 mb-4">
+                        <h1
+                          className="text-[18px] font-medium text-[#FAF9F6] mt-10 mb-6 border-l-2 border-orange-500/70 pl-3 py-2
+                                     bg-gradient-to-r from-orange-500/10 to-transparent"
+                        >
                           {children}
                         </h1>
                       ),
                       h2: ({ children }) => (
-                        <h2 className="text-[15px] font-medium text-slate-100 mt-5 mb-3">
+                        <h2
+                          className="text-[15px] font-normal text-amber-100/90 mt-8 mb-4 border-l-2 border-amber-400/50 pl-3 py-1
+                                     bg-gradient-to-r from-amber-500/[0.07] to-transparent"
+                        >
                           {children}
                         </h2>
                       ),
                       h3: ({ children }) => (
-                        <h3 className="text-[14px] font-medium text-slate-200 mt-4 mb-2">
+                        <h3
+                          className="text-[15px] font-normal text-yellow-100/80 mt-6 mb-3 border-l-2 border-yellow-300/30 pl-3 py-1
+                                     bg-gradient-to-r from-yellow-500/[0.05] to-transparent"
+                        >
                           {children}
                         </h3>
                       ),
                       p: ({ children }) => (
-                        <p className="text-slate-300 leading-relaxed mb-3 text-[14px]">
+                        <p className="text-slate-300 leading-relaxed mb-4 text-[14px] pl-3">
                           {children}
                         </p>
                       ),
@@ -288,8 +345,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                           <code
                             className={`${className} ${
                               isInline
-                                ? "bg-slate-700/30 rounded px-1 py-0.5 text-[13px] text-slate-200"
-                                : "block bg-slate-800/50 p-3 rounded-lg my-3 text-[13px] leading-relaxed text-slate-200"
+                                ? "bg-slate-800/50 rounded px-1 py-0.5 text-[13px] text-orange-200/90"
+                                : "block bg-slate-800/50 px-4 py-3 text-[13px] leading-relaxed text-orange-100/90 border-l-2 border-orange-500/20 my-4"
                             }`}
                             {...props}
                           >
@@ -298,19 +355,35 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         );
                       },
                       ol: ({ children }) => (
-                        <ol className="list-decimal list-inside space-y-1.5 mb-3 text-slate-300">
+                        <ol className="list-decimal list-inside space-y-2 mb-4 text-slate-300 pl-3">
                           {children}
                         </ol>
                       ),
                       li: ({ children }) => (
-                        <li className="text-slate-300 text-[14px]">
-                          {children}
-                        </li>
+                        <div className="flex items-start gap-2 text-sm text-slate-300 mb-1">
+                          <div className="mt-1 w-1.5 h-1.5 rounded-full bg-green-500/40 flex-shrink-0" />
+                          <div>{children}</div>
+                        </div>
                       ),
                       strong: ({ children }) => (
-                        <strong className="font-medium text-slate-100">
+                        <strong className="font-medium text-orange-200">
                           {children}
                         </strong>
+                      ),
+                      blockquote: ({ children }) => (
+                        <blockquote
+                          className="p-4 my-4 mt-6 rounded-xl backdrop-blur-sm
+                                             bg-green-900/10 border border-green-500/20
+                                             hover:bg-green-900/20 transition-all duration-200
+                                             not-prose"
+                        >
+                          <div className="text-xs font-medium mb-2 text-green-400">
+                            Key Takeaways
+                          </div>
+                          <div className="space-y-2 pt-2 border-t border-slate-700/50">
+                            {children}
+                          </div>
+                        </blockquote>
                       ),
                     }}
                   >
@@ -331,7 +404,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             className="max-w-3xl mx-auto flex items-center space-x-2 rounded-lg 
                       bg-gradient-to-r from-slate-800/50 to-slate-800/30
                       border border-slate-700/50 backdrop-blur-sm
-                      shadow-lg mb-4"
+                      shadow-lg"
           >
             <input
               type="text"
@@ -360,7 +433,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           {suggestions.length > 0 && (
             <motion.div
               layout
-              className="max-w-3xl mx-auto flex flex-wrap gap-2"
+              className="max-w-3xl mx-auto flex flex-wrap gap-2 mt-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -391,14 +464,29 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           {isSuggestionsLoading && (
             <motion.div
               layout
-              className="max-w-3xl mx-auto flex justify-center"
+              className="max-w-3xl mx-auto flex flex-wrap gap-2 mt-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <div className="text-sm text-slate-400">
-                Generating suggestions...
-              </div>
+              {[
+                { width: "w-64" },
+                { width: "w-48" },
+                { width: "w-56" },
+                { width: "w-40" },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="px-3 py-2 rounded-xl backdrop-blur-sm
+                           bg-orange-500/[0.07] border border-orange-500/[0.15]
+                           animate-pulse"
+                >
+                  <div className="h-2.5 w-12 bg-orange-500/20 rounded mb-0.5" />
+                  <div
+                    className={`h-3.5 ${item.width} bg-orange-500/10 rounded`}
+                  />
+                </div>
+              ))}
             </motion.div>
           )}
         </div>

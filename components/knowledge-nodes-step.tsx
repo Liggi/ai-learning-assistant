@@ -7,6 +7,7 @@ import {
   type CalibrationLevel,
 } from "@/components/ui/calibration-pill";
 import { useKnowledgeNodes } from "@/features/roadmap/queries";
+import Loading from "@/components/ui/loading";
 
 const levels: { min: number; max: number; label: CalibrationLevel }[] = [
   { min: 0, max: 0, label: "No calibration" },
@@ -175,14 +176,7 @@ export default function KnowledgeNodesStep({
   };
 
   if (isLoading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#0B0D11] text-white">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
-          <p className="mt-4 text-gray-400">Generating knowledge nodes...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {
