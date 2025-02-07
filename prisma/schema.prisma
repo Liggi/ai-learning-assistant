@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Subject {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  calibrationSettings CalibrationSettings?
+  roadmapNodes       RoadmapNode[]
+  roadmapEdges       RoadmapEdge[]
+  chatMessages       ChatMessage[]
+
+  @@map("subjects")
+}
+
+model CalibrationSettings {
+  id                   String   @id @default(uuid())
+  subjectId           String   @unique // One-to-one with Subject
+  selectedKnowledgeNodes Json    // Store array as JSON
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  // Relations
+  subject             Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@map("calibration_settings")
+}
+
+model RoadmapNode {
+  id          String   @id @default(uuid())
+  subjectId   String
+  title       String
+  description String
+  type        String
+  position    Json     // Store position object as JSON
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  subject     Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  sourceEdges RoadmapEdge[] @relation("Source")
+  targetEdges RoadmapEdge[] @relation("Target")
+
+  @@map("roadmap_nodes")
+}
+
+model RoadmapEdge {
+  id        String   @id @default(uuid())
+  subjectId String
+  sourceId  String
+  targetId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  subject   Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  source    RoadmapNode @relation("Source", fields: [sourceId], references: [id], onDelete: Cascade)
+  target    RoadmapNode @relation("Target", fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@map("roadmap_edges")
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  subjectId String
+  role      String   // 'user' | 'assistant'
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
