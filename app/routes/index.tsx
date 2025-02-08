@@ -4,19 +4,22 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Node as ReactFlowNode, Edge as ReactFlowEdge } from "@xyflow/react";
 import { generateRoadmap } from "@/features/roadmap/generator";
 import Loading from "@/components/ui/loading";
-import ChatInterface, { NodeData } from "@/components/chat-interface";
 import SelectSubjectStep from "@/components/select-subject-step";
 import KnowledgeNodesStep from "@/components/knowledge-nodes-step";
 import FeynmanTechnique from "@/components/feynman-technique-step";
 import RoadmapView from "@/components/roadmap-view";
 import { useConversationStore } from "@/features/chat/store";
 import { useRoadmapStore, RoadmapNodeData } from "@/features/roadmap/store";
-import ConversationFlow from "@/components/conversation-flow";
 import ChatLayout from "@/components/chat-layout";
 import {
   generateRoadmapBadges,
   ModuleBadge,
 } from "@/features/badges/generator";
+import {
+  getAllSubjects,
+  createSubject,
+  getSubjectWithRoadmap,
+} from "@/prisma/subjects";
 
 import "@xyflow/react/dist/style.css";
 
@@ -29,6 +32,12 @@ type ViewState =
 
 export const Route = createFileRoute("/")({
   component: Home,
+  loader: async () => {
+    const subjects = await getAllSubjects();
+    return {
+      subjects,
+    };
+  },
 });
 
 function Home() {
@@ -36,6 +45,7 @@ function Home() {
     useConversationStore();
   const { setNodes: setRoadmapNodes, setEdges: setRoadmapEdges } =
     useRoadmapStore();
+  const { subjects } = Route.useLoaderData();
   const [currentView, setCurrentView] = useState<ViewState>("selectSubject");
   const [isHydrated, setIsHydrated] = useState(false);
   const [userSubject, setUserSubject] = useState("");
@@ -49,7 +59,6 @@ function Home() {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [selectedNode, setSelectedNode] =
     useState<ReactFlowNode<RoadmapNodeData> | null>(null);
-  const [isLoadingKnowledge, setIsLoadingKnowledge] = useState(false);
   const [roadmapBadges, setRoadmapBadges] = useState<ModuleBadge[]>([]);
 
   useEffect(() => {
@@ -61,10 +70,17 @@ function Home() {
   }
 
   async function handleSubmit() {
+    console.log("Submitting");
     setIsButtonLoading(true);
     setIsLoading(true);
 
     try {
+      await createSubject({
+        data: {
+          title: userSubject,
+        },
+      });
+
       const roadmap = await generateRoadmap({
         data: {
           subject: userSubject,
@@ -159,7 +175,6 @@ function Home() {
               subject={userSubject}
               onSubjectChange={setUserSubject}
               onNext={() => setCurrentView("calibrateWithExistingKnowledge")}
-              isSubmitting={isLoadingKnowledge}
             />
           </ViewWrapper>
         );
@@ -240,6 +255,42 @@ function Home() {
 
   return (
     <div className="w-screen h-screen bg-background relative">
+      <motion.div
+        className="absolute top-4 left-4 z-50 bg-card rounded-lg shadow-lg p-4 w-64"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <h3 className="text-lg font-semibold mb-3">Recent Subjects</h3>
+        {subjects.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No subjects yet</p>
+        ) : (
+          <ul className="space-y-2">
+            {subjects.map((subject) => (
+              <li key={subject.id}>
+                <button
+                  onClick={async () => {
+                    const s = await getSubjectWithRoadmap({
+                      data: {
+                        id: subject.id,
+                      },
+                    });
+
+                    console.log(s);
+
+                    // setUserSubject(subject.title);
+                    // setCurrentView("calibrateWithExistingKnowledge");
+                  }}
+                  className="text-sm w-full text-left px-3 py-2 rounded-md hover:bg-accent transition-colors"
+                >
+                  {subject.title}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </motion.div>
+
       {currentView === "roadmap" ? (
         <div className="absolute inset-0">{renderView()}</div>
       ) : (

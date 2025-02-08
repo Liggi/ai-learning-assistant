@@ -7,14 +7,14 @@ interface SubjectInputStepProps {
   subject: string;
   onSubjectChange: (subject: string) => void;
   onNext: () => void;
-  isSubmitting: boolean;
+  isSubmitting?: boolean;
 }
 
 export default function SubjectInputStep({
   subject,
   onSubjectChange,
   onNext,
-  isSubmitting,
+  isSubmitting = false,
 }: SubjectInputStepProps) {
   return (
     <div className="w-full h-screen flex items-center justify-center">
