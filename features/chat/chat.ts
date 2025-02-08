@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { createServerFn } from "@tanstack/start";
-import { createSystemPrompt } from "@/lib/anthropic";
+import { systemPrompt } from "@/prompts";
 
 const stripResponsePlanning = (text: string): string => {
   return text
@@ -32,11 +32,11 @@ export const chat = createServerFn({ method: "POST" })
             content: data.message,
           },
         ],
-        system: createSystemPrompt(
-          data.subject,
-          data.moduleTitle,
-          data.moduleDescription
-        ),
+        system: systemPrompt({
+          subject: data.subject,
+          moduleTitle: data.moduleTitle,
+          moduleDescription: data.moduleDescription,
+        }),
         model: "claude-3-sonnet-20240229",
         max_tokens: 1024,
       });

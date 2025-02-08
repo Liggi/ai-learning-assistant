@@ -16,10 +16,11 @@ import {
   ModuleBadge,
 } from "@/features/badges/generator";
 import {
-  getAllSubjects,
-  createSubject,
-  getSubjectWithRoadmap,
-} from "@/prisma/subjects";
+  useSubjects,
+  useCreateSubject,
+  useSaveRoadmap,
+  useSubjectWithRoadmap,
+} from "@/hooks/api/subjects";
 
 import "@xyflow/react/dist/style.css";
 
@@ -32,12 +33,6 @@ type ViewState =
 
 export const Route = createFileRoute("/")({
   component: Home,
-  loader: async () => {
-    const subjects = await getAllSubjects();
-    return {
-      subjects,
-    };
-  },
 });
 
 function Home() {
@@ -45,7 +40,6 @@ function Home() {
     useConversationStore();
   const { setNodes: setRoadmapNodes, setEdges: setRoadmapEdges } =
     useRoadmapStore();
-  const { subjects } = Route.useLoaderData();
   const [currentView, setCurrentView] = useState<ViewState>("selectSubject");
   const [isHydrated, setIsHydrated] = useState(false);
   const [userSubject, setUserSubject] = useState("");
@@ -60,10 +54,41 @@ function Home() {
   const [selectedNode, setSelectedNode] =
     useState<ReactFlowNode<RoadmapNodeData> | null>(null);
   const [roadmapBadges, setRoadmapBadges] = useState<ModuleBadge[]>([]);
+  const { data: subjects = [] } = useSubjects();
+  const createSubjectMutation = useCreateSubject();
+  const saveRoadmapMutation = useSaveRoadmap();
+  const [loadingSubjectId, setLoadingSubjectId] = useState<string | null>(null);
+  const { data: loadedSubject } = useSubjectWithRoadmap(loadingSubjectId || "");
 
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  useEffect(() => {
+    if (loadedSubject && loadedSubject.roadmap) {
+      // Set the subject title
+      setUserSubject(loadedSubject.title);
+
+      // Set the roadmap data
+      const nodes = loadedSubject.roadmap
+        .nodes as ReactFlowNode<RoadmapNodeData>[];
+      const edges = loadedSubject.roadmap.edges as ReactFlowEdge[];
+
+      setNodes(nodes);
+      setEdges(edges);
+
+      // Update the roadmap store
+      setRoadmapNodes(nodes);
+      setRoadmapEdges(edges);
+
+      // Clear loading states
+      setLoadingSubjectId(null);
+      setIsLoading(false);
+
+      // Switch to roadmap view
+      setCurrentView("roadmap");
+    }
+  }, [loadedSubject]);
 
   if (!isHydrated) {
     return <div className="w-screen h-screen bg-background" />;
@@ -75,11 +100,7 @@ function Home() {
     setIsLoading(true);
 
     try {
-      await createSubject({
-        data: {
-          title: userSubject,
-        },
-      });
+      const subject = await createSubjectMutation.mutateAsync(userSubject);
 
       const roadmap = await generateRoadmap({
         data: {
@@ -95,6 +116,13 @@ function Home() {
       // Sync with stores
       setRoadmapNodes(roadmap.nodes);
       setRoadmapEdges(roadmap.edges);
+
+      // Save the roadmap
+      await saveRoadmapMutation.mutateAsync({
+        subjectId: subject.id,
+        nodes: roadmap.nodes,
+        edges: roadmap.edges,
+      });
 
       // Generate badges for the entire roadmap
       try {
@@ -159,7 +187,7 @@ function Home() {
   };
 
   const renderView = () => {
-    if (isLoading) {
+    if (isLoading || loadingSubjectId) {
       return (
         <ViewWrapper>
           <Loading />
@@ -253,6 +281,8 @@ function Home() {
     }
   };
 
+  console.log(subjects);
+
   return (
     <div className="w-screen h-screen bg-background relative">
       <motion.div
@@ -269,17 +299,9 @@ function Home() {
             {subjects.map((subject) => (
               <li key={subject.id}>
                 <button
-                  onClick={async () => {
-                    const s = await getSubjectWithRoadmap({
-                      data: {
-                        id: subject.id,
-                      },
-                    });
-
-                    console.log(s);
-
-                    // setUserSubject(subject.title);
-                    // setCurrentView("calibrateWithExistingKnowledge");
+                  onClick={() => {
+                    setIsLoading(true);
+                    setLoadingSubjectId(subject.id);
                   }}
                   className="text-sm w-full text-left px-3 py-2 rounded-md hover:bg-accent transition-colors"
                 >

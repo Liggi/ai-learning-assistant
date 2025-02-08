@@ -1,37 +1,35 @@
+import { z } from "zod";
 import prisma from "@/prisma/client";
 import type { Subject, Roadmap } from "@prisma/client";
 import { createServerFn } from "@tanstack/start";
-import { roadmapSchema } from "@/types/roadmap";
-import type { Roadmap as RoadmapType } from "@/types/roadmap";
+import { SubjectSchema } from "./generated/zod";
+import { SerializedRoadmapSchema } from "./roadmap";
 
-export interface SerializedSubject
-  extends Omit<Subject, "createdAt" | "updatedAt"> {
-  createdAt: string;
-  updatedAt: string;
-  roadmap?: RoadmapType | null;
-}
+export const SerializedSubjectSchema = SubjectSchema.extend({
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  roadmap: SerializedRoadmapSchema.nullable().optional(),
+});
 
-export interface SerializedRoadmap
-  extends Omit<Roadmap, "createdAt" | "updatedAt"> {
-  createdAt: string;
-  updatedAt: string;
-}
+export type SerializedSubject = z.infer<typeof SerializedSubjectSchema>;
 
 export function serializeSubject(
   subject: Subject & { roadmap?: Roadmap | null }
 ): SerializedSubject {
-  return {
+  return SerializedSubjectSchema.parse({
     ...subject,
     createdAt: subject.createdAt.toISOString(),
     updatedAt: subject.updatedAt.toISOString(),
     roadmap: subject.roadmap
-      ? roadmapSchema.parse({
+      ? {
           ...subject.roadmap,
           createdAt: subject.roadmap.createdAt.toISOString(),
           updatedAt: subject.roadmap.updatedAt.toISOString(),
-        })
+          nodes: subject.roadmap.nodes,
+          edges: subject.roadmap.edges,
+        }
       : null,
-  };
+  });
 }
 
 export const createSubject = createServerFn({ method: "POST" })

@@ -1,5 +1,17 @@
 import prisma from "@/prisma/client";
 import { createServerFn } from "@tanstack/start";
+import { z } from "zod";
+import { RoadmapSchema } from "./generated/zod";
+import { roadmapNodeSchema, roadmapEdgeSchema } from "@/types/roadmap";
+
+export const SerializedRoadmapSchema = RoadmapSchema.extend({
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  nodes: roadmapNodeSchema.array(),
+  edges: roadmapEdgeSchema.array(),
+});
+
+export type SerializedRoadmap = z.infer<typeof SerializedRoadmapSchema>;
 
 export const saveRoadmap = createServerFn({ method: "POST" })
   .validator((data: { subjectId: string; nodes: any; edges: any }) => data)
