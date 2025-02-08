@@ -42,10 +42,12 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
     messages: conversation,
     nodes: conversationNodes,
     edges: conversationEdges,
+    setActiveNode,
   } = useConversationStore((state) => ({
     messages: state.messages,
     nodes: state.nodes,
     edges: state.edges,
+    setActiveNode: state.setActiveNode,
   }));
 
   // Get roadmap data
@@ -59,7 +61,23 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
   // Hook up the conversation flow callback so that clicking a node updates
   // the selected message
   const handleNodeClick = (text: string, nodeId: string) => {
-    setSelectedMessageId(nodeId);
+    // Find the clicked message
+    const messageIndex = conversation.findIndex((msg) => msg.id === nodeId);
+    if (messageIndex === -1) return;
+
+    const message = conversation[messageIndex];
+
+    // If this is a user message (question) and there's a next message, select the answer instead
+    if (message.isUser && messageIndex + 1 < conversation.length) {
+      const answer = conversation[messageIndex + 1];
+      if (answer.id) {
+        setSelectedMessageId(answer.id);
+        setActiveNode(answer.id);
+      }
+    } else if (message.id) {
+      setSelectedMessageId(message.id);
+      setActiveNode(message.id);
+    }
   };
 
   return (
@@ -123,6 +141,7 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
           subject={subject}
           onBack={onBack}
           selectedMessageId={selectedMessageId || selectedMessageIdProp}
+          onNewMessage={(messageId) => setSelectedMessageId(messageId)}
         />
       </div>
     </div>

@@ -126,16 +126,16 @@ function Home() {
 
       // Generate badges for the entire roadmap
       try {
-        const badges = await generateRoadmapBadges({
-          data: {
-            subject: userSubject,
-            nodes: roadmap.nodes,
-            selectedKnowledgeNodes: Array.from(selectedKnowledgeNodes),
-          },
-        });
-        console.log("Generated badges for learning journey:");
-        console.log(badges);
-        setRoadmapBadges(badges);
+        // const badges = await generateRoadmapBadges({
+        //   data: {
+        //     subject: userSubject,
+        //     nodes: roadmap.nodes,
+        //     selectedKnowledgeNodes: Array.from(selectedKnowledgeNodes),
+        //   },
+        // });
+        // console.log("Generated badges for learning journey:");
+        // console.log(badges);
+        // setRoadmapBadges(badges);
       } catch (error) {
         console.error("Error generating badges:", error);
       }
@@ -199,6 +199,33 @@ function Home() {
       case "selectSubject":
         return (
           <ViewWrapper>
+            <motion.div
+              className="absolute top-4 left-4 z-50 bg-card rounded-lg shadow-lg p-4 w-64"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h3 className="text-lg font-semibold mb-3">Recent Subjects</h3>
+              {subjects.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No subjects yet</p>
+              ) : (
+                <ul className="space-y-2">
+                  {subjects.map((subject) => (
+                    <li key={subject.id}>
+                      <button
+                        onClick={() => {
+                          setIsLoading(true);
+                          setLoadingSubjectId(subject.id);
+                        }}
+                        className="text-sm w-full text-left px-3 py-2 rounded-md hover:bg-accent transition-colors"
+                      >
+                        {subject.title}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </motion.div>
             <SelectSubjectStep
               subject={userSubject}
               onSubjectChange={setUserSubject}
@@ -285,34 +312,6 @@ function Home() {
 
   return (
     <div className="w-screen h-screen bg-background relative">
-      <motion.div
-        className="absolute top-4 left-4 z-50 bg-card rounded-lg shadow-lg p-4 w-64"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <h3 className="text-lg font-semibold mb-3">Recent Subjects</h3>
-        {subjects.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No subjects yet</p>
-        ) : (
-          <ul className="space-y-2">
-            {subjects.map((subject) => (
-              <li key={subject.id}>
-                <button
-                  onClick={() => {
-                    setIsLoading(true);
-                    setLoadingSubjectId(subject.id);
-                  }}
-                  className="text-sm w-full text-left px-3 py-2 rounded-md hover:bg-accent transition-colors"
-                >
-                  {subject.title}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </motion.div>
-
       {currentView === "roadmap" ? (
         <div className="absolute inset-0">{renderView()}</div>
       ) : (

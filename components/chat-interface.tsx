@@ -33,12 +33,13 @@ interface ChatInterfaceProps {
   onBack: () => void;
   subject: string;
   selectedMessageId?: string;
+  onNewMessage?: (messageId: string) => void;
 }
 
 const generateLearningPrompt = (text: string) => {
   return `Please take the following text about ${text} and produce the following:
 
-A concise, one-or-two-sentence high-level summary capturing the essential idea.
+A concise, short sentence (10 words or less) capturing the essence of the idea(s) being taught.
 Several short statements or 'takeaways' highlighting the main points, each on its own line.
 Keep it factual, clear, and succinct. Avoid unnecessary details or overly friendly tone. Focus on the key concepts.
 
@@ -62,8 +63,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   onBack,
   subject,
   selectedMessageId,
+  onNewMessage,
 }) => {
-  const { addMessage } = useConversationStore();
+  const { messages, addMessage, activeNodeId, setActiveNode } =
+    useConversationStore((state) => ({
+      messages: state.messages,
+      addMessage: state.addMessage,
+      activeNodeId: state.activeNodeId,
+      setActiveNode: state.setActiveNode,
+    }));
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -73,11 +81,24 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     "conversation"
   );
 
+  // Update displayed message when selectedMessageId changes
+  useEffect(() => {
+    if (selectedMessageId) {
+      const message = messages.find((msg) => msg.id === selectedMessageId);
+      if (message) {
+        setCurrentMessage(message);
+        // Generate suggestions based on this message
+        generateSuggestions(message.text);
+      }
+    }
+  }, [selectedMessageId, messages]);
+
   if (!node) {
     return null;
   }
 
   const generateSuggestions = async (message: string) => {
+    setSuggestions([]);
     setIsSuggestionsLoading(true);
     try {
       const result = await generateSuggestionPills({
@@ -102,23 +123,23 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     try {
       // Generate badges for this module
       try {
-        const badges = await generateRoadmapBadges({
-          data: {
-            subject,
-            nodes: [
-              {
-                id: node.label,
-                data: {
-                  label: node.label,
-                  description: node.description,
-                },
-              },
-            ],
-            selectedKnowledgeNodes: [],
-          },
-        });
-        console.log("Generated badges for module:", node.label);
-        console.log(badges);
+        // const badges = await generateRoadmapBadges({
+        //   data: {
+        //     subject,
+        //     nodes: [
+        //       {
+        //         id: node.label,
+        //         data: {
+        //           label: node.label,
+        //           description: node.description,
+        //         },
+        //       },
+        //     ],
+        //     selectedKnowledgeNodes: [],
+        //   },
+        // });
+        // console.log("Generated badges for module:", node.label);
+        // console.log(badges);
       } catch (error) {
         console.error("Error generating badges:", error);
       }
@@ -157,6 +178,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       };
       addMessage(message);
       setCurrentMessage(message);
+      setActiveNode(message.id);
+      onNewMessage?.(message.id);
       generateSuggestions(result.response);
     } catch (error) {
       console.error("Error sending initial message:", error);
@@ -185,7 +208,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       text: userMessage,
       isUser: true,
       id: Date.now().toString(),
-      parentId: selectedMessageId,
+      ...(activeNodeId ? { parentId: activeNodeId } : {}),
     };
     addMessage(userMessageObj);
 
@@ -224,6 +247,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       };
       addMessage(assistantMessage);
       setCurrentMessage(assistantMessage);
+      setActiveNode(assistantMessage.id);
+      onNewMessage?.(assistantMessage.id);
       generateSuggestions(result.response);
     } catch (error) {
       console.error("Error:", error);
@@ -323,30 +348,36 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     components={{
                       h1: ({ children }) => (
                         <h1
-                          className="text-[18px] font-medium text-[#FAF9F6] mt-10 mb-6 border-l-2 border-orange-500/70 pl-3 py-2
-                                     bg-gradient-to-r from-orange-500/10 to-transparent"
+                          className="p-3 mt-8 mb-4 rounded-xl backdrop-blur-sm
+                                   bg-orange-500/[0.08] border border-orange-500/20
+                                   hover:bg-orange-500/[0.12] transition-all duration-200
+                                   text-[18px] font-medium text-orange-100"
                         >
                           {children}
                         </h1>
                       ),
                       h2: ({ children }) => (
                         <h2
-                          className="text-[15px] font-normal text-amber-100/90 mt-8 mb-4 border-l-2 border-amber-400/50 pl-3 py-1
-                                     bg-gradient-to-r from-amber-500/[0.07] to-transparent"
+                          className="p-3 mt-6 mb-3 rounded-xl backdrop-blur-sm
+                                   bg-cyan-500/[0.08] border border-cyan-500/20
+                                   hover:bg-cyan-500/[0.12] transition-all duration-200
+                                   text-[16px] font-medium text-cyan-100"
                         >
                           {children}
                         </h2>
                       ),
                       h3: ({ children }) => (
                         <h3
-                          className="text-[15px] font-normal text-yellow-100/80 mt-6 mb-3 border-l-2 border-yellow-300/30 pl-3 py-1
-                                     bg-gradient-to-r from-yellow-500/[0.05] to-transparent"
+                          className="p-2.5 mt-5 mb-2 rounded-xl backdrop-blur-sm
+                                   bg-purple-500/[0.08] border border-purple-500/20
+                                   hover:bg-purple-500/[0.12] transition-all duration-200
+                                   text-[15px] font-medium text-purple-100"
                         >
                           {children}
                         </h3>
                       ),
                       p: ({ children }) => (
-                        <p className="text-slate-300 leading-relaxed mb-4 text-[14px] pl-3">
+                        <p className="text-slate-300 leading-relaxed mb-5 text-[14px] pl-3">
                           {children}
                         </p>
                       ),
@@ -442,7 +473,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
 
           {/* Suggestions */}
-          {suggestions.length > 0 && (
+          {!isLoading && suggestions.length > 0 && (
             <motion.div
               layout
               className="max-w-3xl mx-auto flex flex-wrap gap-2 mt-4"
@@ -473,7 +504,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           )}
 
           {/* Loading indicator for suggestions */}
-          {isSuggestionsLoading && (
+          {(isSuggestionsLoading || isLoading) && (
             <motion.div
               layout
               className="max-w-3xl mx-auto flex flex-wrap gap-2 mt-4"

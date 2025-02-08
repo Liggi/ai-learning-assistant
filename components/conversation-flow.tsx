@@ -48,8 +48,8 @@ function ConversationFlowInner({
       fitView({
         padding: 0.4,
         duration: 400,
-        minZoom: 0.6,
-        maxZoom: 1.2,
+        minZoom: 0.2,
+        maxZoom: 2,
       });
     }, 100);
     return () => clearTimeout(timer);
@@ -85,9 +85,9 @@ function ConversationFlowInner({
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={false}
-        minZoom={0.6}
-        maxZoom={1.2}
-        zoomOnScroll={false}
+        minZoom={0.2}
+        maxZoom={2}
+        zoomOnScroll={true}
         onNodeMouseEnter={() => {}}
         onNodeMouseLeave={() => {}}
       />

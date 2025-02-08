@@ -37,7 +37,7 @@ interface ConversationState {
 
 // Constants for layout
 const VERTICAL_SPACING = 60; // Space between the bottom of one node and top of the next
-const HORIZONTAL_SPACING = 300; // Space between columns
+const HORIZONTAL_SPACING = 400; // Space between columns
 const START_X = 100; // Starting X position
 const START_Y = 100; // Starting Y position
 const DEFAULT_NODE_HEIGHT = 150; // Default height if not measured yet
