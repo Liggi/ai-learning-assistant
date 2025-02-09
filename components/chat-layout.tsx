@@ -1,22 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ConversationFlow from "./conversation-flow";
-import ChatInterface from "./chat-interface";
+import ChatInterface, { NodeData } from "./chat-interface";
 import { useConversationStore } from "@/features/chat/store";
 import { useRoadmapStore, RoadmapNodeData } from "@/features/roadmap/store";
 import RoadmapView from "@/components/roadmap-view";
 import { Node } from "@xyflow/react";
 import { LayoutGrid, GitBranch } from "lucide-react";
-
-export interface NodeData extends Record<string, unknown> {
-  label: string;
-  description: string;
-  status?: "not-started" | "in-progress" | "completed";
-  progress?: number;
-  type: "roadmap";
-}
+import {
+  generateCurriculumLearningPath,
+  generateModuleLearningPath,
+  generateCurriculumAchievements,
+  generateModuleAchievements,
+} from "../features/badges";
 
 interface ChatLayoutProps {
-  node?: RoadmapNodeData;
+  node?: Node<RoadmapNodeData>;
   onBack: () => void;
   subject: string;
   selectedMessageId?: string;
@@ -57,6 +55,181 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
       edges: state.edges,
     })
   );
+
+  // Convert RoadmapNode to ChatInterface NodeData
+  const chatNode =
+    node && node.data
+      ? {
+          label: node.data.label,
+          description: node.data.description,
+          status: node.data.status,
+          progress: node.data.progress,
+        }
+      : undefined;
+
+  // Generate badges when module changes
+  useEffect(() => {
+    const generateBadges = async () => {
+      console.log("\n🔍 Starting badge generation with:", {
+        subject,
+        nodeId: node?.id,
+        nodeData: node?.data,
+        roadmapNodesCount: roadmapNodes?.length,
+      });
+
+      // Only generate badges if we have both subject and roadmap nodes
+      if (!subject || !roadmapNodes?.length) {
+        console.log("❌ Missing required data for badge generation:", {
+          subject,
+          roadmapNodesCount: roadmapNodes?.length,
+        });
+        return;
+      }
+
+      try {
+        // Cache the node data to prevent unnecessary re-renders
+        const nodeData = roadmapNodes.map((node) => ({
+          id: node.id,
+          data: {
+            label: node.data.label,
+            description: node.data.description,
+          },
+        }));
+
+        console.log("📦 Prepared node data:", nodeData);
+
+        // 1. Generate Curriculum Learning Path Badges
+        console.log(
+          "\n🎯 Attempting to generate Curriculum Learning Path Badges..."
+        );
+        try {
+          await generateCurriculumLearningPath({
+            data: {
+              subject,
+              subjectArea: subject,
+              nodes: nodeData,
+            },
+          });
+          console.log(
+            "✅ Successfully generated curriculum learning path badges"
+          );
+        } catch (error) {
+          console.error(
+            "❌ Failed to generate curriculum learning path badges:",
+            error
+          );
+          throw error;
+        }
+
+        // 2. Generate Curriculum Achievement Badges
+        console.log(
+          "\n🏆 Attempting to generate Curriculum Achievement Badges..."
+        );
+        const completedNodes = roadmapNodes.filter(
+          (n) => n.data.status === "completed"
+        );
+        console.log("📊 Completed nodes:", {
+          count: completedNodes.length,
+          nodes: completedNodes.map((n) => n.id),
+        });
+
+        try {
+          await generateCurriculumAchievements({
+            data: {
+              subject,
+              subjectArea: subject,
+              nodes: nodeData,
+              completedModules: completedNodes.map((n) => n.id),
+              overallProgress: completedNodes.length / roadmapNodes.length,
+            },
+          });
+          console.log(
+            "✅ Successfully generated curriculum achievement badges"
+          );
+        } catch (error) {
+          console.error(
+            "❌ Failed to generate curriculum achievement badges:",
+            error
+          );
+          throw error;
+        }
+
+        // If we have a selected module, generate module-specific badges
+        if (node?.id && node.data) {
+          console.log("\n📌 Selected node details:", {
+            id: node.id,
+            label: node.data.label,
+            description: node.data.description,
+            progress: node.data.progress,
+          });
+
+          // 3. Generate Module Learning Path Badges
+          console.log(
+            "\n🎯 Attempting to generate Module Learning Path Badges..."
+          );
+          try {
+            await generateModuleLearningPath({
+              data: {
+                moduleId: node.id,
+                moduleLabel: node.data.label,
+                moduleDescription: node.data.description,
+                concepts: [], // TODO: Get concepts from module data
+              },
+            });
+            console.log(
+              "✅ Successfully generated module learning path badges"
+            );
+          } catch (error) {
+            console.error(
+              "❌ Failed to generate module learning path badges:",
+              error
+            );
+            throw error;
+          }
+
+          // 4. Generate Module Achievement Badges
+          console.log(
+            "\n🏆 Attempting to generate Module Achievement Badges..."
+          );
+          try {
+            await generateModuleAchievements({
+              data: {
+                subject,
+                moduleId: node.id,
+                moduleLabel: node.data.label,
+                moduleDescription: node.data.description,
+                concepts: [], // TODO: Get concepts from module data
+                progress: node.data.progress || 0,
+              },
+            });
+            console.log("✅ Successfully generated module achievement badges");
+          } catch (error) {
+            console.error(
+              "❌ Failed to generate module achievement badges:",
+              error
+            );
+            throw error;
+          }
+        }
+      } catch (error) {
+        console.error("\n💥 Badge generation failed with error:", error);
+        if (error instanceof Error) {
+          console.error("Error details:", {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+          });
+        }
+      }
+    };
+
+    // Debounce the badge generation to prevent rapid re-renders
+    const timeoutId = setTimeout(() => {
+      generateBadges();
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [subject, node?.id, node?.data]); // Only re-run when subject or selected node changes
 
   // Hook up the conversation flow callback so that clicking a node updates
   // the selected message
@@ -119,7 +292,7 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
           <RoadmapView
             nodes={roadmapNodes}
             edges={roadmapEdges}
-            onNodeClick={(node) => {
+            onNodeClick={(node: Node<RoadmapNodeData>) => {
               // If we have a parent onShowRoadmap, use that for full-screen mode
               if (onShowRoadmap) {
                 onShowRoadmap();
@@ -137,7 +310,7 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
       {/* Right: Chat Interface */}
       <div className="w-1/2 h-full">
         <ChatInterface
-          node={node}
+          node={chatNode}
           subject={subject}
           onBack={onBack}
           selectedMessageId={selectedMessageId || selectedMessageIdProp}

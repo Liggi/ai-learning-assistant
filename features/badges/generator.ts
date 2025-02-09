@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { TextBlock } from "@anthropic-ai/sdk/src/resources/messages/messages.js";
 import { createServerFn } from "@tanstack/start";
-import { Badge } from "./badges";
+import { Badge, ModuleAchievementBadge } from "../../types/badges";
 import { generateBadgesPrompt } from "../../prompts";
 
 interface RoadmapNode {
@@ -10,10 +10,6 @@ interface RoadmapNode {
     label: string;
     description: string;
   };
-}
-
-interface ModuleBadge extends Badge {
-  moduleId: string; // The module where this badge is most likely to be earned
 }
 
 export const generateRoadmapBadges = createServerFn({ method: "POST" })
@@ -132,7 +128,7 @@ export const generateRoadmapBadges = createServerFn({ method: "POST" })
       }
     }
 
-    return parsedJSON.badges as ModuleBadge[];
+    return parsedJSON.badges as ModuleAchievementBadge[];
   });
 
-export type { ModuleBadge };
+export type { ModuleAchievementBadge };

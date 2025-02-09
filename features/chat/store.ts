@@ -85,24 +85,17 @@ const computeTreeLayout = (
   const nodeMap: { [key: string]: TreeNode } = {};
   const roots: TreeNode[] = [];
 
-  messages.forEach((msg, index) => {
-    const id = msg.id || `${index}`;
+  messages.forEach((msg) => {
+    const id = msg.id || `${Date.now()}-${Math.random()}`;
     msg.id = id; // assign an id if missing
     const treeNode: TreeNode = { message: msg, children: [] };
     nodeMap[id] = treeNode;
 
-    // Determine the parent by checking if there's an explicit parent
-    // If not explicit and not the first message, treat the previous message as parent.
+    // If there's an explicit parent ID, use that
     if (msg.parentId && nodeMap[msg.parentId]) {
       nodeMap[msg.parentId].children.push(treeNode);
-    } else if (!msg.parentId && index > 0) {
-      const prevMsg = messages[index - 1];
-      if (prevMsg.id && nodeMap[prevMsg.id]) {
-        nodeMap[prevMsg.id].children.push(treeNode);
-      } else {
-        roots.push(treeNode);
-      }
     } else {
+      // If no parent ID, this is a root node
       roots.push(treeNode);
     }
   });
@@ -175,6 +168,17 @@ export const useConversationStore = create<ConversationState>((set) => ({
   nodeHeights: {},
   addMessage: (message) =>
     set((state) => {
+      // If this is a user message and we have an active node that's not a user message,
+      // set the parent ID to the active node
+      if (message.isUser && state.activeNodeId) {
+        const activeMessage = state.messages.find(
+          (m) => m.id === state.activeNodeId
+        );
+        if (activeMessage && !activeMessage.isUser) {
+          message.parentId = state.activeNodeId;
+        }
+      }
+
       const newMessages = [...state.messages, message];
       const { nodes: newNodes, edges: newEdges } = computeTreeLayout(
         newMessages,

@@ -36,12 +36,19 @@ interface ChatInterfaceProps {
   onNewMessage?: (messageId: string) => void;
 }
 
-const generateLearningPrompt = (text: string) => {
-  return `Please take the following text about ${text} and produce the following:
+const generateLearningPrompt = (text: string, question?: string) => {
+  return `Please analyze the following response${question ? ` to the question: "${question}"` : ""} and produce:
 
-A concise, short sentence (10 words or less) capturing the essence of the idea(s) being taught.
-Several short statements or 'takeaways' highlighting the main points, each on its own line.
-Keep it factual, clear, and succinct. Avoid unnecessary details or overly friendly tone. Focus on the key concepts.
+1. A concise summary (10 words or less) that captures:
+   - The main point being addressed${question ? " in response to the question" : ""}
+   - The key insight or conclusion provided
+
+2. Several short statements or 'takeaways' highlighting:
+   - The main points made in the response
+   - How these points${question ? " answer the original question and" : ""} connect to the broader topic
+   - Any practical implications or applications mentioned
+
+Keep it factual, clear, and succinct. Focus on the key concepts and their relationships.
 
 Return the response in this exact JSON format:
 {
@@ -97,7 +104,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     return null;
   }
 
-  const generateSuggestions = async (message: string) => {
+  const generateSuggestions = async (
+    message: string,
+    history?: { role: "user" | "assistant"; content: string }[],
+    coveredTopics?: string[]
+  ) => {
     setSuggestions([]);
     setIsSuggestionsLoading(true);
     try {
@@ -107,6 +118,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           moduleTitle: node.label,
           moduleDescription: node.description,
           currentMessage: message,
+          conversationHistory: history,
+          coveredTopics,
         },
       });
       setSuggestions(result.suggestions);
@@ -144,13 +157,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         console.error("Error generating badges:", error);
       }
 
+      const initialPrompt =
+        "Ignore this message and dive into the topic immediately. No preamble at all, no 'as we were discussing', no 'let's continue'. Nothing. Just dive in.";
+
       const result = await chat({
         data: {
           subject: subject,
           moduleTitle: node.label,
           moduleDescription: node.description,
-          message:
-            "Ignore this message and dive into the topic immediately. No preamble at all, no 'as we were discussing', no 'let's continue'. Nothing. Just dive in.",
+          message: initialPrompt,
         },
       });
 
@@ -160,7 +175,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           subject: subject,
           moduleTitle: node.label,
           moduleDescription: node.description,
-          message: generateLearningPrompt(result.response),
+          message: generateLearningPrompt(result.response, initialPrompt),
         },
       });
 
@@ -195,22 +210,30 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
-  const handleSend = async (message?: string) => {
-    if ((!message && !input.trim()) || isLoading) return;
-
-    const userMessage = message || input.trim();
-    setInput("");
+  const handleSend = async (text: string) => {
     setIsLoading(true);
-    setSuggestions([]);
+    setInput("");
 
-    // Add user message to conversation
-    const userMessageObj = {
-      text: userMessage,
+    // Create user message
+    const userMessageObj: Message = {
+      text,
       isUser: true,
       id: Date.now().toString(),
-      ...(activeNodeId ? { parentId: activeNodeId } : {}),
+      // Set parent ID to the currently active node if it exists
+      parentId: activeNodeId || undefined,
     };
     addMessage(userMessageObj);
+
+    // Convert conversation history to the format expected by the API
+    const conversationHistory = messages.map((msg) => ({
+      role: msg.isUser ? "user" : ("assistant" as "user" | "assistant"),
+      content: msg.text,
+    }));
+
+    // Extract covered topics from conversation
+    const coveredTopics = messages
+      .filter((msg) => !msg.isUser && msg.content?.takeaways)
+      .flatMap((msg) => msg.content!.takeaways);
 
     try {
       const result = await chat({
@@ -218,7 +241,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           subject: subject,
           moduleTitle: node.label,
           moduleDescription: node.description,
-          message: userMessage,
+          message: text,
+          conversationHistory,
         },
       });
 
@@ -228,7 +252,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           subject: subject,
           moduleTitle: node.label,
           moduleDescription: node.description,
-          message: generateLearningPrompt(result.response),
+          message: generateLearningPrompt(result.response, text),
+          conversationHistory,
         },
       });
 
@@ -249,7 +274,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setCurrentMessage(assistantMessage);
       setActiveNode(assistantMessage.id);
       onNewMessage?.(assistantMessage.id);
-      generateSuggestions(result.response);
+
+      // Generate suggestions with full context
+      generateSuggestions(result.response, conversationHistory, coveredTopics);
     } catch (error) {
       console.error("Error:", error);
       const errorMessage = {
@@ -453,14 +480,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSend()}
+              onKeyPress={(e) => e.key === "Enter" && handleSend(input)}
               className="flex-1 bg-transparent text-slate-300 px-4 py-3.5
                        focus:outline-none text-sm"
               placeholder="Type your message..."
               disabled={isLoading}
             />
             <button
-              onClick={() => handleSend()}
+              onClick={() => handleSend(input)}
               className={`text-cyan-400 hover:text-cyan-300 focus:outline-none 
                         focus:text-cyan-300 transition-colors p-4 ${
                           isLoading ? "opacity-50 cursor-not-allowed" : ""

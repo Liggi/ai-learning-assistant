@@ -1,8 +1,4 @@
-interface Badge {
-  name: string;
-  description: string;
-  level: "Bronze" | "Silver" | "Gold" | "Platinum";
-}
+import { Badge } from "../../types/badges";
 
 // React Hooks Badges
 const reactHooksBadges: Badge[] = [

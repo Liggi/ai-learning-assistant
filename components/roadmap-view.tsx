@@ -4,10 +4,12 @@ import {
   ReactFlowProvider,
   Node as ReactFlowNode,
   Edge as ReactFlowEdge,
+  useReactFlow,
 } from "@xyflow/react";
 import Node from "@/components/react-flow/node";
 import { RoadmapNodeData } from "@/features/roadmap/store";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 const nodeTypes = { normalNode: Node };
 
@@ -22,18 +24,29 @@ function FlowWithProvider({
   onNodeClick: (node: ReactFlowNode<RoadmapNodeData>) => void;
   isPanel?: boolean;
 }) {
+  const { setCenter } = useReactFlow();
+
+  useEffect(() => {
+    // Focus on the first node if it exists
+    if (nodes.length > 0) {
+      const firstNode = nodes[0];
+      // Account for node dimensions (200x100) to center it properly
+      setCenter(
+        firstNode.position.x + 100, // Add half the width
+        firstNode.position.y + 50, // Add half the height
+        {
+          zoom: 1,
+        }
+      );
+    }
+  }, [nodes, setCenter, isPanel]);
+
   return (
     <ReactFlow
       nodes={nodes}
       edges={edges}
       onNodeClick={(_, node) => onNodeClick(node)}
       nodeTypes={nodeTypes}
-      fitView
-      fitViewOptions={{
-        padding: isPanel ? 0.2 : 0.4,
-        minZoom: isPanel ? 0.1 : 0.4,
-        maxZoom: isPanel ? 0.8 : 1.2,
-      }}
       nodesDraggable={false}
       nodesConnectable={false}
       elementsSelectable={false}
