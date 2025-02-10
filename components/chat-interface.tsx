@@ -347,37 +347,31 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                              [&>h1+h2]:mt-3 [&>h2+h3]:mt-2"
                     components={{
                       h1: ({ children }) => (
-                        <h1
-                          className="p-3 mt-8 mb-4 rounded-xl backdrop-blur-sm
-                                   bg-orange-500/[0.08] border border-orange-500/20
-                                   hover:bg-orange-500/[0.12] transition-all duration-200
-                                   text-[18px] font-medium text-orange-100"
-                        >
-                          {children}
+                        <h1 className="relative mb-4 text-xl font-semibold ml-2">
+                          <div className="absolute -left-3 h-7 w-1 rounded-full bg-gradient-to-b from-orange-500 to-red-500"></div>
+                          <span className="bg-gradient-to-r from-orange-100 to-orange-300 bg-clip-text text-transparent">
+                            {children}
+                          </span>
                         </h1>
                       ),
                       h2: ({ children }) => (
-                        <h2
-                          className="p-3 mt-6 mb-3 rounded-xl backdrop-blur-sm
-                                   bg-cyan-500/[0.08] border border-cyan-500/20
-                                   hover:bg-cyan-500/[0.12] transition-all duration-200
-                                   text-[16px] font-medium text-cyan-100"
-                        >
-                          {children}
+                        <h2 className="relative mb-4 text-lg font-semibold ml-2">
+                          <div className="absolute -left-3 h-6 w-1 rounded-full bg-gradient-to-b from-cyan-500 to-blue-500"></div>
+                          <span className="bg-gradient-to-r from-cyan-100 to-cyan-300 bg-clip-text text-transparent">
+                            {children}
+                          </span>
                         </h2>
                       ),
                       h3: ({ children }) => (
-                        <h3
-                          className="p-2.5 mt-5 mb-2 rounded-xl backdrop-blur-sm
-                                   bg-purple-500/[0.08] border border-purple-500/20
-                                   hover:bg-purple-500/[0.12] transition-all duration-200
-                                   text-[15px] font-medium text-purple-100"
-                        >
-                          {children}
+                        <h3 className="relative mb-3 text-base font-semibold ml-2">
+                          <div className="absolute -left-3 h-5 w-1 rounded-full bg-gradient-to-b from-purple-500 to-pink-500"></div>
+                          <span className="bg-gradient-to-r from-purple-100 to-purple-300 bg-clip-text text-transparent">
+                            {children}
+                          </span>
                         </h3>
                       ),
                       p: ({ children }) => (
-                        <p className="text-slate-300 leading-relaxed mb-5 text-[14px] pl-3">
+                        <p className="text-slate-300 leading-relaxed mb-5 text-[14px] pl-2">
                           {children}
                         </p>
                       ),
@@ -409,9 +403,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         </div>
                       ),
                       strong: ({ children }) => (
-                        <strong className="font-medium text-orange-200">
+                        <span className="font-bold bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent px-0.5 relative">
                           {children}
-                        </strong>
+                          <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-amber-200 to-yellow-400 opacity-50"></span>
+                        </span>
                       ),
                       blockquote: ({ children }) => (
                         <blockquote

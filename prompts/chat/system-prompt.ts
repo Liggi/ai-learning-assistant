@@ -29,7 +29,7 @@ Rules:
 
 Instructions:
 1. First, generate between 1 and 5 key takeaways that capture the most crucial points a learner should remember from this lesson. Keep them as brief as possible.
-2. Then, craft a detailed yet digestible explanation that expands on these takeaways.
+2. Then, craft a detailed yet digestible explanation that expands on these takeaways. Call out unique details, entities, concepts, or anything else relevant by using bold.
 3. The response should have a structure like this:
    - Provide a concise, step-by-step explanation with appropriate headings, paragraphs, or bullet points.
    - Then, at the end of the response, ensure the key takeaways are visibly separated from the explanation. For instance, use a markdown blockquote formatted like:

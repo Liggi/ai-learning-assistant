@@ -13,6 +13,8 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as LoadingImport } from './routes/loading'
 import { Route as IndexImport } from './routes/index'
+import { Route as LearningMapSubjectIdImport } from './routes/learning-map/$subjectId'
+import { Route as ChatSubjectIdModuleIdImport } from './routes/chat/$subjectId.$moduleId'
 
 // Create/Update Routes
 
@@ -25,6 +27,18 @@ const LoadingRoute = LoadingImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LearningMapSubjectIdRoute = LearningMapSubjectIdImport.update({
+  id: '/learning-map/$subjectId',
+  path: '/learning-map/$subjectId',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ChatSubjectIdModuleIdRoute = ChatSubjectIdModuleIdImport.update({
+  id: '/chat/$subjectId/$moduleId',
+  path: '/chat/$subjectId/$moduleId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -46,6 +60,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoadingImport
       parentRoute: typeof rootRoute
     }
+    '/learning-map/$subjectId': {
+      id: '/learning-map/$subjectId'
+      path: '/learning-map/$subjectId'
+      fullPath: '/learning-map/$subjectId'
+      preLoaderRoute: typeof LearningMapSubjectIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/chat/$subjectId/$moduleId': {
+      id: '/chat/$subjectId/$moduleId'
+      path: '/chat/$subjectId/$moduleId'
+      fullPath: '/chat/$subjectId/$moduleId'
+      preLoaderRoute: typeof ChatSubjectIdModuleIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -54,36 +82,59 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/loading': typeof LoadingRoute
+  '/learning-map/$subjectId': typeof LearningMapSubjectIdRoute
+  '/chat/$subjectId/$moduleId': typeof ChatSubjectIdModuleIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/loading': typeof LoadingRoute
+  '/learning-map/$subjectId': typeof LearningMapSubjectIdRoute
+  '/chat/$subjectId/$moduleId': typeof ChatSubjectIdModuleIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/loading': typeof LoadingRoute
+  '/learning-map/$subjectId': typeof LearningMapSubjectIdRoute
+  '/chat/$subjectId/$moduleId': typeof ChatSubjectIdModuleIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/loading'
+  fullPaths:
+    | '/'
+    | '/loading'
+    | '/learning-map/$subjectId'
+    | '/chat/$subjectId/$moduleId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/loading'
-  id: '__root__' | '/' | '/loading'
+  to:
+    | '/'
+    | '/loading'
+    | '/learning-map/$subjectId'
+    | '/chat/$subjectId/$moduleId'
+  id:
+    | '__root__'
+    | '/'
+    | '/loading'
+    | '/learning-map/$subjectId'
+    | '/chat/$subjectId/$moduleId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoadingRoute: typeof LoadingRoute
+  LearningMapSubjectIdRoute: typeof LearningMapSubjectIdRoute
+  ChatSubjectIdModuleIdRoute: typeof ChatSubjectIdModuleIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoadingRoute: LoadingRoute,
+  LearningMapSubjectIdRoute: LearningMapSubjectIdRoute,
+  ChatSubjectIdModuleIdRoute: ChatSubjectIdModuleIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,7 +148,9 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/loading"
+        "/loading",
+        "/learning-map/$subjectId",
+        "/chat/$subjectId/$moduleId"
       ]
     },
     "/": {
@@ -105,6 +158,12 @@ export const routeTree = rootRoute
     },
     "/loading": {
       "filePath": "loading.tsx"
+    },
+    "/learning-map/$subjectId": {
+      "filePath": "learning-map/$subjectId.tsx"
+    },
+    "/chat/$subjectId/$moduleId": {
+      "filePath": "chat/$subjectId.$moduleId.tsx"
     }
   }
 }

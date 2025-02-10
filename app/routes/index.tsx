@@ -6,11 +6,11 @@ import { generateRoadmap } from "@/features/roadmap/generator";
 import Loading from "@/components/ui/loading";
 import SelectSubjectStep from "@/components/select-subject-step";
 import KnowledgeNodesStep from "@/components/knowledge-nodes-step";
-import FeynmanTechnique from "@/components/feynman-technique-step";
 import RoadmapView from "@/components/roadmap-view";
 import { useConversationStore } from "@/features/chat/store";
 import { useRoadmapStore, RoadmapNodeData } from "@/features/roadmap/store";
 import ChatLayout from "@/components/chat-layout";
+import { Link } from "@tanstack/react-router";
 import {
   generateRoadmapBadges,
   ModuleBadge,
@@ -188,17 +188,13 @@ function Home() {
 
   const renderView = () => {
     if (isLoading || loadingSubjectId) {
-      return (
-        <ViewWrapper>
-          <Loading />
-        </ViewWrapper>
-      );
+      return <Loading />;
     }
 
     switch (currentView) {
       case "selectSubject":
         return (
-          <ViewWrapper>
+          <>
             <motion.div
               className="absolute top-4 left-4 z-50 bg-card rounded-lg shadow-lg p-4 w-64"
               initial={{ opacity: 0, x: -20 }}
@@ -212,15 +208,13 @@ function Home() {
                 <ul className="space-y-2">
                   {subjects.map((subject) => (
                     <li key={subject.id}>
-                      <button
-                        onClick={() => {
-                          setIsLoading(true);
-                          setLoadingSubjectId(subject.id);
-                        }}
-                        className="text-sm w-full text-left px-3 py-2 rounded-md hover:bg-accent transition-colors"
+                      <Link
+                        to="/learning-map/$subjectId"
+                        params={{ subjectId: subject.id }}
+                        className="text-sm w-full text-left px-3 py-2 rounded-md hover:bg-accent transition-colors block"
                       >
                         {subject.title}
-                      </button>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -231,44 +225,21 @@ function Home() {
               onSubjectChange={setUserSubject}
               onNext={() => setCurrentView("calibrateWithExistingKnowledge")}
             />
-          </ViewWrapper>
+          </>
         );
 
       case "calibrateWithExistingKnowledge":
         return (
-          <ViewWrapper>
-            <KnowledgeNodesStep
-              subject={userSubject}
-              selectedKnowledgeNodes={selectedKnowledgeNodes}
-              onCalibrationChange={toggleKnowledgeNode}
-              onBack={() => setCurrentView("selectSubject")}
-              onNext={async () => {
-                await handleSubmit();
-                setCurrentView("roadmap");
-              }}
-            />
-          </ViewWrapper>
-        );
-
-      case "feynmanTechnique":
-        return (
-          <ViewWrapper>
-            <FeynmanTechnique
-              userKnowledge={userKnowledge}
-              setUserKnowledge={setUserKnowledge}
-              setStep={(step) => {
-                if (step === 1) {
-                  setCurrentView("calibrateWithExistingKnowledge");
-                }
-              }}
-              isLoading={isLoading}
-              isButtonLoading={isButtonLoading}
-              handleSubmit={async () => {
-                await handleSubmit();
-                setCurrentView("roadmap");
-              }}
-            />
-          </ViewWrapper>
+          <KnowledgeNodesStep
+            subject={userSubject}
+            selectedKnowledgeNodes={selectedKnowledgeNodes}
+            onCalibrationChange={toggleKnowledgeNode}
+            onBack={() => setCurrentView("selectSubject")}
+            onNext={async () => {
+              await handleSubmit();
+              setCurrentView("roadmap");
+            }}
+          />
         );
 
       case "roadmap":
@@ -277,38 +248,32 @@ function Home() {
         }
 
         return (
-          <ViewWrapper>
-            <RoadmapView
-              nodes={nodes}
-              edges={edges}
-              onNodeClick={(node) => {
-                setSelectedNode(node);
-                setCurrentView("chat");
-              }}
-              onReset={handleReset}
-            />
-          </ViewWrapper>
+          <RoadmapView
+            nodes={nodes}
+            edges={edges}
+            onNodeClick={(node) => {
+              setSelectedNode(node);
+              setCurrentView("chat");
+            }}
+            onReset={handleReset}
+          />
         );
 
       case "chat":
         return (
-          <ViewWrapper>
-            <ChatLayout
-              node={selectedNode?.data}
-              subject={userSubject}
-              onBack={() => setCurrentView("roadmap")}
-              onShowRoadmap={() => {
-                console.log("Setting view to roadmap");
-                setCurrentView("roadmap");
-                console.log("New view state:", "roadmap");
-              }}
-            />
-          </ViewWrapper>
+          <ChatLayout
+            node={selectedNode?.data}
+            subject={userSubject}
+            onBack={() => setCurrentView("roadmap")}
+            onShowRoadmap={() => {
+              console.log("Setting view to roadmap");
+              setCurrentView("roadmap");
+              console.log("New view state:", "roadmap");
+            }}
+          />
         );
     }
   };
-
-  console.log(subjects);
 
   return (
     <div className="w-screen h-screen bg-background relative">
@@ -318,19 +283,5 @@ function Home() {
         <AnimatePresence mode="wait">{renderView()}</AnimatePresence>
       )}
     </div>
-  );
-}
-
-function ViewWrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <motion.div
-      className="absolute inset-0"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      {children}
-    </motion.div>
   );
 }

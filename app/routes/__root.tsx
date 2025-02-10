@@ -2,10 +2,13 @@ import {
   Outlet,
   ScrollRestoration,
   createRootRoute,
+  useLocation,
 } from "@tanstack/react-router";
 import { Meta, Scripts } from "@tanstack/start";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 const queryClient = new QueryClient();
 
@@ -28,26 +31,39 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  const location = useLocation();
+
   return (
     <RootDocument>
       <QueryClientProvider client={queryClient}>
-        <Outlet />
+        <div className="relative w-full h-full">
+          <AnimatePresence mode="sync">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="w-full h-full absolute inset-0"
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+        <ScrollRestoration />
+        <Scripts />
       </QueryClientProvider>
     </RootDocument>
   );
 }
 
-function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html className="dark">
       <head>
         <Meta />
       </head>
-      <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

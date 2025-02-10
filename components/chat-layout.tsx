@@ -50,6 +50,13 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
     setActiveNode: state.setActiveNode,
   }));
 
+  console.log("ChatLayout rendering with:", {
+    node,
+    subject,
+    selectedMessageIdProp,
+    conversation: conversation.length,
+  });
+
   // Get roadmap data
   const { nodes: roadmapNodes, edges: roadmapEdges } = useRoadmapStore(
     (state) => ({
@@ -84,29 +91,19 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
     <div className="flex h-screen bg-slate-900 text-slate-300">
       {/* Left: Conversation Flow or Roadmap Visualization */}
       <div className="w-1/2 h-full border-r border-slate-700 relative">
-        {/* View Toggle Button */}
         <button
-          onClick={() =>
-            setCurrentView(
-              currentView === "conversation" ? "roadmap" : "conversation"
-            )
-          }
+          onClick={() => {
+            if (onShowRoadmap) {
+              onShowRoadmap();
+            }
+          }}
           className="absolute top-4 left-4 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-md
                    text-xs font-medium transition-all duration-150
                    bg-slate-800/50 border border-slate-700/50
                    hover:bg-slate-800 hover:border-slate-700"
         >
-          {currentView === "conversation" ? (
-            <>
-              <LayoutGrid size={12} className="text-slate-400" />
-              <span className="text-slate-300">Learning Plan</span>
-            </>
-          ) : (
-            <>
-              <GitBranch size={12} className="text-slate-400" />
-              <span className="text-slate-300">Conversation Map</span>
-            </>
-          )}
+          <LayoutGrid size={12} className="text-slate-400" />
+          <span className="text-slate-300">Learning Plan</span>
         </button>
 
         {currentView === "conversation" ? (
