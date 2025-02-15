@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { generateRoadmap } from "@/features/roadmap/generator";
 import Loading from "@/components/ui/loading";
 import SubjectEntry from "@/components/subject-entry";
-import KnowledgeNodesStep from "@/components/knowledge-nodes-step";
+import ExistingKnowledgeCalibration from "@/components/existing-knowledge-calibration";
 import { Link } from "@tanstack/react-router";
 import {
   useSubjects,
@@ -109,7 +109,7 @@ function Home() {
 
       case "calibrateWithExistingKnowledge":
         return (
-          <KnowledgeNodesStep
+          <ExistingKnowledgeCalibration
             subject={userSubject}
             selectedKnowledgeNodes={selectedKnowledgeNodes}
             onCalibrationChange={toggleKnowledgeNode}

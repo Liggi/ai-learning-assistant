@@ -57,7 +57,7 @@ interface KnowledgeNode {
   depth_level: number;
 }
 
-interface KnowledgeNodesStepProps {
+interface ExistingKnowledgeCalibrationProps {
   subject: string;
   selectedKnowledgeNodes: Set<string>;
   onCalibrationChange: (id: string) => void;
@@ -78,14 +78,14 @@ const getComplexityFromDepth = (depth: number): ComplexityLevel => {
   return mapping[depth] || "basic";
 };
 
-export default function KnowledgeNodesStep({
+export default function ExistingKnowledgeCalibration({
   subject,
   selectedKnowledgeNodes,
   onCalibrationChange,
   onBack,
   onNext,
   onKnowledgeNodesGenerated = () => {},
-}: KnowledgeNodesStepProps) {
+}: ExistingKnowledgeCalibrationProps) {
   const { data: knowledgeNodes, isLoading, error } = useKnowledgeNodes(subject);
   const [visibleNodeCount, setVisibleNodeCount] = useState(0);
   const [sortedNodes, setSortedNodes] = useState<KnowledgeNode[]>([]);

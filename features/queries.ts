@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { generateKnowledgeNodes } from "./generator";
+import { generate } from "./generators/knowledge-nodes";
 
 export function useKnowledgeNodes(subject: string) {
   return useQuery({
     queryKey: ["knowledgeNodes", subject],
     queryFn: async () => {
-      const response = await generateKnowledgeNodes({ data: { subject } });
+      const response = await generate({ data: { subject } });
       return response;
     },
     enabled: !!subject,
