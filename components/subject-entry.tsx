@@ -3,19 +3,19 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ButtonLoading } from "@/components/ui/button-loading";
 
-interface SubjectInputStepProps {
+interface SubjectEntryProps {
   subject: string;
   onSubjectChange: (subject: string) => void;
   onNext: () => void;
   isSubmitting?: boolean;
 }
 
-export default function SubjectInputStep({
+export default function SubjectEntry({
   subject,
   onSubjectChange,
   onNext,
   isSubmitting = false,
-}: SubjectInputStepProps) {
+}: SubjectEntryProps) {
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <motion.div
