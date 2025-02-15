@@ -11,10 +11,7 @@ import { useConversationStore } from "@/features/chat/store";
 import { useRoadmapStore, RoadmapNodeData } from "@/features/roadmap/store";
 import ChatLayout from "@/components/chat-layout";
 import { Link } from "@tanstack/react-router";
-import {
-  generateRoadmapBadges,
-  ModuleBadge,
-} from "@/features/badges/generator";
+import { ModuleBadge } from "@/features/badges/generator";
 import {
   useSubjects,
   useCreateSubject,
@@ -159,18 +156,6 @@ function Home() {
       }
       return newSet;
     });
-  };
-
-  const handleNodeClick = (node: ReactFlowNode<RoadmapNodeData>) => {
-    setSelectedNode(node);
-    setCurrentView("chat");
-
-    // Log out badges for this module using our dynamically generated badges
-    const moduleBadges = roadmapBadges.filter(
-      (badge) => badge.moduleId === node.id
-    );
-    console.log("Available badges for module:", node.data.label);
-    console.log(moduleBadges);
   };
 
   const handleReset = () => {

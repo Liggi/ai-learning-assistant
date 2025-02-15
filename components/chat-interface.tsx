@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Send } from "lucide-react";
 import { chat, generateSuggestionPills } from "@/features/chat/chat";
+import { generateTooltips } from "@/features/chat/tooltips";
+import { extractBoldedSegments } from "@/utils/extractBolded";
 import {
   generateRoadmapBadges,
   ModuleBadge,
@@ -9,6 +11,11 @@ import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { LoadingBubble } from "./ui/loading-bubble";
 import { useConversationStore } from "@/features/chat/store";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export interface NodeData extends Record<string, unknown> {
   label: string;
@@ -81,58 +88,70 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [currentView, setCurrentView] = useState<"roadmap" | "conversation">(
     "conversation"
   );
+  const [tooltips, setTooltips] = useState<Record<string, string>>({});
 
-  // Update displayed message when selectedMessageId changes
-  useEffect(() => {
-    if (selectedMessageId) {
-      const message = messages.find((msg) => msg.id === selectedMessageId);
-      if (message) {
-        setCurrentMessage(message);
-        // Generate suggestions based on this message
-        generateSuggestions(message.text);
-      }
-    }
-  }, [selectedMessageId, messages]);
-
-  useEffect(() => {
-    // Reset initialization when node changes
-    setHasInitialized(false);
-  }, [node?.id]); // Only reset when node ID changes, not label
-
-  useEffect(() => {
-    if (!hasInitialized && node?.label) {
-      console.log("Initializing chat for node:", node.label);
-      setHasInitialized(true);
-      sendInitialMessage();
-    }
-  }, [hasInitialized, node?.label]);
-
-  if (!node) {
-    return null;
-  }
-
-  const generateSuggestions = async (message: string) => {
-    setSuggestions([]);
-    setIsSuggestionsLoading(true);
-    try {
-      const result = await generateSuggestionPills({
-        data: {
-          subject,
-          moduleTitle: node.label,
-          moduleDescription: node.description,
-          currentMessage: message,
-        },
-      });
-      setSuggestions(result.suggestions);
-    } catch (error) {
-      console.error("Error generating suggestions:", error);
+  const generateSuggestions = useCallback(
+    async (message: string) => {
       setSuggestions([]);
-    } finally {
-      setIsSuggestionsLoading(false);
-    }
-  };
+      setIsSuggestionsLoading(true);
+      try {
+        const result = await generateSuggestionPills({
+          data: {
+            subject,
+            moduleTitle: node?.label || "",
+            moduleDescription: node?.description || "",
+            currentMessage: message,
+          },
+        });
+        setSuggestions(result.suggestions);
+      } catch (error) {
+        console.error("Error generating suggestions:", error);
+        setSuggestions([]);
+      } finally {
+        setIsSuggestionsLoading(false);
+      }
+    },
+    [subject, node?.label, node?.description]
+  );
 
-  const sendInitialMessage = async () => {
+  const processMessageAndGenerateTooltips = useCallback(
+    async (messageText: string) => {
+      const boldedConcepts = extractBoldedSegments(messageText);
+      if (boldedConcepts.length) {
+        try {
+          const tooltipResult = await generateTooltips({
+            data: {
+              concepts: boldedConcepts,
+              subject,
+              moduleTitle: node?.label || "",
+              moduleDescription: node?.description || "",
+            },
+          });
+          setTooltips((prev) => ({ ...prev, ...tooltipResult.tooltips }));
+        } catch (error) {
+          console.error("Error generating tooltips:", error);
+        }
+      }
+    },
+    [subject, node?.label, node?.description]
+  );
+
+  const handleMessageUpdate = useCallback(
+    (message: Message) => {
+      addMessage(message);
+      setCurrentMessage(message);
+      setActiveNode(message.id ?? "");
+      onNewMessage?.(message.id ?? "");
+    },
+    [addMessage, setActiveNode, onNewMessage]
+  );
+
+  const sendInitialMessage = useCallback(async () => {
+    if (!node?.label) return;
+
+    // Since we know node exists and has label at this point, TypeScript should infer description exists too
+    const { label, description } = node;
+
     console.log("Starting sendInitialMessage");
     setIsLoading(true);
     try {
@@ -140,26 +159,26 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const result = await chat({
         data: {
           subject: subject,
-          moduleTitle: node.label,
-          moduleDescription: node.description,
+          moduleTitle: label,
+          moduleDescription: description,
           message:
             "Ignore this message and dive into the topic immediately. No preamble at all, no 'as we were discussing', no 'let's continue'. Nothing. Just dive in.",
         },
       });
 
+      await processMessageAndGenerateTooltips(result.response);
+
       console.log("Got initial chat response, generating learning content");
-      // Generate learning content from the response
       const learningResult = await chat({
         data: {
           subject: subject,
-          moduleTitle: node.label,
-          moduleDescription: node.description,
+          moduleTitle: label,
+          moduleDescription: description,
           message: generateLearningPrompt(result.response),
         },
       });
 
       console.log("Got learning content, parsing and adding message");
-      // Parse the learning content
       const content = JSON.parse(learningResult.response);
 
       const message = {
@@ -171,10 +190,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           takeaways: content.takeaways,
         },
       };
-      addMessage(message);
-      setCurrentMessage(message);
-      setActiveNode(message.id);
-      onNewMessage?.(message.id);
+
+      handleMessageUpdate(message);
       generateSuggestions(result.response);
     } catch (error) {
       console.error("Error sending initial message:", error);
@@ -183,13 +200,47 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         isUser: false,
         id: Date.now().toString(),
       };
-      addMessage(errorMessage);
-      setCurrentMessage(errorMessage);
+      handleMessageUpdate(errorMessage);
     } finally {
       console.log("Finished sendInitialMessage");
       setIsLoading(false);
     }
-  };
+  }, [
+    subject,
+    node?.label,
+    node?.description,
+    handleMessageUpdate,
+    generateSuggestions,
+    processMessageAndGenerateTooltips,
+  ]);
+
+  // Effect to handle selected message updates
+  useEffect(() => {
+    if (!selectedMessageId) return;
+
+    const message = messages.find((msg) => msg.id === selectedMessageId);
+    if (message) {
+      setCurrentMessage(message);
+      generateSuggestions(message.text);
+    }
+  }, [selectedMessageId, messages, generateSuggestions]);
+
+  // Effect to reset initialization on node change
+  useEffect(() => {
+    if (node?.id) {
+      setHasInitialized(false);
+    }
+  }, [node?.id]);
+
+  // Effect to handle initial message
+  useEffect(() => {
+    if (!hasInitialized && node?.label) {
+      setHasInitialized(true);
+      sendInitialMessage();
+    }
+  }, [hasInitialized, node?.label, sendInitialMessage]);
+
+  if (!node) return null;
 
   const handleSend = async (message?: string) => {
     if ((!message && !input.trim()) || isLoading) return;
@@ -217,6 +268,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           message: userMessage,
         },
       });
+
+      await processMessageAndGenerateTooltips(result.response);
 
       // Generate learning content from the response
       const learningResult = await chat({
@@ -394,12 +447,50 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                           <div>{children}</div>
                         </div>
                       ),
-                      strong: ({ children }) => (
-                        <span className="font-bold bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent px-0.5 relative">
-                          {children}
-                          <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-amber-200 to-yellow-400 opacity-50"></span>
-                        </span>
-                      ),
+                      strong: ({ children }) => {
+                        const concept = String(children).trim();
+                        const tooltipText = tooltips[concept];
+
+                        if (!tooltipText) {
+                          return (
+                            <span className="font-bold bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent px-0.5">
+                              {children}
+                            </span>
+                          );
+                        }
+
+                        return (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span
+                                className="font-bold bg-gradient-to-r from-amber-200 to-yellow-400 bg-clip-text text-transparent px-0.5 cursor-pointer relative
+                                             after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px]
+                                             after:bg-gradient-to-r after:from-amber-200/0 after:via-amber-300/50 after:to-yellow-400/0
+                                             after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300
+                                             hover:from-amber-100 hover:to-yellow-300 transition-all duration-200"
+                              >
+                                {children}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              className="max-w-[250px] p-4 text-sm 
+                              bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900
+                              text-slate-100 border border-slate-600/50 
+                              backdrop-blur-sm
+                              -translate-y-3
+                              rounded-xl
+                              animate-in fade-in-0 zoom-in-95 duration-200
+                              data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95
+                              shadow-[0_-8px_40px_-12px] shadow-amber-500/20
+                              ring-1 ring-amber-500/10
+                              after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px]
+                              after:bg-gradient-to-r after:from-amber-500/0 after:via-amber-500/30 after:to-amber-500/0"
+                            >
+                              {tooltipText}
+                            </TooltipContent>
+                          </Tooltip>
+                        );
+                      },
                       blockquote: ({ children }) => (
                         <blockquote
                           className="p-4 my-4 mt-6 rounded-xl backdrop-blur-sm
