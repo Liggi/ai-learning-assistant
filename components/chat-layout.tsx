@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ConversationFlow from "./conversation-flow";
 import ChatInterface from "./chat-interface";
 import { useConversationStore } from "@/features/chat/store";
@@ -30,6 +30,11 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
   selectedMessageId: selectedMessageIdProp,
   onShowRoadmap,
 }) => {
+  console.log("ChatLayout received node:", {
+    nodeId: node?.id,
+    label: node?.label,
+  });
+
   const [selectedMessageId, setSelectedMessageId] = useState<
     string | undefined
   >(selectedMessageIdProp);
@@ -49,6 +54,13 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
     edges: state.edges,
     setActiveNode: state.setActiveNode,
   }));
+
+  useEffect(() => {
+    console.log("ChatLayout node prop changed:", {
+      nodeId: node?.id,
+      label: node?.label,
+    });
+  }, [node]);
 
   console.log("ChatLayout rendering with:", {
     node,

@@ -65,6 +65,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   selectedMessageId,
   onNewMessage,
 }) => {
+  const [hasInitialized, setHasInitialized] = useState(false);
   const { messages, addMessage, activeNodeId, setActiveNode } =
     useConversationStore((state) => ({
       messages: state.messages,
@@ -93,6 +94,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   }, [selectedMessageId, messages]);
 
+  useEffect(() => {
+    // Reset initialization when node changes
+    setHasInitialized(false);
+  }, [node?.id]); // Only reset when node ID changes, not label
+
+  useEffect(() => {
+    if (!hasInitialized && node?.label) {
+      console.log("Initializing chat for node:", node.label);
+      setHasInitialized(true);
+      sendInitialMessage();
+    }
+  }, [hasInitialized, node?.label]);
+
   if (!node) {
     return null;
   }
@@ -119,31 +133,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   const sendInitialMessage = async () => {
+    console.log("Starting sendInitialMessage");
     setIsLoading(true);
     try {
-      // Generate badges for this module
-      try {
-        // const badges = await generateRoadmapBadges({
-        //   data: {
-        //     subject,
-        //     nodes: [
-        //       {
-        //         id: node.label,
-        //         data: {
-        //           label: node.label,
-        //           description: node.description,
-        //         },
-        //       },
-        //     ],
-        //     selectedKnowledgeNodes: [],
-        //   },
-        // });
-        // console.log("Generated badges for module:", node.label);
-        // console.log(badges);
-      } catch (error) {
-        console.error("Error generating badges:", error);
-      }
-
+      console.log("Sending initial chat request");
       const result = await chat({
         data: {
           subject: subject,
@@ -154,6 +147,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         },
       });
 
+      console.log("Got initial chat response, generating learning content");
       // Generate learning content from the response
       const learningResult = await chat({
         data: {
@@ -164,6 +158,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         },
       });
 
+      console.log("Got learning content, parsing and adding message");
       // Parse the learning content
       const content = JSON.parse(learningResult.response);
 
@@ -191,6 +186,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       addMessage(errorMessage);
       setCurrentMessage(errorMessage);
     } finally {
+      console.log("Finished sendInitialMessage");
       setIsLoading(false);
     }
   };
@@ -264,10 +260,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    sendInitialMessage();
-  }, [node.label]);
 
   return (
     <div className="flex-1 flex flex-col h-screen bg-slate-900 text-slate-300">
