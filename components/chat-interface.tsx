@@ -1,21 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Send } from "lucide-react";
-import { chat, generateSuggestionPills } from "@/features/chat/chat";
-import { generateTooltips } from "@/features/chat/tooltips";
+import { Send } from "lucide-react";
+import { generate as generateLesson } from "@/features/generators/lesson";
+import { generate as generateSuggestedQuestions } from "@/features/generators/suggested-questions";
 import { extractBoldedSegments } from "@/utils/extractBolded";
-import {
-  generateRoadmapBadges,
-  ModuleBadge,
-} from "@/features/badges/generator";
 import ReactMarkdown from "react-markdown";
-import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
-import { LoadingBubble } from "./ui/loading-bubble";
+import { motion, AnimatePresence } from "framer-motion";
 import { useConversationStore } from "@/features/chat/store";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { generateTooltips } from "@/features/chat/tooltips";
 
 export interface NodeData extends Record<string, unknown> {
   label: string;
@@ -95,7 +91,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setSuggestions([]);
       setIsSuggestionsLoading(true);
       try {
-        const result = await generateSuggestionPills({
+        const result = await generateSuggestedQuestions({
           data: {
             subject,
             moduleTitle: node?.label || "",
@@ -156,7 +152,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setIsLoading(true);
     try {
       console.log("Sending initial chat request");
-      const result = await chat({
+      const result = await generateLesson({
         data: {
           subject: subject,
           moduleTitle: label,
@@ -169,7 +165,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       await processMessageAndGenerateTooltips(result.response);
 
       console.log("Got initial chat response, generating learning content");
-      const learningResult = await chat({
+      const learningResult = await generateLesson({
         data: {
           subject: subject,
           moduleTitle: label,
@@ -260,7 +256,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     addMessage(userMessageObj);
 
     try {
-      const result = await chat({
+      const result = await generateLesson({
         data: {
           subject: subject,
           moduleTitle: node.label,
@@ -272,7 +268,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       await processMessageAndGenerateTooltips(result.response);
 
       // Generate learning content from the response
-      const learningResult = await chat({
+      const learningResult = await generateLesson({
         data: {
           subject: subject,
           moduleTitle: node.label,

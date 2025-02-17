@@ -1,5 +1,11 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { z } from "zod";
+import { callAnthropic } from "@/features/llm";
+import { createPrompt } from "@/prompts/chat/suggested-questions";
 import { createServerFn } from "@tanstack/start";
+
+const suggestionsSchema = z.object({
+  questions: z.array(z.string()),
+});
 
 export const generate = createServerFn({ method: "POST" })
   .validator(
@@ -14,36 +20,10 @@ export const generate = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     try {
-      const client = new Anthropic({
-        apiKey: process.env["ANTHROPIC_API_KEY"],
-      });
+      const prompt = createPrompt(data);
+      const response = await callAnthropic(prompt, suggestionsSchema);
 
-      const message = await client.messages.create({
-        messages: [
-          {
-            role: "user",
-            content: `Based on the current lesson about ${data.moduleTitle} (${data.moduleDescription}) and the last message: "${data.currentMessage}", generate 3-4 brief questions that a student might ask to explore different aspects of this topic. These should be natural questions that would help the student branch into different areas of learning.
-
-Format them as if the student is asking them, for example: "How does X relate to Y?" or "Can you explain Z in more detail?"
-
-Keep each question under 8 words if possible. Make them feel natural and conversational.
-
-Return your response in this exact JSON format, and only this format:
-{"questions": ["question 1", "question 2", "question 3"]}`,
-          },
-        ],
-        model: "claude-3-sonnet-20240229",
-        max_tokens: 1024,
-      });
-
-      const jsonContent = JSON.parse(
-        message.content
-          .filter((block) => block.type === "text")
-          .map((block) => block.text)
-          .join("")
-      );
-
-      return { suggestions: jsonContent.questions };
+      return { suggestions: response.questions };
     } catch (err) {
       console.error("Error generating suggestions:", err);
       throw err;

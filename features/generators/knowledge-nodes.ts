@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/start";
-import { generateKnowledgeNodesPrompt } from "../../prompts";
+import { generateKnowledgeNodesPrompt } from "@/prompts/roadmap/generate-knowledge-nodes";
 import { callAnthropic } from "../llm";
 import { z } from "zod";
 

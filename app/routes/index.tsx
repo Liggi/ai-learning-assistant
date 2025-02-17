@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { generateRoadmap } from "@/features/roadmap/generator";
+import { generate as generateRoadmap } from "@/features/generators/roadmap";
 import Loading from "@/components/ui/loading";
 import SubjectEntry from "@/components/subject-entry";
 import ExistingKnowledgeCalibration from "@/components/existing-knowledge-calibration";
@@ -55,19 +55,13 @@ function Home() {
     setIsLoading(true);
 
     try {
-      const subject = await createSubjectMutation.mutateAsync(userSubject);
+      await createSubjectMutation.mutateAsync(userSubject);
 
-      const roadmap = await generateRoadmap({
+      await generateRoadmap({
         data: {
           subject: userSubject,
           priorKnowledge: Array.from(selectedKnowledgeNodes).join("\n\n"),
         },
-      });
-
-      await saveRoadmapMutation.mutateAsync({
-        subjectId: subject.id,
-        nodes: roadmap.nodes,
-        edges: roadmap.edges,
       });
     } catch (error) {
       console.error("[Debug] Error in handleSubmit:", error);

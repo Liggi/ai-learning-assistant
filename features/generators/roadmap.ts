@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/start";
-import { generateRoadmapPrompt } from "../../prompts";
+import { generateRoadmapPrompt } from "@/prompts/roadmap/generate-roadmap";
 import { saveRoadmap } from "@/prisma/roadmap";
 import { callAnthropic } from "../llm";
 import { z } from "zod";

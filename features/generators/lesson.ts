@@ -1,13 +1,17 @@
 import { createServerFn } from "@tanstack/start";
 import { z } from "zod";
 import { callAnthropic } from "@/features/llm";
-import { systemPrompt } from "@/prompts";
+import { createPrompt } from "@/prompts/chat/lesson";
 
 const stripResponsePlanning = (text: string): string => {
   return text
     .replace(/<response_planning>[\s\S]*?<\/response_planning>/g, "")
     .trim();
 };
+
+const lessonResponseSchema = z.object({
+  response: z.string(),
+});
 
 export const generate = createServerFn({ method: "POST" })
   .validator(
@@ -20,22 +24,14 @@ export const generate = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     try {
-      const generateResponseSchema = z.object({
-        response: z.string(),
-      });
-
-      const prompt = `${systemPrompt({
+      const prompt = createPrompt({
         subject: data.subject,
         moduleTitle: data.moduleTitle,
         moduleDescription: data.moduleDescription,
-      })}
+        message: data.message,
+      });
 
-${data.message}
-
-Please answer and return only valid JSON using this format:
-{"response": "your answer"}`;
-
-      const result = await callAnthropic(prompt, generateResponseSchema);
+      const result = await callAnthropic(prompt, lessonResponseSchema);
 
       const cleanedResponse = stripResponsePlanning(result.response);
       return { response: cleanedResponse };

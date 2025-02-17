@@ -6,7 +6,7 @@ import {
   CalibrationPill,
   type CalibrationLevel,
 } from "@/components/ui/calibration-pill";
-import { useKnowledgeNodes } from "@/features/roadmap/queries";
+import { useKnowledgeNodes } from "@/features/queries";
 import Loading from "@/components/ui/loading";
 
 const levels: { min: number; max: number; label: CalibrationLevel }[] = [
