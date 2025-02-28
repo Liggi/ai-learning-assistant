@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import ConversationFlow from "./conversation-flow";
 import ChatInterface from "./chat-interface";
 import { useConversationStore } from "@/features/chat/store";
-import { useRoadmapStore, RoadmapNodeData } from "@/features/roadmap/store";
 import RoadmapView from "@/components/roadmap-view";
-import { Node } from "@xyflow/react";
-import { LayoutGrid, GitBranch } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
+import type { Node, Edge } from "@xyflow/react";
+import type { RoadmapNodeData } from "@/types/roadmap";
 
 export interface NodeData extends Record<string, unknown> {
   label: string;
@@ -21,6 +21,8 @@ interface ChatLayoutProps {
   subject: string;
   selectedMessageId?: string;
   onShowRoadmap?: () => void;
+  roadmapNodes?: Node[];
+  roadmapEdges?: Edge[];
 }
 
 const ChatLayout: React.FC<ChatLayoutProps> = ({
@@ -29,9 +31,10 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
   onBack,
   selectedMessageId: selectedMessageIdProp,
   onShowRoadmap,
+  roadmapNodes = [],
+  roadmapEdges = [],
 }) => {
   console.log("ChatLayout received node:", {
-    nodeId: node?.id,
     label: node?.label,
   });
 
@@ -57,7 +60,6 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
 
   useEffect(() => {
     console.log("ChatLayout node prop changed:", {
-      nodeId: node?.id,
       label: node?.label,
     });
   }, [node]);
@@ -68,14 +70,6 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
     selectedMessageIdProp,
     conversation: conversation.length,
   });
-
-  // Get roadmap data
-  const { nodes: roadmapNodes, edges: roadmapEdges } = useRoadmapStore(
-    (state) => ({
-      nodes: state.nodes,
-      edges: state.edges,
-    })
-  );
 
   // Hook up the conversation flow callback so that clicking a node updates
   // the selected message

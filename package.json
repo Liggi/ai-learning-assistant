@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "vinxi dev",
     "build": "vinxi build",
-    "start": "vinxi start"
+    "start": "vinxi start",
+    "clear-db": "node --loader ts-node/esm scripts/clear-database.ts"
   },
   "keywords": [],
   "author": "",
@@ -50,6 +51,8 @@
     "prisma-zod-generator": "^0.8.13",
     "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.17",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.2",
     "zod-prisma-types": "^3.2.3"
   }

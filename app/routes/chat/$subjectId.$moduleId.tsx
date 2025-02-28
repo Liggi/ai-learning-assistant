@@ -1,6 +1,7 @@
 import ChatLayout from "@/components/chat-layout";
 import { useSubjectWithRoadmap } from "@/hooks/api/subjects";
 import { createFileRoute, useParams, useRouter } from "@tanstack/react-router";
+import type { RoadmapNodeData } from "@/types/roadmap";
 
 export const Route = createFileRoute("/chat/$subjectId/$moduleId")({
   component: LearningMap,
@@ -15,11 +16,13 @@ function LearningMap() {
 
   if (!loadedSubject?.roadmap) return null;
 
+  const nodeData = loadedSubject.roadmap.nodes.find(
+    (node) => node.id === moduleId
+  )?.data;
+
   return (
     <ChatLayout
-      node={
-        loadedSubject.roadmap.nodes.find((node) => node.id === moduleId)?.data
-      }
+      node={nodeData}
       subject={loadedSubject.title}
       onBack={() => {
         router.navigate({
@@ -33,6 +36,8 @@ function LearningMap() {
           params: { subjectId },
         });
       }}
+      roadmapNodes={loadedSubject.roadmap.nodes}
+      roadmapEdges={loadedSubject.roadmap.edges}
     />
   );
 }

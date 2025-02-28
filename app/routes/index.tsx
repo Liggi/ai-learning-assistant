@@ -5,7 +5,7 @@ import { generate as generateRoadmap } from "@/features/generators/roadmap";
 import Loading from "@/components/ui/loading";
 import SubjectEntry from "@/components/subject-entry";
 import ExistingKnowledgeCalibration from "@/components/existing-knowledge-calibration";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import {
   useSubjects,
   useCreateSubject,
@@ -13,8 +13,11 @@ import {
   useSubjectWithRoadmap,
 } from "@/hooks/api/subjects";
 import { SerializedSubject } from "@/prisma/subjects";
+import { Logger } from "@/lib/logger";
 
 import "@xyflow/react/dist/style.css";
+
+const logger = new Logger({ context: "HomeRoute" });
 
 type ViewState = "selectSubject" | "calibrateWithExistingKnowledge";
 
@@ -23,6 +26,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const router = useRouter();
   const [isHydrated, setIsHydrated] = useState(false);
 
   const [currentView, setCurrentView] = useState<ViewState>("selectSubject");
@@ -43,6 +47,7 @@ function Home() {
 
   useEffect(() => {
     if (loadedSubject && loadedSubject.roadmap) {
+      logger.info("Loaded existing subject", { title: loadedSubject.title });
       setUserSubject(loadedSubject.title);
     }
   }, [loadedSubject]);
@@ -52,19 +57,32 @@ function Home() {
   }
 
   async function handleSubmit() {
+    logger.info("Starting subject creation", {
+      subject: userSubject,
+      knownTopicsCount: selectedKnowledgeNodes.size,
+    });
     setIsLoading(true);
 
     try {
-      await createSubjectMutation.mutateAsync(userSubject);
+      const newSubject = await createSubjectMutation.mutateAsync(userSubject);
+      logger.info("Subject created successfully", { subjectId: newSubject.id });
 
       await generateRoadmap({
         data: {
           subject: userSubject,
           priorKnowledge: Array.from(selectedKnowledgeNodes).join("\n\n"),
+          subjectId: newSubject.id,
         },
       });
+      logger.info("Roadmap generated successfully");
+
+      logger.info("Navigating to learning map", { subjectId: newSubject.id });
+      await router.navigate({
+        to: "/learning-map/$subjectId",
+        params: { subjectId: newSubject.id },
+      });
     } catch (error) {
-      console.error("[Debug] Error in handleSubmit:", error);
+      logger.error("Error in handleSubmit", { error });
     } finally {
       setIsLoading(false);
     }
@@ -75,8 +93,10 @@ function Home() {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
+        logger.debug("Knowledge node removed", { id });
       } else {
         newSet.add(id);
+        logger.debug("Knowledge node added", { id });
       }
       return newSet;
     });
@@ -95,8 +115,14 @@ function Home() {
 
             <SubjectEntry
               subject={userSubject}
-              onSubjectChange={setUserSubject}
-              onNext={() => setCurrentView("calibrateWithExistingKnowledge")}
+              onSubjectChange={(newSubject) => {
+                logger.info("Subject updated", { newSubject });
+                setUserSubject(newSubject);
+              }}
+              onNext={() => {
+                logger.info("Moving to knowledge calibration");
+                setCurrentView("calibrateWithExistingKnowledge");
+              }}
             />
           </>
         );
@@ -107,7 +133,10 @@ function Home() {
             subject={userSubject}
             selectedKnowledgeNodes={selectedKnowledgeNodes}
             onCalibrationChange={toggleKnowledgeNode}
-            onBack={() => setCurrentView("selectSubject")}
+            onBack={() => {
+              logger.info("Returning to subject selection");
+              setCurrentView("selectSubject");
+            }}
             onNext={async () => {
               await handleSubmit();
             }}

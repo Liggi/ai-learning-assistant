@@ -1,6 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { TextBlock } from "@anthropic-ai/sdk/src/resources/messages/messages.js";
 import { z } from "zod";
+import { Logger } from "@/lib/logger";
+
+const logger = new Logger({ context: "Anthropic" });
 
 /**
  * Reusable function for handling calls to the Anthropic API with strongly typed responses.
@@ -25,10 +28,12 @@ export async function callAnthropic<T>(
 
   while (attempt < maxRetries) {
     try {
-      console.log(`\n🔄 Attempt ${attempt + 1} of ${maxRetries}`);
+      logger.group(`Attempt ${attempt + 1} of ${maxRetries}`, () => {
+        logger.info("Starting new API request attempt");
+      });
       attempt++;
 
-      console.log("📤 Sending request to Anthropic API...");
+      logger.debug("Sending request to Anthropic API", { prompt });
       const message = await client.messages.create({
         max_tokens: 4096,
         messages: [
@@ -40,31 +45,60 @@ export async function callAnthropic<T>(
         model: "claude-3-5-sonnet-latest",
       });
 
-      console.log("📥 Received response from Anthropic API");
+      logger.debug("Received response from Anthropic API", {
+        response: message,
+      });
       const stringResponse = message.content
         .filter((block): block is TextBlock => block.type === "text")
         .map((block) => block.text)
         .join("");
 
-      console.log("\n🔍 Attempting to parse JSON...");
-      const parsedResponse = JSON.parse(stringResponse);
+      logger.group("JSON Parsing", () => {
+        logger.debug("Attempting to parse response", { stringResponse });
+      });
 
-      // Validate and parse the response using the provided Zod schema.
+      let parsedResponse;
+      try {
+        // First try direct parsing
+        parsedResponse = JSON.parse(stringResponse);
+      } catch (parseError) {
+        logger.warn("Direct parsing failed, attempting to clean response", {
+          error: parseError,
+        });
+        const cleanedResponse = stringResponse
+          .replace(/[\n\r]/g, "\\n")
+          .replace(/(?<!\\)"/g, '\\"');
+
+        try {
+          parsedResponse = JSON.parse(`{"response": "${cleanedResponse}"}`);
+          logger.info("Successfully parsed cleaned response");
+        } catch (secondError) {
+          logger.error("Failed to parse cleaned response", {
+            error: secondError,
+            cleanedResponse,
+          });
+          throw parseError;
+        }
+      }
+
+      // Validate and parse the response using the provided Zod schema
       const result = schema.parse(parsedResponse);
-      console.log("✅ Response passed validation!");
+      logger.info("Response passed schema validation");
 
       return result;
     } catch (err) {
-      console.error(`\n❌ Attempt ${attempt} failed with error:`, err);
+      logger.error(`Attempt ${attempt} failed`, { error: err });
       if (attempt >= maxRetries) {
-        console.error("\n💥 All attempts failed after maximum retries");
+        logger.error("All attempts failed after maximum retries", {
+          maxRetries,
+        });
         throw err;
       }
-      // Wait 1 second before the next attempt.
+      // Wait 1 second before the next attempt
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 
-  // This line should never be reached.
+  // This line should never be reached
   throw new Error("Unreachable: Failed to obtain a valid Anthropic response");
 }

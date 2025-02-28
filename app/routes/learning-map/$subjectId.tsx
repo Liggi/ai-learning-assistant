@@ -2,6 +2,9 @@ import RoadmapView from "@/components/roadmap-view";
 import { useSubjectWithRoadmap } from "@/hooks/api/subjects";
 import { createFileRoute, useParams, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { Logger } from "@/lib/logger";
+
+const logger = new Logger({ context: "LearningMapRoute" });
 
 export const Route = createFileRoute("/learning-map/$subjectId")({
   component: LearningMap,
@@ -12,9 +15,22 @@ function LearningMap() {
   const router = useRouter();
   const { data: loadedSubject } = useSubjectWithRoadmap(subjectId);
 
-  if (!loadedSubject?.roadmap) return null;
+  logger.info("Loading subject with roadmap", {
+    subjectId,
+    hasSubject: !!loadedSubject,
+    hasRoadmap: !!loadedSubject?.roadmap,
+  });
+
+  if (!loadedSubject?.roadmap) {
+    logger.warn("No roadmap found", { subjectId });
+    return null;
+  }
 
   const { nodes, edges } = loadedSubject.roadmap;
+  logger.info("Rendering roadmap", {
+    nodeCount: nodes.length,
+    edgeCount: edges.length,
+  });
 
   return (
     <motion.div

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Send } from "lucide-react";
 import { generate as generateLesson } from "@/features/generators/lesson";
 import { generate as generateSuggestedQuestions } from "@/features/generators/suggested-questions";
+import { generate as generateTooltips } from "@/features/generators/tooltips";
 import { extractBoldedSegments } from "@/utils/extractBolded";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,7 +12,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { generateTooltips } from "@/features/chat/tooltips";
 
 export interface NodeData extends Record<string, unknown> {
   label: string;
