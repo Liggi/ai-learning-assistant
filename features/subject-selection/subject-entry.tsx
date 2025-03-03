@@ -1,21 +1,32 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ButtonLoading } from "@/components/ui/button-loading";
+import { useCreateSubject } from "@/hooks/api/subjects";
 
 interface SubjectEntryProps {
   subject: string;
   onSubjectChange: (subject: string) => void;
-  onNext: () => void;
-  isSubmitting?: boolean;
+  onNext: (subjectId: string) => void;
 }
 
 export default function SubjectEntry({
   subject,
   onSubjectChange,
   onNext,
-  isSubmitting = false,
 }: SubjectEntryProps) {
+  const createSubjectMutation = useCreateSubject();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    const newSubject = await createSubjectMutation.mutateAsync(subject);
+    setIsSubmitting(false);
+
+    onNext(newSubject.id);
+  };
+
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <motion.div
@@ -39,7 +50,7 @@ export default function SubjectEntry({
             className="mb-4"
             onKeyDown={(e) => {
               if (e.key === "Enter" && subject.trim()) {
-                onNext();
+                handleSubmit();
               }
             }}
           />
@@ -48,7 +59,7 @@ export default function SubjectEntry({
           ) : (
             <Button
               className="w-full"
-              onClick={onNext}
+              onClick={handleSubmit}
               disabled={!subject.trim()}
             >
               Next

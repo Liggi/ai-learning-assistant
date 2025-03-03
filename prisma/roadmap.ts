@@ -3,9 +3,6 @@ import { createServerFn } from "@tanstack/start";
 import { z } from "zod";
 import { RoadmapSchema } from "./generated/zod";
 import { roadmapNodeSchema, roadmapEdgeSchema } from "@/types/roadmap";
-import { Logger } from "@/lib/logger";
-
-const logger = new Logger({ context: "RoadmapService" });
 
 export const SerializedRoadmapSchema = RoadmapSchema.extend({
   createdAt: z.string(),
@@ -25,35 +22,24 @@ const saveRoadmapInputSchema = z.object({
 export const saveRoadmap = createServerFn({ method: "POST" })
   .validator((data: { subjectId: string; nodes: any; edges: any }) => data)
   .handler(async ({ data }) => {
-    logger.info("Starting roadmap save process", { subjectId: data.subjectId });
-
     try {
       // Validate input data
-      logger.debug("Validating input data");
       const validatedData = saveRoadmapInputSchema.parse(data);
-      logger.debug("Input data validation successful");
 
       // Verify subject exists
-      logger.debug("Verifying subject exists");
       const subject = await prisma.subject.findUnique({
         where: { id: validatedData.subjectId },
       });
 
       if (!subject) {
-        logger.error("Subject not found", {
-          subjectId: validatedData.subjectId,
-        });
         throw new Error(`Subject not found: ${validatedData.subjectId}`);
       }
-      logger.debug("Subject verification successful");
 
       // Ensure nodes and edges are valid JSON
-      logger.debug("Preparing data for database");
       const sanitizedNodes = JSON.parse(JSON.stringify(validatedData.nodes));
       const sanitizedEdges = JSON.parse(JSON.stringify(validatedData.edges));
 
       // Upsert the roadmap record
-      logger.debug("Upserting roadmap");
       const roadmap = await prisma.roadmap.upsert({
         where: { subjectId: validatedData.subjectId },
         update: {
@@ -68,7 +54,6 @@ export const saveRoadmap = createServerFn({ method: "POST" })
       });
 
       // Convert Date objects AND ensure JSON fields are plain objects
-      logger.debug("Serializing roadmap data");
       const serializedRoadmap = {
         ...roadmap,
         createdAt: roadmap.createdAt.toISOString(),
@@ -77,22 +62,8 @@ export const saveRoadmap = createServerFn({ method: "POST" })
         edges: JSON.parse(JSON.stringify(roadmap.edges)),
       };
 
-      logger.info("Roadmap saved successfully", { subjectId: data.subjectId });
       return serializedRoadmap;
     } catch (error) {
-      logger.error("Error in roadmap save process", {
-        error: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined,
-        data: {
-          subjectId: data.subjectId,
-          nodesLength: Array.isArray(data.nodes)
-            ? data.nodes.length
-            : typeof data.nodes,
-          edgesLength: Array.isArray(data.edges)
-            ? data.edges.length
-            : typeof data.edges,
-        },
-      });
       throw error;
     }
   });

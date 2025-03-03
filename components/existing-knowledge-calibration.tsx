@@ -8,6 +8,12 @@ import {
 } from "@/components/ui/calibration-pill";
 import { useKnowledgeNodes } from "@/features/queries";
 import Loading from "@/components/ui/loading";
+import { SerializedSubject } from "@/prisma/subjects";
+import { generate } from "@/features/generators/roadmap";
+import { Logger } from "@/lib/logger";
+import { useSaveRoadmap } from "@/hooks/api/subjects";
+
+const logger = new Logger({ context: "ExistingKnowledgeCalibration" });
 
 const levels: { min: number; max: number; label: CalibrationLevel }[] = [
   { min: 0, max: 0, label: "No calibration" },
@@ -44,13 +50,6 @@ const complexityStyles = {
 } as const;
 
 type ComplexityLevel = keyof typeof complexityStyles;
-const complexityLevels: ComplexityLevel[] = [
-  "basic",
-  "intermediate",
-  "advanced",
-  "expert",
-  "master",
-];
 
 interface KnowledgeNode {
   name: string;
@@ -58,13 +57,9 @@ interface KnowledgeNode {
 }
 
 interface ExistingKnowledgeCalibrationProps {
-  subject: string;
-  selectedKnowledgeNodes: Set<string>;
-  onCalibrationChange: (id: string) => void;
+  subject: SerializedSubject;
   onBack: () => void;
   onNext: () => void;
-  onKnowledgeNodesGenerated?: (nodes: string[]) => void;
-  isLoading?: boolean;
 }
 
 const getComplexityFromDepth = (depth: number): ComplexityLevel => {
@@ -80,50 +75,62 @@ const getComplexityFromDepth = (depth: number): ComplexityLevel => {
 
 export default function ExistingKnowledgeCalibration({
   subject,
-  selectedKnowledgeNodes,
-  onCalibrationChange,
   onBack,
   onNext,
-  onKnowledgeNodesGenerated = () => {},
 }: ExistingKnowledgeCalibrationProps) {
-  const { data: knowledgeNodes, isLoading, error } = useKnowledgeNodes(subject);
-  const [visibleNodeCount, setVisibleNodeCount] = useState(0);
+  const {
+    data: knowledgeNodes,
+    isLoading,
+    error,
+  } = useKnowledgeNodes(subject.title);
   const [sortedNodes, setSortedNodes] = useState<KnowledgeNode[]>([]);
-  const [lastSelectedComplexity, setLastSelectedComplexity] =
-    useState<ComplexityLevel | null>(null);
+
   const [conceptComplexities, setConceptComplexities] = useState<
     Map<string, ComplexityLevel>
   >(new Map());
-  const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
-  // Calculate complexity similarity score (0-1)
-  const getComplexitySimilarity = (
-    complexity1: ComplexityLevel,
-    complexity2: ComplexityLevel
-  ): number => {
-    const levels = complexityLevels;
-    const pos1 = levels.indexOf(complexity1);
-    const pos2 = levels.indexOf(complexity2);
-    const maxDistance = levels.length - 1;
-    return 1 - Math.abs(pos1 - pos2) / maxDistance;
-  };
+  const createRoadmapMutation = useSaveRoadmap();
 
-  // Helper function to determine if a node should be visible
-  const shouldBeVisible = (
-    index: number,
-    totalNodes: number,
-    nodeName: string
-  ) => {
-    // Always show initial distribution
-    const step = Math.floor(totalNodes / 5);
-    const distributionIndex = Math.floor(index / step);
-    const isInitiallyVisible = index % step === 0 && distributionIndex < 5;
+  const [selectedKnowledgeNodes, setSelectedKnowledgeNodes] = useState<
+    Set<string>
+  >(new Set());
 
-    if (isInitiallyVisible) return true;
-    if (index >= visibleNodeCount) return false;
+  async function createRoadmap() {
+    logger.info("Starting roadmap creation", {
+      subject,
+    });
 
-    // If we have a last selected complexity, show all nodes up to visibleNodeCount
-    return true;
+    try {
+      const roadmap = await generate({
+        data: {
+          subject: subject.title,
+          priorKnowledge: Array.from(selectedKnowledgeNodes).join("\n"),
+        },
+      });
+      logger.info("Roadmap generated successfully");
+
+      await createRoadmapMutation.mutateAsync({
+        subjectId: subject.id,
+        nodes: roadmap.nodes,
+        edges: roadmap.edges,
+      });
+    } catch (error) {
+      logger.error("Error in createRoadmap", { error });
+    }
+  }
+
+  const toggleKnowledgeNode = (id: string) => {
+    setSelectedKnowledgeNodes((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+        logger.debug("Knowledge node removed", { id });
+      } else {
+        newSet.add(id);
+        logger.debug("Knowledge node added", { id });
+      }
+      return newSet;
+    });
   };
 
   // Sort nodes by depth_level and calculate initial visibility
@@ -158,22 +165,7 @@ export default function ExistingKnowledgeCalibration({
       });
       setConceptComplexities(complexities);
     }
-  }, [knowledgeNodes]); // Remove onKnowledgeNodesGenerated from dependencies
-
-  // Separate effect for onKnowledgeNodesGenerated callback
-  useEffect(() => {
-    if (sortedNodes.length && onKnowledgeNodesGenerated) {
-      onKnowledgeNodesGenerated(sortedNodes.map((node) => node.name));
-    }
-  }, [sortedNodes, onKnowledgeNodesGenerated]);
-
-  // Increment visible count when user interacts
-  const handleCalibrationChange = (id: string) => {
-    const nodeComplexity = conceptComplexities.get(id) || "basic";
-    setLastSelectedComplexity(nodeComplexity);
-    setVisibleNodeCount((prev) => Math.min(prev + 3, sortedNodes.length));
-    onCalibrationChange(id);
-  };
+  }, [knowledgeNodes]);
 
   if (isLoading) {
     return <Loading />;
@@ -198,7 +190,6 @@ export default function ExistingKnowledgeCalibration({
 
   return (
     <div className="flex flex-col h-screen bg-[#0B0D11] text-white">
-      {/* Minimalist Header */}
       <div className="p-6 border-b border-gray-800">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -231,36 +222,20 @@ export default function ExistingKnowledgeCalibration({
         </motion.div>
       </div>
 
-      {/* Main Content Area */}
       <div className="flex-1 overflow-auto p-6">
         <div className="max-w-[1200px] mx-auto">
           <div className="columns-2 md:columns-3 gap-4">
-            {sortedNodes.map((node, index) => {
-              const isDistributed = shouldBeVisible(
-                index,
-                sortedNodes.length,
-                node.name
-              );
-              const isVisible = isDistributed || index < visibleNodeCount;
-
+            {sortedNodes.map((node) => {
               return (
-                <div
-                  key={node.name}
-                  className="break-inside-avoid mb-4"
-                  ref={(el) => {
-                    if (el) itemRefs.current.set(node.name, el);
-                  }}
-                >
+                <div key={node.name} className="break-inside-avoid mb-4">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    animate={
-                      isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
-                    }
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
-                    style={{ pointerEvents: isVisible ? "auto" : "none" }}
+                    style={{ pointerEvents: "auto" }}
                   >
                     <button
-                      onClick={() => handleCalibrationChange(node.name)}
+                      onClick={() => toggleKnowledgeNode(node.name)}
                       className={`
                         block w-full text-left px-3 py-2 rounded-2xl transition-all duration-200
                         ${
@@ -310,7 +285,6 @@ export default function ExistingKnowledgeCalibration({
         </div>
       </div>
 
-      {/* Fixed Footer */}
       <div className="border-t border-gray-800 p-4 bg-[#0B0D11]">
         <div className="max-w-[900px] mx-auto flex justify-between">
           <Button
@@ -321,13 +295,16 @@ export default function ExistingKnowledgeCalibration({
             <ChevronLeft className="mr-2 h-4 w-4" /> Back
           </Button>
           <Button
-            onClick={onNext}
+            onClick={() => {
+              createRoadmap();
+              onNext();
+            }}
             variant="outline"
             className="text-gray-400 hover:text-white"
           >
             {selectedKnowledgeNodes.size > 0
               ? "Continue with selection"
-              : "Skip calibration"}{" "}
+              : "Continue"}{" "}
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         </div>

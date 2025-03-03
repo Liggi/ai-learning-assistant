@@ -11,11 +11,11 @@ generator client {
 generator zod {
   provider               = "zod-prisma-types"
   output                 = "./generated/zod"
-  createInputTypes       = false
-  createModelTypes       = true
-  addInputTypeValidation = false
-  addIncludeTypes        = false
-  addSelectTypes         = false
+  addIncludeTypes        = "false"
+  addInputTypeValidation = "false"
+  addSelectTypes         = "false"
+  createInputTypes       = "false"
+  createModelTypes       = "true"
 }
 
 datasource db {
@@ -28,16 +28,15 @@ model Subject {
   title     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  roadmap Roadmap?
+  roadmap   Roadmap?
 }
 
 model Roadmap {
   id        String   @id @default(uuid())
   subjectId String   @unique
-  subject   Subject  @relation(fields: [subjectId], references: [id])
   nodes     Json
   edges     Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  subject   Subject  @relation(fields: [subjectId], references: [id])
 }

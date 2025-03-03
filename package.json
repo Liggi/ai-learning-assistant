@@ -24,10 +24,12 @@
     "@tanstack/react-query": "^5.64.2",
     "@tanstack/react-router": "^1.95.1",
     "@tanstack/start": "^1.95.1",
+    "@types/lodash": "^4.17.16",
     "@xyflow/react": "^12.3.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^11.17.0",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.469.0",
     "prisma": "^6.3.1",
     "react": "^19.0.0",
@@ -37,8 +39,11 @@
     "superjson": "^1.1.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^11.1.0",
     "vinxi": "^0.5.1",
-    "zod": "^3.24.2"
+    "vite": "^6.2.0",
+    "zod": "^3.24.2",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@shadcn/ui": "^0.0.4",

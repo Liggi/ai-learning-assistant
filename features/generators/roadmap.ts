@@ -23,19 +23,14 @@ const nodeDataSchema = z.object({
     .default("not-started"),
 });
 
-const positionSchema = z
-  .object({
-    x: z.number(),
-    y: z.number(),
-  })
-  .default(() => ({
-    x: Math.floor(Math.random() * 800),
-    y: Math.floor(Math.random() * 600),
-  }));
+const positionSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+});
 
 const nodeSchema = z
   .object({
-    id: z.string().default(() => uuidv4()),
+    id: z.string(),
     type: z.literal("normalNode").default("normalNode"),
     position: positionSchema,
     data: nodeDataSchema,
@@ -51,7 +46,7 @@ const nodeSchema = z
 
 const edgeSchema = z
   .object({
-    id: z.string().default(() => uuidv4()),
+    id: z.string(),
     type: z.literal("smoothstep").default("smoothstep"),
     source: z.string(),
     target: z.string(),

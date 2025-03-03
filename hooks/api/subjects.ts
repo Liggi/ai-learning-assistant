@@ -1,9 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type UseQueryResult,
+} from "@tanstack/react-query";
 import {
   getAllSubjects,
   getSubjectWithRoadmap,
   createSubject,
   type SerializedSubject,
+  getSubject,
 } from "@/prisma/subjects";
 import { saveRoadmap } from "@/prisma/roadmap";
 import type { Node, Edge } from "@xyflow/react";
@@ -13,6 +19,17 @@ export function useSubjects() {
     queryKey: ["subjects"],
     queryFn: async () => {
       return getAllSubjects();
+    },
+  });
+}
+
+export function useSubject(
+  subjectId: string
+): UseQueryResult<SerializedSubject | null> {
+  return useQuery<SerializedSubject | null>({
+    queryKey: ["subjects", subjectId],
+    queryFn: async () => {
+      return getSubject({ data: { id: subjectId } });
     },
   });
 }

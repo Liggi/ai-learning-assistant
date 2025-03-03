@@ -1,12 +1,14 @@
 import { z } from "zod";
 import prisma from "@/prisma/client";
-import type { Subject, Roadmap } from "@prisma/client";
 import { createServerFn } from "@tanstack/start";
-import { SubjectSchema } from "./generated/zod";
+import { SubjectSchema, RoadmapSchema } from "./generated/zod";
 import { SerializedRoadmapSchema } from "./roadmap";
 import { Logger } from "@/lib/logger";
 
 const logger = new Logger({ context: "SubjectsService" });
+
+type PrismaSubject = z.infer<typeof SubjectSchema>;
+type PrismaRoadmap = z.infer<typeof RoadmapSchema>;
 
 export const SerializedSubjectSchema = SubjectSchema.extend({
   createdAt: z.string(),
@@ -17,7 +19,7 @@ export const SerializedSubjectSchema = SubjectSchema.extend({
 export type SerializedSubject = z.infer<typeof SerializedSubjectSchema>;
 
 export function serializeSubject(
-  subject: Subject & { roadmap?: Roadmap | null }
+  subject: PrismaSubject & { roadmap?: PrismaRoadmap | null }
 ): SerializedSubject {
   return SerializedSubjectSchema.parse({
     ...subject,
@@ -85,6 +87,31 @@ export const getAllSubjects = createServerFn({ method: "GET" })
 const getSubjectSchema = z.object({
   id: z.string().uuid("Invalid subject ID"),
 });
+
+export const getSubject = createServerFn({ method: "GET" })
+  .validator((data: unknown) => getSubjectSchema.parse(data))
+  .handler(async ({ data }): Promise<SerializedSubject | null> => {
+    logger.info("Fetching subject", { id: data.id });
+    try {
+      const subject = await prisma.subject.findUnique({
+        where: { id: data.id },
+      });
+
+      if (!subject) {
+        logger.warn("Subject not found", { id: data.id });
+        return null;
+      }
+
+      logger.info("Subject fetched successfully", { id: data.id });
+      return serializeSubject(subject);
+    } catch (error) {
+      logger.error("Failed to fetch subject", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        id: data.id,
+      });
+      throw error;
+    }
+  });
 
 export const getSubjectWithRoadmap = createServerFn({ method: "GET" })
   .validator((data: unknown) => getSubjectSchema.parse(data))
