@@ -46,7 +46,4 @@ Ensure your explanation is accurate, tailored to the learner's current stage, an
 
 Format your answer entirely in markdown.
 
-${message}
-
-Please answer and return only valid JSON using this format:
-{"response": "your answer"}`;
+${message}`;

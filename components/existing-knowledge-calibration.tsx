@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import {
   CalibrationPill,
   type CalibrationLevel,
@@ -95,6 +95,8 @@ export default function ExistingKnowledgeCalibration({
     Set<string>
   >(new Set());
 
+  const [isCreatingRoadmap, setIsCreatingRoadmap] = useState(false);
+
   async function createRoadmap() {
     logger.info("Starting roadmap creation", {
       subject,
@@ -116,6 +118,7 @@ export default function ExistingKnowledgeCalibration({
       });
     } catch (error) {
       logger.error("Error in createRoadmap", { error });
+      setIsCreatingRoadmap(false);
     }
   }
 
@@ -291,21 +294,33 @@ export default function ExistingKnowledgeCalibration({
             variant="outline"
             onClick={onBack}
             className="text-gray-400 hover:text-white"
+            disabled={isCreatingRoadmap}
           >
             <ChevronLeft className="mr-2 h-4 w-4" /> Back
           </Button>
           <Button
-            onClick={() => {
-              createRoadmap();
+            onClick={async () => {
+              setIsCreatingRoadmap(true);
+              await createRoadmap();
               onNext();
+              setIsCreatingRoadmap(false);
             }}
             variant="outline"
             className="text-gray-400 hover:text-white"
+            disabled={isCreatingRoadmap}
           >
-            {selectedKnowledgeNodes.size > 0
-              ? "Continue with selection"
-              : "Continue"}{" "}
-            <ChevronRight className="ml-2 h-4 w-4" />
+            {isCreatingRoadmap ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...
+              </>
+            ) : (
+              <>
+                {selectedKnowledgeNodes.size > 0
+                  ? "Continue with selection"
+                  : "Continue"}{" "}
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </>
+            )}
           </Button>
         </div>
       </div>

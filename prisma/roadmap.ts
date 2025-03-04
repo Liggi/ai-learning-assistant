@@ -39,6 +39,8 @@ export const saveRoadmap = createServerFn({ method: "POST" })
       const sanitizedNodes = JSON.parse(JSON.stringify(validatedData.nodes));
       const sanitizedEdges = JSON.parse(JSON.stringify(validatedData.edges));
 
+      console.log("Saving roadmap");
+
       // Upsert the roadmap record
       const roadmap = await prisma.roadmap.upsert({
         where: { subjectId: validatedData.subjectId },

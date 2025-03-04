@@ -42,19 +42,27 @@ export default function ConversationNode({
   const setNodeHeight = useConversationStore((state) => state.setNodeHeight);
   const lastHeightRef = useRef<number>(0);
 
-  // Create a debounced update function that only triggers if height changed
+  // Create a debounced update function that only triggers if height changed significantly
   const debouncedUpdateHeight = useCallback(
     debounce((height: number) => {
-      if (height !== lastHeightRef.current) {
+      // Only update if the height has changed by at least 5px to avoid minor fluctuations
+      if (Math.abs(height - lastHeightRef.current) > 5) {
         lastHeightRef.current = height;
         setNodeHeight(data.id, height);
       }
-    }, 100),
+    }, 150),
     [data.id, setNodeHeight]
   );
 
   useEffect(() => {
     if (!containerRef.current) return;
+
+    // Set initial height
+    const initialHeight = containerRef.current.offsetHeight;
+    if (initialHeight > 0 && lastHeightRef.current === 0) {
+      lastHeightRef.current = initialHeight;
+      setNodeHeight(data.id, initialHeight);
+    }
 
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {

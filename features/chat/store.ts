@@ -1,23 +1,14 @@
 import { create } from "zustand";
 import { Node, Edge } from "@xyflow/react";
-
-interface LearningContent {
-  summary: string;
-  takeaways: string[];
-}
-
-export interface Message {
-  id?: string;
-  text: string;
-  isUser: boolean;
-  content?: LearningContent;
-  parentId?: string; // Track which message this is responding to
-}
+import { Message, NodeData } from "./chat-service";
 
 export interface ConversationNodeData extends Record<string, unknown> {
   id: string;
   text: string;
-  content?: LearningContent;
+  content?: {
+    summary: string;
+    takeaways: string[];
+  };
   summary: string;
   isUser: boolean;
 }
@@ -28,9 +19,9 @@ interface ConversationState {
   edges: Edge[];
   activeNodeId: string | null;
   nodeHeights: Record<string, number>; // Map of node ID to its height
+
+  // Actions
   addMessage: (message: Message) => void;
-  setNodes: (nodes: Node<ConversationNodeData>[]) => void;
-  setEdges: (edges: Edge[]) => void;
   setActiveNode: (nodeId: string) => void;
   setNodeHeight: (nodeId: string, height: number) => void;
 }
@@ -77,7 +68,7 @@ const messageToNode = (
 });
 
 // Compute tree layout from messages and return nodes and edges arrays
-const computeTreeLayout = (
+export const computeTreeLayout = (
   messages: Message[],
   nodeHeights: Record<string, number>
 ): { nodes: Node<ConversationNodeData>[]; edges: Edge[] } => {
@@ -173,39 +164,39 @@ export const useConversationStore = create<ConversationState>((set) => ({
   edges: [],
   activeNodeId: null,
   nodeHeights: {},
+
   addMessage: (message) =>
     set((state) => {
       const newMessages = [...state.messages, message];
-      const { nodes: newNodes, edges: newEdges } = computeTreeLayout(
+      const { nodes, edges } = computeTreeLayout(
         newMessages,
         state.nodeHeights
       );
       return {
         messages: newMessages,
-        nodes: newNodes,
-        edges: newEdges,
+        nodes,
+        edges,
       };
     }),
-  setNodes: (nodes) => set({ nodes }),
-  setEdges: (edges) => set({ edges }),
+
   setActiveNode: (nodeId) => set({ activeNodeId: nodeId }),
+
   setNodeHeight: (nodeId, height) =>
     set((state) => {
-      // Only update if height actually changed
       if (state.nodeHeights[nodeId] === height) {
         return state;
       }
 
       const newNodeHeights = { ...state.nodeHeights, [nodeId]: height };
-      const { nodes: newNodes, edges: newEdges } = computeTreeLayout(
+      const { nodes, edges } = computeTreeLayout(
         state.messages,
         newNodeHeights
       );
 
       return {
         nodeHeights: newNodeHeights,
-        nodes: newNodes,
-        edges: newEdges,
+        nodes,
+        edges,
       };
     }),
 }));

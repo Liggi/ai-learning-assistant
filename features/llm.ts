@@ -3,7 +3,7 @@ import { TextBlock } from "@anthropic-ai/sdk/src/resources/messages/messages.js"
 import { z } from "zod";
 import { Logger } from "@/lib/logger";
 
-const logger = new Logger({ context: "Anthropic" });
+const logger = new Logger({ context: "Anthropic", enabled: false });
 
 /**
  * Reusable function for handling calls to the Anthropic API with strongly typed responses.
@@ -57,6 +57,12 @@ export async function callAnthropic<T>(
         logger.debug("Attempting to parse response", { stringResponse });
       });
 
+      // If the response is empty, provide a default empty response
+      if (!stringResponse.trim()) {
+        logger.warn("Empty response received from Anthropic API");
+        return { response: "" } as T;
+      }
+
       let parsedResponse;
       try {
         // First try direct parsing
@@ -65,6 +71,13 @@ export async function callAnthropic<T>(
         logger.warn("Direct parsing failed, attempting to clean response", {
           error: parseError,
         });
+
+        // Check if the schema expects a string directly
+        if (schema.safeParse({ response: stringResponse }).success) {
+          logger.info("Using raw response as string");
+          return { response: stringResponse } as T;
+        }
+
         const cleanedResponse = stringResponse
           .replace(/[\n\r]/g, "\\n")
           .replace(/(?<!\\)"/g, '\\"');

@@ -1,5 +1,6 @@
 import { ReactFlow, ReactFlowProvider, useReactFlow } from "@xyflow/react";
-import { useConversationStore, Message } from "@/features/chat/store";
+import { useConversationStore } from "@/features/chat/store";
+import { Message } from "@/features/chat/chat-service";
 import ConversationNode from "./conversation-node";
 import { useEffect } from "react";
 import { LayoutGrid } from "lucide-react";
@@ -29,10 +30,8 @@ function ConversationFlowInner({
   onNodeClick,
   selectedNodeId,
 }: ConversationFlowProps) {
-  const { nodes, edges } = useConversationStore((state) => ({
-    nodes: state.nodes,
-    edges: state.edges,
-  }));
+  const nodes = useConversationStore((state) => state.nodes);
+  const edges = useConversationStore((state) => state.edges);
   const { fitView } = useReactFlow();
 
   // Add debug logging

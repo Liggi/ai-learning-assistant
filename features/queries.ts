@@ -9,5 +9,8 @@ export function useKnowledgeNodes(subject: string) {
       return response;
     },
     enabled: !!subject,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: Infinity,
   });
 }

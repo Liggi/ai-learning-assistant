@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ConversationFlow from "./conversation-flow";
-import ChatInterface from "./chat-interface";
+import { ChatInterface } from "./chat/chat-interface";
 import { useConversationStore } from "@/features/chat/store";
 import RoadmapView from "@/components/roadmap-view";
 import { LayoutGrid } from "lucide-react";
@@ -34,10 +34,6 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
   roadmapNodes = [],
   roadmapEdges = [],
 }) => {
-  console.log("ChatLayout received node:", {
-    label: node?.label,
-  });
-
   const [selectedMessageId, setSelectedMessageId] = useState<
     string | undefined
   >(selectedMessageIdProp);
@@ -45,44 +41,24 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
     "conversation"
   );
 
-  // Get conversation data
-  const {
-    messages: conversation,
-    nodes: conversationNodes,
-    edges: conversationEdges,
-    setActiveNode,
-  } = useConversationStore((state) => ({
-    messages: state.messages,
-    nodes: state.nodes,
-    edges: state.edges,
-    setActiveNode: state.setActiveNode,
-  }));
-
-  useEffect(() => {
-    console.log("ChatLayout node prop changed:", {
-      label: node?.label,
-    });
-  }, [node]);
-
-  console.log("ChatLayout rendering with:", {
-    node,
-    subject,
-    selectedMessageIdProp,
-    conversation: conversation.length,
+  const messages = useConversationStore((state) => state.messages);
+  const setActiveNode = useConversationStore((state) => state.setActiveNode);
+  const currentMessage = useConversationStore((state) => {
+    const activeNodeId = state.activeNodeId;
+    return activeNodeId
+      ? state.messages.find((msg) => msg.id === activeNodeId)
+      : undefined;
   });
 
-  // Hook up the conversation flow callback so that clicking a node updates
-  // the selected message
   const handleNodeClick = (text: string, nodeId: string) => {
-    // Find the clicked message
-    const messageIndex = conversation.findIndex((msg) => msg.id === nodeId);
+    const messageIndex = messages.findIndex((msg) => msg.id === nodeId);
     if (messageIndex === -1) return;
 
-    const message = conversation[messageIndex];
+    const message = messages[messageIndex];
 
     // If this is a user message (question) and there's a next message, select the answer instead
-    if (message.isUser && messageIndex + 1 < conversation.length) {
-      const answer = conversation[messageIndex + 1];
+    if (message.isUser && messageIndex + 1 < messages.length) {
+      const answer = messages[messageIndex + 1];
       if (answer.id) {
         setSelectedMessageId(answer.id);
         setActiveNode(answer.id);
@@ -114,7 +90,7 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
 
         {currentView === "conversation" ? (
           <ConversationFlow
-            conversation={conversation}
+            conversation={messages}
             onNodeClick={handleNodeClick}
             selectedNodeId={selectedMessageId || selectedMessageIdProp}
           />
@@ -137,6 +113,7 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({
           />
         )}
       </div>
+
       {/* Right: Chat Interface */}
       <div className="w-1/2 h-full">
         <ChatInterface

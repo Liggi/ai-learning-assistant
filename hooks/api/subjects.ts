@@ -41,6 +41,8 @@ export function useSubjectWithRoadmap(subjectId: string) {
       return getSubjectWithRoadmap({ data: { id: subjectId } });
     },
     enabled: Boolean(subjectId),
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 }
 

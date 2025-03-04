@@ -33,6 +33,18 @@ export const generate = createServerFn({ method: "POST" })
 
       const result = await callAnthropic(prompt, lessonResponseSchema);
 
+      console.log({ result });
+
+      if (!result.response) {
+        console.warn("Empty response received from LLM");
+        return {
+          response:
+            "I'm sorry, I couldn't generate a proper response. Please try again.",
+        };
+      }
+
+      // Simply clean the response using our helper and return it directly
+      // No JSON parsing needed
       const cleanedResponse = stripResponsePlanning(result.response);
       return { response: cleanedResponse };
     } catch (err) {
