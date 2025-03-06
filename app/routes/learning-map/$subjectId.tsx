@@ -3,6 +3,7 @@ import { useSubjectWithRoadmap } from "@/hooks/api/subjects";
 import { createFileRoute, useParams, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Logger } from "@/lib/logger";
+import Loading from "@/components/ui/loading";
 
 const logger = new Logger({ context: "LearningMapRoute" });
 
@@ -13,17 +14,34 @@ export const Route = createFileRoute("/learning-map/$subjectId")({
 function LearningMap() {
   const { subjectId } = useParams({ from: "/learning-map/$subjectId" });
   const router = useRouter();
-  const { data: loadedSubject } = useSubjectWithRoadmap(subjectId);
+  const { data: loadedSubject, isLoading } = useSubjectWithRoadmap(subjectId);
 
   logger.info("Loading subject with roadmap", {
     subjectId,
     hasSubject: !!loadedSubject,
     hasRoadmap: !!loadedSubject?.roadmap,
+    isLoading,
   });
+
+  if (isLoading) {
+    return <Loading progress={95} context="roadmapLoading" />;
+  }
 
   if (!loadedSubject?.roadmap) {
     logger.warn("No roadmap found", { subjectId });
-    return null;
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#0B0D11] text-white">
+        <div className="text-center">
+          <p className="text-lg mb-4">No roadmap found for this subject</p>
+          <button
+            onClick={() => router.navigate({ to: "/" })}
+            className="px-4 py-2 bg-blue-500 rounded hover:bg-blue-600"
+          >
+            Return home
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const { nodes, edges } = loadedSubject.roadmap;

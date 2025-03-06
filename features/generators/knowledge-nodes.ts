@@ -22,9 +22,7 @@ export const generate = createServerFn({ method: "POST" })
     });
 
     try {
-      console.log("📤 Requesting Anthropic API via callAnthropic...");
       const response = await callAnthropic(prompt, knowledgeNodesSchema);
-      console.log("✅ Successfully obtained and validated response");
       return response.nodes;
     } catch (error) {
       console.error("Error generating knowledge nodes:", error);

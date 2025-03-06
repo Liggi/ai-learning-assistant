@@ -44,9 +44,7 @@ Instructions:
 
 Ensure your explanation is accurate, tailored to the learner's current stage, and up-to-date based on your training data. Your answer should be a compact learning moment rather than an exhaustive lesson.
 
-Format your answer entirely in markdown.
+Format your answer entirely in markdown with no other text.
 
 ${message}
-
-Please answer and return only valid JSON using this format:
-{"response": "your answer"}`;
+`;

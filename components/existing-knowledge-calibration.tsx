@@ -84,6 +84,7 @@ export default function ExistingKnowledgeCalibration({
     error,
   } = useKnowledgeNodes(subject.title);
   const [sortedNodes, setSortedNodes] = useState<KnowledgeNode[]>([]);
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
   const [conceptComplexities, setConceptComplexities] = useState<
     Map<string, ComplexityLevel>
@@ -94,6 +95,69 @@ export default function ExistingKnowledgeCalibration({
   const [selectedKnowledgeNodes, setSelectedKnowledgeNodes] = useState<
     Set<string>
   >(new Set());
+
+  const [isGeneratingRoadmap, setIsGeneratingRoadmap] = useState(false);
+
+  // Simulate progress based on typical loading time
+  useEffect(() => {
+    if (!isLoading) {
+      setLoadingProgress(100);
+      return;
+    }
+
+    // Reset progress when loading starts
+    setLoadingProgress(0);
+
+    // Typical generation takes about 10 seconds
+    const totalDuration = 10000; // 10 seconds
+    const updateInterval = 100; // Update every 100ms
+
+    const startTime = Date.now();
+    const timer = setInterval(() => {
+      const elapsed = Math.min(totalDuration, Date.now() - startTime);
+      const linearProgress = elapsed / totalDuration;
+
+      // Use a simple easing function that's guaranteed to be monotonically increasing
+      // This is a cubic-bezier inspired curve that starts fast, slows in the middle, and speeds up at the end
+      const easedProgress = cubicBezier(0.35, 0.1, 0.65, 1.0, linearProgress);
+
+      // Scale to 0-95 range and ensure we don't exceed 95% until data arrives
+      const newProgress = Math.min(95, easedProgress * 95);
+
+      setLoadingProgress(newProgress);
+
+      if (elapsed >= totalDuration) {
+        clearInterval(timer);
+      }
+    }, updateInterval);
+
+    return () => clearInterval(timer);
+  }, [isLoading]);
+
+  // Cubic bezier function for smooth easing
+  // This is a simplified version of the CSS cubic-bezier timing function
+  function cubicBezier(
+    p1x: number,
+    p1y: number,
+    p2x: number,
+    p2y: number,
+    t: number
+  ): number {
+    // Clamp t to [0,1]
+    t = Math.max(0, Math.min(1, t));
+
+    // Calculate the polynomial coefficients
+    const cx = 3 * p1x;
+    const bx = 3 * (p2x - p1x) - cx;
+    const ax = 1 - cx - bx;
+
+    const cy = 3 * p1y;
+    const by = 3 * (p2y - p1y) - cy;
+    const ay = 1 - cy - by;
+
+    // Calculate the y value for the given t
+    return ay * Math.pow(t, 3) + by * Math.pow(t, 2) + cy * t;
+  }
 
   async function createRoadmap() {
     logger.info("Starting roadmap creation", {
@@ -109,13 +173,14 @@ export default function ExistingKnowledgeCalibration({
       });
       logger.info("Roadmap generated successfully");
 
-      await createRoadmapMutation.mutateAsync({
+      return await createRoadmapMutation.mutateAsync({
         subjectId: subject.id,
         nodes: roadmap.nodes,
         edges: roadmap.edges,
       });
     } catch (error) {
       logger.error("Error in createRoadmap", { error });
+      throw error;
     }
   }
 
@@ -168,7 +233,11 @@ export default function ExistingKnowledgeCalibration({
   }, [knowledgeNodes]);
 
   if (isLoading) {
-    return <Loading />;
+    return <Loading progress={loadingProgress} context="calibration" />;
+  }
+
+  if (isGeneratingRoadmap) {
+    return <Loading progress={75} context="roadmapGeneration" />;
   }
 
   if (error) {
@@ -295,9 +364,19 @@ export default function ExistingKnowledgeCalibration({
             <ChevronLeft className="mr-2 h-4 w-4" /> Back
           </Button>
           <Button
-            onClick={() => {
-              createRoadmap();
-              onNext();
+            onClick={async () => {
+              try {
+                // Set a state to show we're generating the roadmap
+                setIsGeneratingRoadmap(true);
+                await createRoadmap();
+                onNext();
+              } catch (error) {
+                // If there's an error, reset the state
+                setIsGeneratingRoadmap(false);
+                logger.error("Failed to create roadmap before navigation", {
+                  error,
+                });
+              }
             }}
             variant="outline"
             className="text-gray-400 hover:text-white"
