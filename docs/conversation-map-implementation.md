@@ -12,6 +12,15 @@ The application has a partially implemented conversation map feature that shows 
 4. **UI Components**: Conversation node and flow components exist but need integration
 5. **Initial Custom Hooks**: Started implementing use-conversation-management.ts and use-message-handling.ts
 
+### Implementation Progress (Updated)
+
+1. ✅ **Database Schema**: Added Conversation, Message, and Layout models to Prisma schema
+2. ✅ **ConversationService**: Implemented the service with proper state management and operations
+3. ✅ **LessonService**: Replaced useStreamingLesson with a proper service-based implementation
+4. ✅ **JSON Utilities**: Created type-safe JSON handling for Prisma with Zod validation
+5. ✅ **React Query Hooks**: Implemented hooks for conversations with proper cache management
+6. ✅ **Initial UI Integration**: Updated ChatLayout to use LessonService directly
+
 ### Current Challenges
 
 1. The chat-layout.tsx component is cluttered with too much logic
@@ -30,10 +39,10 @@ We will implement a domain-driven design with deep modules that have simple inte
 
 ### Domain Services
 
-1. **LessonService**: Handles lesson streaming and response generation
-2. **TooltipService**: Manages tooltip generation and caching
-3. **QuestionService**: Handles suggested questions generation
-4. **ConversationService**: Manages conversation persistence and message operations
+1. ✅ **LessonService**: Handles lesson streaming and response generation
+2. ✅ **TooltipService**: Manages tooltip generation and caching
+3. ✅ **QuestionService**: Handles suggested questions generation
+4. ✅ **ConversationService**: Manages conversation persistence and message operations
 5. **VisualizationService**: Handles visualization of conversation as a tree structure
 
 ### Orchestration Layer
@@ -42,149 +51,136 @@ We will implement a domain-driven design with deep modules that have simple inte
 
 ## Implementation Plan
 
-### Phase 1: Domain Services Implementation ✅
+### Phase 1: Domain Services Implementation
 
-1. **LessonService** ✅
+1. ✅ **LessonService**
 
-   - Created `hooks/services/use-lesson-service.ts`
-   - Refactored lesson streaming functionality from chat-layout.tsx
-   - Implemented state tracking for lesson content, loading, and completion
-   - Added methods for generating responses to questions
-   - Added event subscription system for content completion notification
+   - ✅ Created `hooks/services/use-lesson-service.ts` following Feature Hook pattern
+   - ✅ Implemented streaming with AbortController for cancellation
+   - ✅ Added error handling with logging
+   - ✅ Added event subscription system for completion notification
+   - ✅ Returning proper loading/error states for UI components
 
-2. **TooltipService** ✅
+2. ✅ **TooltipService**
 
-   - Created `hooks/services/use-tooltip-service.ts`
-   - Integrated with existing useTooltipGeneration hook functionality
-   - Added methods for processing content and generating tooltips
-   - Ensured proper caching mechanism is used
-   - Fixed import issues with generateTooltips
+   - ✅ Created `hooks/services/use-tooltip-service.ts` following Feature Hook pattern
+   - ✅ Implemented batch processing pattern from AI integration
+   - ✅ Integrated with Logger utility for structured logging
+   - ✅ Used localStorage for caching processed tooltips
+   - ✅ Implemented proper error handling and timeout logic
+   - ✅ Added performance metrics tracking for optimization
+   - ✅ Updated ChatLayout to use the TooltipService
 
-3. **QuestionService** ✅
+3. ✅ **QuestionService**
 
-   - Created `hooks/services/use-question-service.ts`
-   - Refactored from existing useSuggestedQuestions hook
-   - Added methods for processing content and generating questions
-   - Implemented state tracking for question generation
+   - ✅ Created `hooks/services/use-question-service.ts` following Feature Hook pattern
+   - ✅ Created server function with createServerFn for question generation
+   - ✅ Implemented error handling with request IDs
+   - ✅ Added tracking of loading/error states for UI components
+   - ✅ Added processing of content when streaming is complete
+   - ✅ Updated ChatLayout to use the QuestionService
 
-4. **ConversationService** ✅
+4. ✅ **ConversationService**
 
-   - Created `hooks/services/use-conversation-service.ts`
-   - Integrated with React Query hooks for conversations and messages
-   - Implemented conversation initialization, message adding, node selection
-   - Ensured proper parent-child relationship for messages
-   - Added state tracking for processing status
+   - ✅ Created `hooks/services/use-conversation-service.ts` following API Hook pattern
+   - ✅ Implemented Prisma models for Conversation and Message
+   - ✅ Created serialization functions for Date objects
+   - ✅ Created corresponding React Query hooks (useConversation, useMessages, etc.)
+   - ✅ Implemented proper mutations with invalidation
+   - ✅ Added structured logging with the Logger utility
 
-5. **VisualizationService** ✅
-   - Created `hooks/services/use-visualization-service.ts`
-   - Integrated with conversation-layout.ts utility
-   - Implemented view toggling (map vs. plan)
-   - Added layout persistence functionality
-   - Implemented tree calculation from messages
+5. **VisualizationService**
+   - Create `hooks/services/use-visualization-service.ts` following Feature Hook pattern
+   - Integrate with react-flow for visualization
+   - Create server function for layout persistence
+   - Implement serialization for layout data
+   - Optimize node rendering for performance
 
-### Phase 2: Orchestration Layer Implementation ✅
+### Phase 2: Orchestration Layer Implementation
 
-1. **ConversationOrchestrator** ✅
-   - Created `hooks/orchestration/use-conversation-orchestrator.ts`
-   - Integrated all domain services
-   - Implemented orchestration state tracking
-   - Defined workflow dependencies between services
-   - Implemented event handlers for UI interactions
-   - Handled proper sequencing of operations
+1. **ConversationOrchestrator**
+   - Create `hooks/orchestration/use-conversation-orchestrator.ts`
+   - Implement the orchestration of all domain services
+   - Follow the AI integration flow pattern for dependency management
+   - Track request IDs throughout the system
+   - Implement proper error handling and fallbacks
+   - Coordinate the workflow between services
 
-### Phase 3: UI Refactoring ✅
+### Phase 3: UI Refactoring
 
-1. **ChatLayout Component** ✅
+1. **ChatLayout Component**
 
-   - Refactored to use the orchestration hook
-   - Removed all direct service logic
-   - Simplified rendering code
-   - Implemented proper loading states and transitions
+   - ✅ Started refactoring to use the LessonService directly
+   - Focus solely on rendering, moving all logic to services
+   - Implement proper loading states and transitions
+   - Use shadcn/ui and Tailwind for styling
 
-2. **SidebarContent Component** ✅
-   - Updated to use the visualization service
-   - Ensured proper rendering of conversation tree
-   - Handled empty states and loading indicators
+2. **SidebarContent Component**
+   - Update to use the visualization service
+   - Implement proper state management for tree visibility
+   - Handle loading and error states consistently
+   - Optimize rendering for large conversations
 
-### Phase 4: Testing and Optimization (In Progress)
+### Phase 4: Database Integration
+
+1. ✅ **Schema Implementation**
+
+   - ✅ Defined Prisma models for Conversation, Message, and Layout
+   - ✅ Added appropriate relations and indexes
+   - ✅ Created serialization functions for client-side data
+   - ✅ Implemented type-safe JSON handling with Zod validation
+
+2. ✅ **API Implementation**
+
+   - ✅ Created database operations in prisma/conversations.ts
+   - ✅ Implemented proper validation with Zod schemas
+   - ✅ Added structured error handling and logging
+   - ✅ Returning serialized data for client consumption
+
+3. ✅ **React Query Integration**
+   - ✅ Created API hooks following the naming convention
+   - ✅ Implemented proper queryKey structure
+   - ✅ Added mutations with optimistic updates
+   - ✅ Ensured proper cache invalidation
+
+### Phase 5: Testing and Optimization
 
 1. **Unit Testing**
 
-   - Write tests for each domain service in isolation
-   - Test orchestrator with mocked services
-   - Ensure proper dependency handling
+   - Test each service in isolation
+   - Mock dependencies appropriately
+   - Verify error handling and edge cases
 
 2. **Integration Testing**
 
    - Test end-to-end workflows with actual services
-   - Verify conversation map updates correctly
+   - Verify data persistence and retrieval
    - Test different conversation patterns
 
 3. **Performance Optimization**
    - Implement memoization for expensive calculations
    - Optimize tree rendering for large conversations
-   - Ensure smooth transitions between states
+   - Add pagination for message history if needed
+   - Monitor and optimize API calls
 
-### Phase 5: Migration and Cleanup (New)
+### Phase 6: Documentation and Refinement
 
-1. **Legacy Hooks Deprecation**
+1. **Code Documentation**
 
-   - Gradually deprecate and remove old hooks as they're replaced
-   - Add deprecation notices to old hooks
-   - Ensure no regressions during migration
+   - Add comprehensive comments to all services
+   - Document the orchestration patterns
+   - Create type documentation for interfaces
 
-2. **Documentation**
+2. **User Documentation**
 
-   - Add JSDoc comments to all service interfaces and methods
-   - Create diagrams showing service relationships
-   - Add examples for common usage patterns
+   - Create guides for using the conversation map
+   - Document the feature's capabilities and limitations
+   - Add tooltips and help text in the UI
 
-3. **Error Handling Improvements**
-   - Add more granular error states to each service
-   - Implement retry mechanisms for transient failures
-   - Add user-friendly error messages and recovery options
-
-### Phase 6: Feature Enhancements (New)
-
-1. **Conversation Export/Import**
-
-   - Add ability to export conversations as JSON
-   - Allow importing previous conversations
-   - Implement sharing functionality
-
-2. **Advanced Visualization**
-
-   - Add zoom controls to conversation map
-   - Implement node collapsing for large trees
-   - Add visual indicators for active threads
-
-3. **Offline Support**
-   - Implement offline caching for active conversations
-   - Add synchronization when coming back online
-   - Provide feedback for offline status
-
-## Current Status
-
-We have successfully implemented all domain services, the orchestration layer, and refactored the UI components to use our new architecture. The application now has a clear separation of concerns with each service handling a specific domain of functionality. The orchestrator manages dependencies between services and coordinates workflows.
-
-## Next Steps
-
-1. Begin Phase 4 by implementing unit tests for each service
-2. Review performance of tree visualization for large conversations
-3. Add JSDoc comments to all services for better documentation
-4. Address any edge cases or bugs discovered during testing
-5. Plan for Phase 5 migration by identifying legacy hooks that can be deprecated
-
-## Key Advantages of the New Architecture
-
-1. **Clear Domain Boundaries**: Each service has a focused responsibility
-2. **Simple Interfaces**: Services provide easy-to-understand interfaces that hide implementation details
-3. **Explicit Dependencies**: The orchestrator manages dependencies between services
-4. **Maintainable Code**: The ChatLayout component is much simpler and focused on rendering
-5. **Testable Components**: Services can be tested in isolation with mock dependencies
-6. **Flexibility**: Easy to add new features by extending services or adding new ones
-7. **Performance**: Caching is handled at the service level, improving overall performance
-8. **Developer Experience**: Developers can understand the system more easily due to clear boundaries
+3. **Refinements**
+   - Address any issues discovered during testing
+   - Improve error messaging for better UX
+   - Optimize performance bottlenecks
 
 ## Detailed Service Interfaces
 
@@ -195,11 +191,12 @@ export interface LessonService {
   // State
   content: string;
   isLoading: boolean;
+  error: Error | null;
   isComplete: boolean;
 
   // Operations
-  streamLesson(moduleDetails: ModuleDetails): void;
-  generateResponse(prompt: string): Promise<string>;
+  streamLesson(moduleDetails: ModuleDetails): Promise<void>;
+  generateResponse(prompt: string, requestId?: string): Promise<string>;
 
   // Event subscription
   onContentComplete(callback: (content: string) => void): () => void;
@@ -216,11 +213,16 @@ export interface TooltipService {
   // State
   tooltips: Record<string, string>;
   isGenerating: boolean;
+  error: Error | null;
   isReady: boolean;
 
   // Operations
-  processContent(content: string): void;
-  generateTooltipsForText(text: string): Promise<Record<string, string>>;
+  processContent(content: string, subject: string): Promise<void>;
+  generateTooltipsForConcepts(
+    concepts: string[],
+    context: TooltipContext,
+    requestId?: string
+  ): Promise<Record<string, string>>;
   getTooltipForConcept(concept: string): string | undefined;
 
   // State management
@@ -235,6 +237,7 @@ export interface QuestionService {
   // State
   questions: string[];
   isGenerating: boolean;
+  error: Error | null;
   isReady: boolean;
 
   // Operations
@@ -244,8 +247,9 @@ export interface QuestionService {
       subject: string;
       moduleTitle: string;
       moduleDescription: string;
-    }
-  ): void;
+    },
+    requestId?: string
+  ): Promise<void>;
 
   // State management
   resetQuestions(): void;
@@ -258,20 +262,22 @@ export interface QuestionService {
 export interface ConversationService {
   // State
   conversationId: string | null;
-  conversation: Conversation | null;
-  messages: Message[];
+  messages: SerializedMessage[];
   selectedMessageId: string | null;
   isProcessingMessage: boolean;
+  error: Error | null;
 
   // Operations
   initialize(subjectId: string, moduleId: string): Promise<string>;
-  addUserMessage(text: string, parentId?: string): Promise<Message>;
+  addUserMessage(text: string, parentId?: string): Promise<SerializedMessage>;
   addAIResponse(
     text: string,
     parentId: string,
-    tooltips?: Record<string, string>
-  ): Promise<Message>;
+    tooltips?: Record<string, string>,
+    requestId?: string
+  ): Promise<SerializedMessage>;
   selectMessage(messageId: string): void;
+  getMessageById(messageId: string): SerializedMessage | undefined;
 }
 ```
 
@@ -281,14 +287,22 @@ export interface ConversationService {
 export interface VisualizationService {
   // State
   currentView: "map" | "plan";
+  nodes: Node[];
+  edges: Edge[];
+  isLoading: boolean;
+  error: Error | null;
 
   // Operations
-  getConversationTree(messages: Message[]): { nodes: Node[]; edges: Edge[] };
+  calculateLayout(messages: SerializedMessage[]): {
+    nodes: Node[];
+    edges: Edge[];
+  };
   setView(view: "map" | "plan"): void;
+  zoomToNode(nodeId: string): void;
 
   // Layout management
-  saveLayout(conversationId: string, layout: Layout): void;
-  getLayout(conversationId: string): Layout | null;
+  saveLayout(conversationId: string, layout: SerializedLayout): Promise<void>;
+  getLayout(conversationId: string): Promise<SerializedLayout | null>;
 }
 ```
 
@@ -296,7 +310,7 @@ export interface VisualizationService {
 
 ```typescript
 export interface ConversationOrchestrator {
-  // Services (exposed for UI rendering)
+  // Services
   lesson: LessonService;
   tooltips: TooltipService;
   questions: QuestionService;
@@ -304,6 +318,8 @@ export interface ConversationOrchestrator {
   visualization: VisualizationService;
 
   // Orchestration state
+  isInitializing: boolean;
+  error: Error | null;
   orchestrationState: {
     lessonReady: boolean;
     tooltipsReady: boolean;
@@ -314,8 +330,9 @@ export interface ConversationOrchestrator {
 
   // Event handlers
   handleQuestionClick: (question: string) => Promise<void>;
+  handleUserMessage: (message: string) => Promise<void>;
   handleLearnMore: (concept: string) => Promise<void>;
-  handleRefresh: () => void;
+  handleRefresh: () => Promise<void>;
   handleNodeClick: (nodeId: string) => void;
 }
 ```

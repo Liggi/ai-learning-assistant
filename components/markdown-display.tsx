@@ -205,12 +205,6 @@ const StrongText: React.FC<StrongTextProps> = ({
 
   return (
     <>
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] z-40 pointer-events-none"
-          style={{ willChange: "opacity", transform: "translateZ(0)" }}
-        />
-      )}
       <Tooltip onOpenChange={setIsOpen}>
         <TooltipTrigger asChild>
           <motion.span

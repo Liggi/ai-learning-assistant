@@ -1,6 +1,5 @@
 import { Handle, Position } from "@xyflow/react";
 import { useRef, useEffect, useCallback } from "react";
-import { useConversationStore } from "@/features/chat/store";
 import debounce from "lodash/debounce";
 
 interface ConversationNodeData {
@@ -19,6 +18,7 @@ interface ConversationNodeProps {
   data: ConversationNodeData;
   isConnectable?: boolean;
   selected?: boolean;
+  setNodeHeight?: (nodeId: string, height: number) => void;
 }
 
 const nodeStyles = {
@@ -35,17 +35,17 @@ const nodeStyles = {
 export default function ConversationNode({
   data,
   selected,
+  setNodeHeight,
 }: ConversationNodeProps) {
   const isQuestion = data.isUser;
   const style = isQuestion ? nodeStyles.question : nodeStyles.answer;
   const containerRef = useRef<HTMLDivElement>(null);
-  const setNodeHeight = useConversationStore((state) => state.setNodeHeight);
   const lastHeightRef = useRef<number>(0);
 
   // Create a debounced update function that only triggers if height changed
   const debouncedUpdateHeight = useCallback(
     debounce((height: number) => {
-      if (height !== lastHeightRef.current) {
+      if (height !== lastHeightRef.current && setNodeHeight) {
         lastHeightRef.current = height;
         setNodeHeight(data.id, height);
       }
@@ -54,7 +54,7 @@ export default function ConversationNode({
   );
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !setNodeHeight) return;
 
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -70,7 +70,10 @@ export default function ConversationNode({
       observer.disconnect();
       debouncedUpdateHeight.cancel();
     };
-  }, [data.id, debouncedUpdateHeight]);
+  }, [data.id, debouncedUpdateHeight, setNodeHeight]);
+
+  // Ensure takeaways is always an array
+  const takeaways = data.content?.takeaways || [];
 
   return (
     <div
@@ -98,9 +101,9 @@ export default function ConversationNode({
           <div className="text-gray-100 text-sm font-medium mb-3">
             {data.content.summary}
           </div>
-          {data.content.takeaways.length > 0 && (
+          {takeaways.length > 0 && (
             <div className="space-y-1.5 pt-2 border-t border-slate-700/50">
-              {data.content.takeaways.map((takeaway, index) => (
+              {takeaways.map((takeaway, index) => (
                 <div
                   key={index}
                   className="flex items-start gap-2 text-xs text-slate-300"

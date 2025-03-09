@@ -1,0 +1,132 @@
+You are assisting with a Learning Assistant Application built with modern React and TanStack. This is an educational platform with a roadmap-based visual interface for education journeys.
+
+// TECH STACK
+
+- React 19 with modern Server Components architecture
+- TanStack ecosystem (React Router v1.95+, React Query v5.64+, TanStack Start)
+- Prisma ORM with SQLite database and Zod validation
+- XY Flow for visualization (react-flow)
+- UI components: shadcn/ui (based on Radix UI primitives)
+- Styling: Tailwind CSS
+- State: React Query for server state, React's useState/useReducer for UI state
+- AI integration: Anthropic Claude via SDK
+
+// PROJECT ARCHITECTURE
+
+- Server Functions: Use @tanstack/start's createServerFn for type-safe server functions
+- Data Flow: Client components query data via React Query hooks, which call TanStack Start server functions
+- Database: Prisma client interfaces with SQLite, with generated Zod schemas for validation
+- Type Safety: End-to-end type safety from database to UI with Prisma, Zod, and TypeScript
+
+// DATA FLOW PATTERNS
+
+- Database to Client:
+
+  1. Define Prisma models in schema.prisma
+  2. Generate Zod schemas using prisma-zod-generator
+  3. Create serialization functions that convert Prisma Date objects to ISO strings
+  4. Implement createServerFn endpoints with validation and error handling
+  5. Create React Query hooks in /hooks/api directory using queryKey conventions
+  6. Components consume these hooks with loading/error handling
+
+- Client to Database:
+
+  1. Define mutation hooks using useMutation from React Query
+  2. Implement optimistic updates where appropriate
+  3. Use proper queryClient.invalidateQueries after mutations
+  4. Include error handling and loading states in UI components
+  5. Log operations using the Logger utility for debugging
+
+- AI Integration Flow:
+  1. Create typed prompt templates in /prompts directory
+  2. Call the AI using the callAnthropic utility with Zod schema validation
+  3. Implement proper error handling with retries and timeouts
+  4. Process and cache responses on the server side
+  5. Stream large responses when necessary (e.g., for lessons)
+
+// DATA MODELS
+
+- Subject: Core educational subject with title and roadmap
+- Roadmap: Visual representation with nodes (concepts) and edges (connections)
+- Data serialization: Use SerializedSubject and SerializedRoadmap types for client-side data
+
+// CODE PATTERNS
+
+- Server Code:
+  - Use createServerFn for API endpoints
+  - Use prisma client for database operations
+  - Validate with Zod schemas
+  - Return serialized data (Date objects as strings)
+  - Implement structured logging and error handling
+  - Add request IDs to track operations through the system
+- Client Code:
+  - Use React Query hooks for server state
+  - Implement custom hooks for feature-specific logic
+  - Use React's built-in state management
+  - Component organization: UI (shadcn) → custom components → pages
+
+// CUSTOM HOOKS PATTERNS
+
+- API Hooks: Organize React Query hooks by entity (useSubjects, useRoadmap)
+
+  - Naming: use{Entity} for queries, use{Action}{Entity} for mutations
+  - Structure: queryKey conventions, consistent error handling
+  - Example: useCreateSubject returns useMutation with onSuccess invalidation
+
+- Feature Hooks: Encapsulate complex logic (useStreamingLesson, useTooltipGeneration)
+
+  - State management: track loading, error, and data states
+  - Side effects: useEffect for initialization and cleanup
+  - Cancellation: AbortController for cancellable async operations
+  - Batch processing: group operations for efficiency (e.g., tooltip generation)
+
+- Utility Hooks: Reusable logic (useLocalStorage)
+  - Purpose: abstract browser APIs and provide consistent interfaces
+  - Error handling: graceful degradation when APIs are unavailable
+  - Event handling: proper subscription and cleanup
+
+// COMPONENT STYLING
+
+- Use Tailwind CSS for styling
+- Leverage shadcn/ui components whenever possible
+- Maintain responsive design with mobile-first approach
+- Use clsx/cva for conditional styling
+
+// AI INTEGRATION PATTERNS
+
+- Use server-side functions for LLM calls
+- Structured prompts with typed responses
+- Error handling and logging for AI operations
+- Validation of AI responses with Zod schemas
+- Batch processing for tooltip generation with concurrency limits
+- Streaming content with incremental processing
+- Performance tracking with request IDs and timing metrics
+- Proper timeout handling for long-running operations
+- Retry logic for transient failures
+
+// FEATURE IMPLEMENTATION
+
+- Module-based learning with interactive lessons
+- Visual roadmap for tracking educational progress
+- AI-assisted tooltip generation for technical terms
+- Suggested questions based on content analysis
+- Conversation tree visualization
+
+// DEVELOPMENT WORKFLOW
+
+- Feature code belongs in /features directory
+- React Query hooks in /hooks/api
+- Feature-specific hooks in /hooks
+- UI components in /components directory
+- Server functions in module files (e.g., prisma/subjects.ts)
+- Database operations via Prisma client
+
+// DEBUGGING & LOGGING
+
+- Feature toggles for verbose logging with constants
+- Performance metrics collection for AI operations
+- Use custom Logger class for structured logging
+- Graceful error handling with user-friendly fallbacks
+- Request IDs to track operations through the system
+- Console grouping for related log messages
+- Standardized error response formats

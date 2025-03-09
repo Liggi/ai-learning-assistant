@@ -9,6 +9,20 @@ const logger = new Logger({ context: "Anthropic" });
 let activeCalls = 0;
 const maxConcurrentCalls = 2; // Adjust based on Anthropic's rate limits
 
+// Helper function to extract JSON from a string that might contain other text
+function extractJSON(str: string): string {
+  // Try to find JSON object in the string using regex
+  const jsonRegex = /{[\s\S]*}/;
+  const match = str.match(jsonRegex);
+
+  if (match) {
+    return match[0];
+  }
+
+  // Return the original string if no JSON object was found
+  return str;
+}
+
 /**
  * Reusable function for handling calls to the Anthropic API with strongly typed responses.
  *
@@ -132,9 +146,10 @@ export async function callAnthropic<T>(
 
         let parsedResponse;
         try {
-          // First try direct parsing
+          // First try to extract just the JSON part
           console.log(`[${reqId}] Attempting to parse JSON response`);
-          parsedResponse = JSON.parse(stringResponse);
+          const jsonString = extractJSON(stringResponse);
+          parsedResponse = JSON.parse(jsonString);
           console.log(
             `[${reqId}] Successfully parsed JSON response:`,
             parsedResponse

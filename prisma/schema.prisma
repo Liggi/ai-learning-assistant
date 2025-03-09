@@ -40,3 +40,38 @@ model Roadmap {
   updatedAt DateTime @updatedAt
   subject   Subject  @relation(fields: [subjectId], references: [id])
 }
+
+model Conversation {
+  id        String    @id @default(uuid())
+  subjectId String
+  moduleId  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+  layout    Layout?
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  text           String
+  isUser         Boolean
+  conversationId String
+  parentId       String?
+  tooltips       Json?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  parent         Message?     @relation("MessageToMessage", fields: [parentId], references: [id], onDelete: SetNull)
+  children       Message[]    @relation("MessageToMessage")
+}
+
+model Layout {
+  id             String       @id @default(uuid())
+  conversationId String       @unique
+  nodes          Json
+  edges          Json
+  nodeHeights    Json
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}

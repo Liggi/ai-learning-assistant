@@ -8,7 +8,8 @@
     "dev": "vinxi dev",
     "build": "vinxi build",
     "start": "vinxi start",
-    "clear-db": "node --loader ts-node/esm scripts/clear-database.ts"
+    "clear-db": "node --loader ts-node/esm scripts/clear-database.ts",
+    "test:conversation-map": "tsx scripts/test-conversation-map.ts"
   },
   "keywords": [],
   "author": "",

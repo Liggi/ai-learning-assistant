@@ -1,8 +1,12 @@
 import { ReactFlow, ReactFlowProvider, useReactFlow } from "@xyflow/react";
-import { useConversationStore, Message } from "@/features/chat/store";
-import ConversationNode from "./conversation-node";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { LayoutGrid } from "lucide-react";
+import { SerializedMessage } from "@/prisma/conversations";
+import {
+  ConversationNode as ConversationNodeType,
+  ConversationEdge,
+} from "@/types/conversation";
+import ConversationNode from "./conversation-node";
 
 const nodeTypes = {
   conversationNode: ConversationNode,
@@ -19,46 +23,79 @@ const defaultEdgeOptions = {
 };
 
 interface ConversationFlowProps {
-  conversation: Message[];
+  conversation: SerializedMessage[];
   onNodeClick?: (text: string, nodeId: string) => void;
   selectedNodeId?: string | null;
+  nodes?: ConversationNodeType[];
+  edges?: ConversationEdge[];
 }
 
 function ConversationFlowInner({
   conversation,
   onNodeClick,
   selectedNodeId,
+  nodes,
+  edges,
 }: ConversationFlowProps) {
-  const { nodes, edges } = useConversationStore((state) => ({
-    nodes: state.nodes,
-    edges: state.edges,
-  }));
-  const { fitView } = useReactFlow();
+  const reactFlowInstance = useReactFlow();
+  const initialZoomDone = useRef(false);
+
+  // Use the nodes and edges from props directly
+  const flowNodes = nodes || [];
+  const flowEdges = edges || [];
 
   // Add debug logging
   console.log("Rendering Flow with:", {
-    nodeCount: nodes.length,
-    firstNode: nodes[0],
-    edges: edges.length,
+    nodeCount: flowNodes.length,
+    firstNode: flowNodes[0],
+    edges: flowEdges.length,
   });
 
   // Refit view whenever nodes change
   useEffect(() => {
+    if (!flowNodes.length) return;
+
     const timer = setTimeout(() => {
-      fitView({
+      reactFlowInstance.fitView({
         padding: 0.4,
         duration: 400,
         minZoom: 0.2,
         maxZoom: 2,
       });
+      initialZoomDone.current = true;
     }, 100);
     return () => clearTimeout(timer);
-  }, [nodes, fitView]);
+  }, [flowNodes, reactFlowInstance]);
+
+  // Zoom to selected node when it changes
+  useEffect(() => {
+    if (!selectedNodeId || !flowNodes.length || !initialZoomDone.current)
+      return;
+
+    const selectedNode = flowNodes.find((node) => node.id === selectedNodeId);
+    if (selectedNode && selectedNode.position) {
+      const { x, y } = selectedNode.position;
+
+      // First fit view to show all nodes
+      reactFlowInstance.fitView({
+        padding: 0.4,
+        duration: 400,
+      });
+
+      // Then center on the selected node
+      setTimeout(() => {
+        reactFlowInstance.setCenter(x, y, {
+          zoom: 1.5,
+          duration: 800,
+        });
+      }, 500);
+    }
+  }, [selectedNodeId, flowNodes, reactFlowInstance]);
 
   return (
     <div className="relative w-full h-full">
       <ReactFlow
-        nodes={nodes.map((node) => ({
+        nodes={flowNodes.map((node) => ({
           ...node,
           position: node.position || {
             x: 0,
@@ -66,18 +103,21 @@ function ConversationFlowInner({
           },
           selected: node.id === selectedNodeId,
           className: `node-${node.data.isUser ? "question" : "answer"}`,
-          style: {
-            width: 320,
-            padding: "16px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          },
           data: {
             ...node.data,
+            // Ensure content has the correct structure
+            content: node.data.content
+              ? {
+                  summary: node.data.content.summary,
+                  takeaways: Array.isArray(node.data.content.takeaways)
+                    ? node.data.content.takeaways
+                    : [],
+                }
+              : undefined,
             onClick: (data: any) => onNodeClick?.(data.text, data.id),
           },
         }))}
-        edges={edges}
+        edges={flowEdges}
         nodeTypes={nodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         fitView
@@ -99,6 +139,8 @@ export default function ConversationFlow({
   conversation,
   onNodeClick,
   selectedNodeId,
+  nodes,
+  edges,
 }: ConversationFlowProps) {
   return (
     <div className="w-full h-full">
@@ -107,6 +149,8 @@ export default function ConversationFlow({
           conversation={conversation}
           onNodeClick={onNodeClick}
           selectedNodeId={selectedNodeId}
+          nodes={nodes}
+          edges={edges}
         />
       </ReactFlowProvider>
     </div>

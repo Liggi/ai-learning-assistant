@@ -60,11 +60,21 @@ export const SubjectScalarFieldEnumSchema = z.enum(['id','title','createdAt','up
 
 export const RoadmapScalarFieldEnumSchema = z.enum(['id','subjectId','nodes','edges','createdAt','updatedAt']);
 
+export const ConversationScalarFieldEnumSchema = z.enum(['id','subjectId','moduleId','createdAt','updatedAt']);
+
+export const MessageScalarFieldEnumSchema = z.enum(['id','text','isUser','conversationId','parentId','tooltips','createdAt','updatedAt']);
+
+export const LayoutScalarFieldEnumSchema = z.enum(['id','conversationId','nodes','edges','nodeHeights','createdAt','updatedAt']);
+
 export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const JsonNullValueInputSchema = z.enum(['JsonNull',]).transform((value) => (value === 'JsonNull' ? Prisma.JsonNull : value));
 
+export const NullableJsonNullValueInputSchema = z.enum(['DbNull','JsonNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.DbNull : value);
+
 export const JsonNullValueFilterSchema = z.enum(['DbNull','JsonNull','AnyNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.JsonNull : value === 'AnyNull' ? Prisma.AnyNull : value);
+
+export const NullsOrderSchema = z.enum(['first','last']);
 /////////////////////////////////////////
 // MODELS
 /////////////////////////////////////////
@@ -96,3 +106,50 @@ export const RoadmapSchema = z.object({
 })
 
 export type Roadmap = z.infer<typeof RoadmapSchema>
+
+/////////////////////////////////////////
+// CONVERSATION SCHEMA
+/////////////////////////////////////////
+
+export const ConversationSchema = z.object({
+  id: z.string().uuid(),
+  subjectId: z.string(),
+  moduleId: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+})
+
+export type Conversation = z.infer<typeof ConversationSchema>
+
+/////////////////////////////////////////
+// MESSAGE SCHEMA
+/////////////////////////////////////////
+
+export const MessageSchema = z.object({
+  id: z.string().uuid(),
+  text: z.string(),
+  isUser: z.boolean(),
+  conversationId: z.string(),
+  parentId: z.string().nullable(),
+  tooltips: JsonValueSchema.nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+})
+
+export type Message = z.infer<typeof MessageSchema>
+
+/////////////////////////////////////////
+// LAYOUT SCHEMA
+/////////////////////////////////////////
+
+export const LayoutSchema = z.object({
+  id: z.string().uuid(),
+  conversationId: z.string(),
+  nodes: JsonValueSchema,
+  edges: JsonValueSchema,
+  nodeHeights: JsonValueSchema,
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+})
+
+export type Layout = z.infer<typeof LayoutSchema>
