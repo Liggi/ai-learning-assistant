@@ -1,7 +1,7 @@
 import { ReactFlow, ReactFlowProvider, useReactFlow } from "@xyflow/react";
 import { useEffect, useRef } from "react";
 import { LayoutGrid } from "lucide-react";
-import { SerializedMessage } from "@/prisma/conversations";
+import { Article, UserQuestion } from "@/types/personal-learning-map";
 import {
   ConversationNode as ConversationNodeType,
   ConversationEdge,
@@ -23,7 +23,7 @@ const defaultEdgeOptions = {
 };
 
 interface ConversationFlowProps {
-  conversation: SerializedMessage[];
+  articles?: Article[];
   onNodeClick?: (text: string, nodeId: string) => void;
   selectedNodeId?: string | null;
   nodes?: ConversationNodeType[];
@@ -31,7 +31,7 @@ interface ConversationFlowProps {
 }
 
 function ConversationFlowInner({
-  conversation,
+  articles,
   onNodeClick,
   selectedNodeId,
   nodes,
@@ -136,7 +136,7 @@ function ConversationFlowInner({
 }
 
 export default function ConversationFlow({
-  conversation,
+  articles,
   onNodeClick,
   selectedNodeId,
   nodes,
@@ -146,7 +146,7 @@ export default function ConversationFlow({
     <div className="w-full h-full">
       <ReactFlowProvider>
         <ConversationFlowInner
-          conversation={conversation}
+          articles={articles}
           onNodeClick={onNodeClick}
           selectedNodeId={selectedNodeId}
           nodes={nodes}

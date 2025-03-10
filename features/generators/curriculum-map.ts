@@ -1,19 +1,18 @@
 import { createServerFn } from "@tanstack/start";
 import { generateRoadmapPrompt } from "@/prompts/roadmap/generate-roadmap";
-import { saveRoadmap } from "@/prisma/roadmap";
+import { saveCurriculumMap } from "@/prisma/curriculum-maps";
 import { callAnthropic } from "../llm";
 import { z } from "zod";
 import {
-  roadmapNodeSchema,
-  roadmapEdgeSchema,
-  roadmapNodeDataSchema,
-  RoadmapNode,
-  RoadmapEdge,
-} from "@/types/roadmap";
+  curriculumMapNodeSchema,
+  curriculumMapEdgeSchema,
+  curriculumMapNodeDataSchema,
+  CurriculumMapNode,
+  CurriculumMapEdge,
+} from "@/types/curriculum-map";
 import { Logger } from "@/lib/logger";
-import { v4 as uuidv4 } from "uuid";
 
-const logger = new Logger({ context: "RoadmapGenerator" });
+const logger = new Logger({ context: "CurriculumMapGenerator" });
 
 const nodeDataSchema = z.object({
   label: z.string().default("Untitled"),
@@ -36,7 +35,7 @@ const nodeSchema = z
     data: nodeDataSchema,
   })
   .transform(
-    (node): RoadmapNode => ({
+    (node): CurriculumMapNode => ({
       id: node.id,
       type: node.type,
       position: node.position,
@@ -52,7 +51,7 @@ const edgeSchema = z
     target: z.string(),
   })
   .transform(
-    (edge): RoadmapEdge => ({
+    (edge): CurriculumMapEdge => ({
       id: edge.id,
       type: edge.type,
       source: edge.source,
@@ -60,7 +59,7 @@ const edgeSchema = z
     })
   );
 
-const roadmapSchema = z.object({
+const curriculumMapSchema = z.object({
   nodes: z.array(nodeSchema),
   edges: z.array(edgeSchema),
 });
@@ -71,7 +70,7 @@ export const generate = createServerFn({ method: "POST" })
       data
   )
   .handler(async ({ data }) => {
-    logger.info("Starting roadmap generation process", {
+    logger.info("Starting curriculum map generation process", {
       subject: data.subject,
       hasSubjectId: !!data.subjectId,
       priorKnowledgeLength: data.priorKnowledge.length,
@@ -84,15 +83,15 @@ export const generate = createServerFn({ method: "POST" })
       });
 
       logger.info("Requesting Anthropic API");
-      const parsedJSON = await callAnthropic(prompt, roadmapSchema);
+      const parsedJSON = await callAnthropic(prompt, curriculumMapSchema);
       logger.info("Successfully received and parsed Anthropic response");
 
-      logger.debug("Validating roadmap structure");
+      logger.debug("Validating curriculum map structure");
       if (!parsedJSON.nodes.length) {
-        throw new Error("Generated roadmap contains no nodes");
+        throw new Error("Generated curriculum map contains no nodes");
       }
       if (!parsedJSON.edges.length) {
-        throw new Error("Generated roadmap contains no edges");
+        throw new Error("Generated curriculum map contains no edges");
       }
 
       const nodeIds = parsedJSON.nodes.map((node) => node.id);
@@ -117,46 +116,46 @@ export const generate = createServerFn({ method: "POST" })
         };
       });
 
-      const finalRoadmap = {
+      const finalCurriculumMap = {
         nodes: parsedJSON.nodes,
         edges: processedEdges,
       };
 
-      logger.debug("Roadmap structure validation passed", {
-        nodesCount: finalRoadmap.nodes.length,
-        edgesCount: finalRoadmap.edges.length,
+      logger.debug("Curriculum map structure validation passed", {
+        nodesCount: finalCurriculumMap.nodes.length,
+        edgesCount: finalCurriculumMap.edges.length,
       });
 
       if (data.subjectId) {
-        logger.info("Saving roadmap", { subjectId: data.subjectId });
+        logger.info("Saving curriculum map", { subjectId: data.subjectId });
         try {
-          await saveRoadmap({
+          await saveCurriculumMap({
             data: {
               subjectId: data.subjectId,
-              nodes: finalRoadmap.nodes,
-              edges: finalRoadmap.edges,
+              nodes: finalCurriculumMap.nodes,
+              edges: finalCurriculumMap.edges,
             },
           });
-          logger.info("Roadmap saved successfully", {
+          logger.info("Curriculum map saved successfully", {
             subjectId: data.subjectId,
           });
         } catch (saveError) {
-          logger.error("Error saving roadmap", {
+          logger.error("Error saving curriculum map", {
             error:
               saveError instanceof Error ? saveError.message : "Unknown error",
             subjectId: data.subjectId,
           });
           throw new Error(
-            `Failed to save roadmap: ${
+            `Failed to save curriculum map: ${
               saveError instanceof Error ? saveError.message : "Unknown error"
             }`
           );
         }
       }
 
-      return finalRoadmap;
+      return finalCurriculumMap;
     } catch (error) {
-      logger.error("Error in roadmap generation", {
+      logger.error("Error in curriculum map generation", {
         error: error instanceof Error ? error.message : "Unknown error",
         stack: error instanceof Error ? error.stack : undefined,
         subject: data.subject,

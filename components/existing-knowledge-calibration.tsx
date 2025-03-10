@@ -9,9 +9,9 @@ import {
 import { useKnowledgeNodes } from "@/features/queries";
 import Loading from "@/components/ui/loading";
 import { SerializedSubject } from "@/prisma/subjects";
-import { generate } from "@/features/generators/roadmap";
+import { generate } from "@/features/generators/curriculum-map";
 import { Logger } from "@/lib/logger";
-import { useSaveRoadmap } from "@/hooks/api/subjects";
+import { useSaveCurriculumMap } from "@/hooks/api/subjects";
 
 const logger = new Logger({ context: "ExistingKnowledgeCalibration" });
 
@@ -90,13 +90,14 @@ export default function ExistingKnowledgeCalibration({
     Map<string, ComplexityLevel>
   >(new Map());
 
-  const createRoadmapMutation = useSaveRoadmap();
+  const createCurriculumMapMutation = useSaveCurriculumMap();
 
   const [selectedKnowledgeNodes, setSelectedKnowledgeNodes] = useState<
     Set<string>
   >(new Set());
 
-  const [isGeneratingRoadmap, setIsGeneratingRoadmap] = useState(false);
+  const [isGeneratingCurriculumMap, setIsGeneratingCurriculumMap] =
+    useState(false);
 
   // Simulate progress based on typical loading time
   useEffect(() => {
@@ -159,27 +160,27 @@ export default function ExistingKnowledgeCalibration({
     return ay * Math.pow(t, 3) + by * Math.pow(t, 2) + cy * t;
   }
 
-  async function createRoadmap() {
-    logger.info("Starting roadmap creation", {
+  async function createCurriculumMap() {
+    logger.info("Starting curriculum map creation", {
       subject,
     });
 
     try {
-      const roadmap = await generate({
+      const curriculumMap = await generate({
         data: {
           subject: subject.title,
           priorKnowledge: Array.from(selectedKnowledgeNodes).join("\n"),
         },
       });
-      logger.info("Roadmap generated successfully");
+      logger.info("Curriculum map generated successfully");
 
-      return await createRoadmapMutation.mutateAsync({
+      return await createCurriculumMapMutation.mutateAsync({
         subjectId: subject.id,
-        nodes: roadmap.nodes,
-        edges: roadmap.edges,
+        nodes: curriculumMap.nodes,
+        edges: curriculumMap.edges,
       });
     } catch (error) {
-      logger.error("Error in createRoadmap", { error });
+      logger.error("Error in createCurriculumMap", { error });
       throw error;
     }
   }
@@ -236,8 +237,8 @@ export default function ExistingKnowledgeCalibration({
     return <Loading progress={loadingProgress} context="calibration" />;
   }
 
-  if (isGeneratingRoadmap) {
-    return <Loading progress={75} context="roadmapGeneration" />;
+  if (isGeneratingCurriculumMap) {
+    return <Loading progress={75} context="curriculumMapGeneration" />;
   }
 
   if (error) {
@@ -367,12 +368,12 @@ export default function ExistingKnowledgeCalibration({
             onClick={async () => {
               try {
                 // Set a state to show we're generating the roadmap
-                setIsGeneratingRoadmap(true);
-                await createRoadmap();
+                setIsGeneratingCurriculumMap(true);
+                await createCurriculumMap();
                 onNext();
               } catch (error) {
                 // If there's an error, reset the state
-                setIsGeneratingRoadmap(false);
+                setIsGeneratingCurriculumMap(false);
                 logger.error("Failed to create roadmap before navigation", {
                   error,
                 });

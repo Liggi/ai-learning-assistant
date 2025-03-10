@@ -1,17 +1,14 @@
-import ChatLayout from "@/components/chat-layout";
+import LearningLayout from "@/components/learning-layout";
 import { createFileRoute } from "@tanstack/react-router";
 import { getSubjectWithCurriculumMap } from "@/prisma/subjects";
 import { ErrorDisplay } from "@/components/error-display";
-import ChatLayoutNew from "@/components/chat-layout-new";
 
-export const Route = createFileRoute("/chat/$subjectId/$moduleId")({
+export const Route = createFileRoute("/learning/$subjectId/$moduleId")({
   loader: async ({ params }) => {
     const { subjectId, moduleId } = params;
     const subject = await getSubjectWithCurriculumMap({
       data: { id: subjectId },
     });
-
-    console.log("loading chat route");
 
     if (!subject) {
       throw new Error(`Subject with ID ${subjectId} not found`);
@@ -44,7 +41,7 @@ export const Route = createFileRoute("/chat/$subjectId/$moduleId")({
       moduleId,
     };
   },
-  component: Chat,
+  component: LearningView,
   errorComponent: ({ error }) => {
     return (
       <ErrorDisplay
@@ -58,11 +55,10 @@ export const Route = createFileRoute("/chat/$subjectId/$moduleId")({
   },
 });
 
-function Chat() {
+function LearningView() {
   const { moduleDetails, subjectId, moduleId } = Route.useLoaderData();
-
   return (
-    <ChatLayoutNew
+    <LearningLayout
       moduleDetails={moduleDetails}
       subjectId={subjectId}
       moduleId={moduleId}

@@ -6,12 +6,13 @@ import {
 } from "@tanstack/react-query";
 import {
   getAllSubjects,
-  getSubjectWithRoadmap,
+  getSubjectWithCurriculumMap,
   createSubject,
   type SerializedSubject,
   getSubject,
+  getSubjectCurriculumMapId,
 } from "@/prisma/subjects";
-import { saveRoadmap } from "@/prisma/roadmap";
+import { saveCurriculumMap } from "@/prisma/curriculum-maps";
 import type { Node, Edge } from "@xyflow/react";
 
 export function useSubjects() {
@@ -34,11 +35,11 @@ export function useSubject(
   });
 }
 
-export function useSubjectWithRoadmap(subjectId: string) {
+export function useSubjectWithCurriculumMap(subjectId: string) {
   return useQuery<SerializedSubject | null>({
-    queryKey: ["subjects", subjectId, "roadmap"],
+    queryKey: ["subjects", subjectId, "curriculumMap"],
     queryFn: async () => {
-      return getSubjectWithRoadmap({ data: { id: subjectId } });
+      return getSubjectWithCurriculumMap({ data: { id: subjectId } });
     },
     enabled: Boolean(subjectId),
   });
@@ -57,7 +58,7 @@ export function useCreateSubject() {
   });
 }
 
-export function useSaveRoadmap() {
+export function useSaveCurriculumMap() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -70,10 +71,24 @@ export function useSaveRoadmap() {
       nodes: Node[];
       edges: Edge[];
     }) => {
-      return saveRoadmap({ data: { subjectId, nodes, edges } });
+      return saveCurriculumMap({ data: { subjectId, nodes, edges } });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
     },
+  });
+}
+
+export function useSubjectCurriculumMapId(
+  subjectId: string | null,
+  enabled: boolean
+) {
+  return useQuery<{ curriculumMapId: string } | null>({
+    queryKey: ["subjects", subjectId, "curriculumMapId"],
+    queryFn: async () => {
+      if (!subjectId) return null;
+      return getSubjectCurriculumMapId({ data: { subjectId } });
+    },
+    enabled,
   });
 }

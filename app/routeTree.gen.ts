@@ -15,6 +15,7 @@ import { Route as LoadingImport } from './routes/loading'
 import { Route as IndexImport } from './routes/index'
 import { Route as LearningMapSubjectIdImport } from './routes/learning-map/$subjectId'
 import { Route as CalibrationSubjectIdImport } from './routes/calibration/$subjectId'
+import { Route as LearningSubjectIdModuleIdImport } from './routes/learning/$subjectId.$moduleId'
 import { Route as ChatSubjectIdModuleIdImport } from './routes/chat/$subjectId.$moduleId'
 
 // Create/Update Routes
@@ -40,6 +41,12 @@ const LearningMapSubjectIdRoute = LearningMapSubjectIdImport.update({
 const CalibrationSubjectIdRoute = CalibrationSubjectIdImport.update({
   id: '/calibration/$subjectId',
   path: '/calibration/$subjectId',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LearningSubjectIdModuleIdRoute = LearningSubjectIdModuleIdImport.update({
+  id: '/learning/$subjectId/$moduleId',
+  path: '/learning/$subjectId/$moduleId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -88,6 +95,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatSubjectIdModuleIdImport
       parentRoute: typeof rootRoute
     }
+    '/learning/$subjectId/$moduleId': {
+      id: '/learning/$subjectId/$moduleId'
+      path: '/learning/$subjectId/$moduleId'
+      fullPath: '/learning/$subjectId/$moduleId'
+      preLoaderRoute: typeof LearningSubjectIdModuleIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -99,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning-map/$subjectId': typeof LearningMapSubjectIdRoute
   '/chat/$subjectId/$moduleId': typeof ChatSubjectIdModuleIdRoute
+  '/learning/$subjectId/$moduleId': typeof LearningSubjectIdModuleIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -107,6 +122,7 @@ export interface FileRoutesByTo {
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning-map/$subjectId': typeof LearningMapSubjectIdRoute
   '/chat/$subjectId/$moduleId': typeof ChatSubjectIdModuleIdRoute
+  '/learning/$subjectId/$moduleId': typeof LearningSubjectIdModuleIdRoute
 }
 
 export interface FileRoutesById {
@@ -116,6 +132,7 @@ export interface FileRoutesById {
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning-map/$subjectId': typeof LearningMapSubjectIdRoute
   '/chat/$subjectId/$moduleId': typeof ChatSubjectIdModuleIdRoute
+  '/learning/$subjectId/$moduleId': typeof LearningSubjectIdModuleIdRoute
 }
 
 export interface FileRouteTypes {
@@ -126,6 +143,7 @@ export interface FileRouteTypes {
     | '/calibration/$subjectId'
     | '/learning-map/$subjectId'
     | '/chat/$subjectId/$moduleId'
+    | '/learning/$subjectId/$moduleId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +151,7 @@ export interface FileRouteTypes {
     | '/calibration/$subjectId'
     | '/learning-map/$subjectId'
     | '/chat/$subjectId/$moduleId'
+    | '/learning/$subjectId/$moduleId'
   id:
     | '__root__'
     | '/'
@@ -140,6 +159,7 @@ export interface FileRouteTypes {
     | '/calibration/$subjectId'
     | '/learning-map/$subjectId'
     | '/chat/$subjectId/$moduleId'
+    | '/learning/$subjectId/$moduleId'
   fileRoutesById: FileRoutesById
 }
 
@@ -149,6 +169,7 @@ export interface RootRouteChildren {
   CalibrationSubjectIdRoute: typeof CalibrationSubjectIdRoute
   LearningMapSubjectIdRoute: typeof LearningMapSubjectIdRoute
   ChatSubjectIdModuleIdRoute: typeof ChatSubjectIdModuleIdRoute
+  LearningSubjectIdModuleIdRoute: typeof LearningSubjectIdModuleIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -157,6 +178,7 @@ const rootRouteChildren: RootRouteChildren = {
   CalibrationSubjectIdRoute: CalibrationSubjectIdRoute,
   LearningMapSubjectIdRoute: LearningMapSubjectIdRoute,
   ChatSubjectIdModuleIdRoute: ChatSubjectIdModuleIdRoute,
+  LearningSubjectIdModuleIdRoute: LearningSubjectIdModuleIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -173,7 +195,8 @@ export const routeTree = rootRoute
         "/loading",
         "/calibration/$subjectId",
         "/learning-map/$subjectId",
-        "/chat/$subjectId/$moduleId"
+        "/chat/$subjectId/$moduleId",
+        "/learning/$subjectId/$moduleId"
       ]
     },
     "/": {
@@ -190,6 +213,9 @@ export const routeTree = rootRoute
     },
     "/chat/$subjectId/$moduleId": {
       "filePath": "chat/$subjectId.$moduleId.tsx"
+    },
+    "/learning/$subjectId/$moduleId": {
+      "filePath": "learning/$subjectId.$moduleId.tsx"
     }
   }
 }

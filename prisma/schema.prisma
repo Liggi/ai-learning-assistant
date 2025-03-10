@@ -24,54 +24,92 @@ datasource db {
 }
 
 model Subject {
-  id        String   @id @default(uuid())
-  title     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  roadmap   Roadmap?
+  id            String         @id @default(uuid())
+  title         String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  curriculumMap CurriculumMap?
+  mapContexts   MapContext[]
 }
 
-model Roadmap {
-  id        String   @id @default(uuid())
-  subjectId String   @unique
-  nodes     Json
-  edges     Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  subject   Subject  @relation(fields: [subjectId], references: [id])
+model CurriculumMap {
+  id          String       @id @default(uuid())
+  subjectId   String       @unique
+  nodes       Json // Module nodes with their metadata
+  edges       Json // Connections between modules
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  subject     Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  mapContexts MapContext[]
 }
 
-model Conversation {
-  id        String    @id @default(uuid())
-  subjectId String
-  moduleId  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  messages  Message[]
-  layout    Layout?
+model PersonalLearningMap {
+  id            String         @id @default(uuid())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  articles      Article[]
+  userQuestions UserQuestion[]
+  layout        Layout?
+  mapContext    MapContext?
 }
 
-model Message {
-  id             String       @id @default(uuid())
-  text           String
-  isUser         Boolean
-  conversationId String
-  parentId       String?
-  tooltips       Json?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  parent         Message?     @relation("MessageToMessage", fields: [parentId], references: [id], onDelete: SetNull)
-  children       Message[]    @relation("MessageToMessage")
+model MapContext {
+  id                    String              @id @default(uuid())
+  curriculumMapId       String
+  moduleId              String // ID of the specific module in the curriculum map
+  personalLearningMapId String              @unique
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  curriculumMap         CurriculumMap       @relation(fields: [curriculumMapId], references: [id], onDelete: Cascade)
+  personalLearningMap   PersonalLearningMap @relation(fields: [personalLearningMapId], references: [id], onDelete: Cascade)
+  subject               Subject             @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subjectId             String
+}
+
+model Article {
+  id                    String              @id @default(uuid())
+  content               String
+  personalLearningMapId String
+  isRoot                Boolean             @default(false)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  personalLearningMap   PersonalLearningMap @relation(fields: [personalLearningMapId], references: [id], onDelete: Cascade)
+  contextualTooltips    ContextualTooltip[]
+  sourceQuestions       UserQuestion[]      @relation("DestinationArticle")
+  destinationQuestions  UserQuestion[]      @relation("SourceArticle")
+}
+
+model UserQuestion {
+  id                    String              @id @default(uuid())
+  text                  String
+  personalLearningMapId String
+  sourceArticleId       String
+  destinationArticleId  String
+  isImplicit            Boolean             @default(false) // Whether question was explicitly asked or implicit (e.g., from tooltip exploration)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  personalLearningMap   PersonalLearningMap @relation(fields: [personalLearningMapId], references: [id], onDelete: Cascade)
+  sourceArticle         Article             @relation("SourceArticle", fields: [sourceArticleId], references: [id], onDelete: Cascade)
+  destinationArticle    Article             @relation("DestinationArticle", fields: [destinationArticleId], references: [id], onDelete: Cascade)
+}
+
+model ContextualTooltip {
+  id          String   @id @default(uuid())
+  term        String
+  explanation String
+  articleId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  article     Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
 }
 
 model Layout {
-  id             String       @id @default(uuid())
-  conversationId String       @unique
-  nodes          Json
-  edges          Json
-  nodeHeights    Json
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  id                    String              @id @default(uuid())
+  personalLearningMapId String              @unique
+  nodes                 Json // Positions and metadata for article nodes
+  edges                 Json // Visual properties for question edges
+  nodeHeights           Json // Height measurements for proper layout
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  personalLearningMap   PersonalLearningMap @relation(fields: [personalLearningMapId], references: [id], onDelete: Cascade)
 }

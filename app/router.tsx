@@ -13,6 +13,7 @@ function NotFound() {
 }
 
 export function createRouter() {
+  // Use the most basic configuration to avoid any potential issues
   const router = createTanStackRouter({
     routeTree,
     defaultNotFoundComponent: NotFound,

@@ -2,7 +2,7 @@ import {
   Outlet,
   ScrollRestoration,
   createRootRoute,
-  useLocation,
+  useRouter,
 } from "@tanstack/react-router";
 import { Meta, Scripts } from "@tanstack/start";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -32,25 +32,39 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-  const location = useLocation();
+  const router = useRouter();
+
+  // Set up router-based view transitions for modern browsers
+  useEffect(() => {
+    // Check if View Transitions API is supported
+    if (document.startViewTransition) {
+      // Add transition handler for route changes
+      const unsubscribe = router.subscribe(
+        "onBeforeNavigate",
+        ({ toLocation }) => {
+          // Don't animate on initial load
+          if (!router.state.location) return;
+
+          // Use View Transitions API
+          document.startViewTransition?.(() => {
+            return new Promise((resolve) => {
+              // Give router time to update DOM
+              setTimeout(resolve, 0);
+            });
+          });
+        }
+      );
+
+      return unsubscribe;
+    }
+  }, [router]);
 
   return (
     <RootDocument>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider delayDuration={0}>
           <div className="relative w-full h-full">
-            <AnimatePresence mode="sync">
-              <motion.div
-                key={location.pathname}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="w-full h-full absolute inset-0"
-              >
-                <Outlet />
-              </motion.div>
-            </AnimatePresence>
+            <Outlet />
           </div>
           <ScrollRestoration />
           <Scripts />

@@ -22,15 +22,15 @@ const phraseSets = {
     "Analyzing subject areas",
     "Preparing calibration tools",
   ],
-  roadmapGeneration: [
-    "Creating your personalized roadmap",
+  curriculumMapGeneration: [
+    "Creating your personalized curriculum map",
     "Organizing learning modules",
     "Sequencing learning path",
     "Tailoring to your knowledge level",
     "Building learning connections",
   ],
-  roadmapLoading: [
-    "Loading your learning roadmap",
+  curriculumMapLoading: [
+    "Loading your curriculum map",
     "Preparing visualization",
     "Rendering learning path",
     "Setting up your journey",

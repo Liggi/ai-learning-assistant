@@ -6,7 +6,7 @@ import {
   Edge as ReactFlowEdge,
 } from "@xyflow/react";
 import Node from "@/components/react-flow/node";
-import { RoadmapNodeData } from "@/features/roadmap/store";
+import { CurriculumMapNodeData } from "@/types/curriculum-map";
 import { cn } from "@/lib/utils";
 
 const nodeTypes = { normalNode: Node };
@@ -17,16 +17,19 @@ function FlowWithProvider({
   onNodeClick,
   isPanel = false,
 }: {
-  nodes: ReactFlowNode<RoadmapNodeData>[];
+  nodes: ReactFlowNode<CurriculumMapNodeData>[];
   edges: ReactFlowEdge[];
-  onNodeClick: (node: ReactFlowNode<RoadmapNodeData>) => void;
+  onNodeClick: (node: ReactFlowNode<CurriculumMapNodeData>) => void;
   isPanel?: boolean;
 }) {
   return (
     <ReactFlow
       nodes={nodes}
       edges={edges}
-      onNodeClick={(_, node) => onNodeClick(node)}
+      onNodeClick={(e, node) => {
+        e.preventDefault();
+        onNodeClick(node);
+      }}
       nodeTypes={nodeTypes}
       fitView
       fitViewOptions={{
@@ -43,21 +46,21 @@ function FlowWithProvider({
   );
 }
 
-interface RoadmapViewProps {
-  nodes: ReactFlowNode<RoadmapNodeData>[];
+interface CurriculumMapViewProps {
+  nodes: ReactFlowNode<CurriculumMapNodeData>[];
   edges: ReactFlowEdge[];
-  onNodeClick: (node: ReactFlowNode<RoadmapNodeData>) => void;
+  onNodeClick: (node: ReactFlowNode<CurriculumMapNodeData>) => void;
   onReset: () => void;
   isPanel?: boolean;
 }
 
-export default function RoadmapView({
+export default function CurriculumMapView({
   nodes,
   edges,
   onNodeClick,
   onReset,
   isPanel = false,
-}: RoadmapViewProps) {
+}: CurriculumMapViewProps) {
   return (
     <div
       className={cn(
