@@ -130,3 +130,30 @@ You are assisting with a Learning Assistant Application built with modern React 
 - Request IDs to track operations through the system
 - Console grouping for related log messages
 - Standardized error response formats
+
+// TERMINAL COMMANDS & ENVIRONMENT
+
+- IMPORTANT: When running npm or Node.js commands, always use zsh explicitly:
+  - The Cursor terminal uses bash by default, which doesn't load nvm configuration
+  - Always prefix npm/Node.js commands with `zsh -c "command"` (e.g., `zsh -c "npm test"`)
+  - This ensures nvm is properly loaded from .zshrc
+  - Without this, npm/node commands will fail with "command not found" errors
+  - Example: Use `zsh -c "npm test"` instead of just `npm test`
+  - Example: Use `zsh -c "node script.js"` instead of just `node script.js`
+
+// RUNNING TESTS
+
+- Test commands available:
+
+  - `npm test`: Run all tests once
+  - `npm run test:watch`: Run tests in watch mode
+  - `npm run test:coverage`: Run tests with coverage reporting
+  - `npm run test:conversation-map`: Run specific conversation map tests
+
+- To run tests properly:
+  1. Always source the zshrc file to ensure nvm is loaded correctly:
+     `zsh -c "source ~/.zshrc && npm test"`
+  2. If the simple zsh prefix doesn't work (`zsh -c "npm test"` fails with "command not found"),
+     explicitly source the zshrc file first as shown above
+  3. Test files are located throughout the project with `.test.ts` or `.test.tsx` extensions
+  4. The project uses Vitest for testing with configuration in `vitest.config.ts`

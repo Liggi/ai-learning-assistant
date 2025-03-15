@@ -21,6 +21,87 @@ import { serializeArticle } from "./articles";
 
 const logger = new Logger({ context: "PersonalLearningMapService" });
 
+/**
+ * Server function to get or create a personal learning map
+ * This centralizes the "find or create" logic on the server side
+ */
+const getOrCreatePersonalLearningMapSchema = z.object({
+  subjectId: z.string().min(1, "Subject ID is required"),
+  moduleId: z.string().min(1, "Module ID is required"),
+});
+
+export const getOrCreatePersonalLearningMap = createServerFn({ method: "POST" })
+  .validator((data: unknown) =>
+    getOrCreatePersonalLearningMapSchema.parse(data)
+  )
+  .handler(async ({ data }): Promise<SerializedPersonalLearningMap> => {
+    const { subjectId, moduleId } = data;
+
+    logger.info("Getting or creating personal learning map", {
+      subjectId,
+      moduleId,
+    });
+
+    // Get curriculum map ID
+    const subject = await prisma.subject.findUnique({
+      where: { id: subjectId },
+      include: { curriculumMap: true },
+    });
+
+    if (!subject || !subject.curriculumMap) {
+      logger.error("Subject or curriculum map not found", { subjectId });
+      throw new Error("Subject or curriculum map not found");
+    }
+
+    const curriculumMapId = subject.curriculumMap.id;
+
+    // Find existing maps through MapContext
+    const existingMapContexts = await prisma.mapContext.findMany({
+      where: {
+        curriculumMapId,
+        moduleId,
+        subjectId,
+      },
+      include: {
+        personalLearningMap: true,
+      },
+    });
+
+    logger.info("Found existing map contexts", {
+      count: existingMapContexts.length,
+    });
+
+    // Return existing map or create new one
+    if (
+      existingMapContexts.length > 0 &&
+      existingMapContexts[0].personalLearningMap
+    ) {
+      return serializePersonalLearningMap(
+        existingMapContexts[0].personalLearningMap
+      );
+    } else {
+      logger.info("Creating new personal learning map");
+
+      // Create a new personal learning map with its context
+      const newMap = await prisma.personalLearningMap.create({
+        data: {
+          mapContext: {
+            create: {
+              curriculumMapId,
+              moduleId,
+              subjectId,
+            },
+          },
+        },
+        include: {
+          mapContext: true,
+        },
+      });
+
+      return serializePersonalLearningMap(newMap);
+    }
+  });
+
 // Type definitions using Prisma and Zod generated schemas
 type PrismaPersonalLearningMap = z.infer<typeof PersonalLearningMapSchema>;
 type PrismaMapContext = z.infer<typeof MapContextSchema>;
