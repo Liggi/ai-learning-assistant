@@ -5,15 +5,12 @@ import {
   type UseQueryResult,
 } from "@tanstack/react-query";
 import {
-  getAllSubjects,
-  getSubjectWithCurriculumMap,
   createSubject,
-  type SerializedSubject,
   getSubject,
-  getSubjectCurriculumMapId,
+  getAllSubjects,
+  updateSubject,
 } from "@/prisma/subjects";
-import { saveCurriculumMap } from "@/prisma/curriculum-maps";
-import type { Node, Edge } from "@xyflow/react";
+import { SerializedSubject } from "@/types/serialized";
 
 export function useSubjects() {
   return useQuery<SerializedSubject[]>({
@@ -35,16 +32,6 @@ export function useSubject(
   });
 }
 
-export function useSubjectWithCurriculumMap(subjectId: string) {
-  return useQuery<SerializedSubject | null>({
-    queryKey: ["subjects", subjectId, "curriculumMap"],
-    queryFn: async () => {
-      return getSubjectWithCurriculumMap({ data: { id: subjectId } });
-    },
-    enabled: Boolean(subjectId),
-  });
-}
-
 export function useCreateSubject() {
   const queryClient = useQueryClient();
 
@@ -58,37 +45,22 @@ export function useCreateSubject() {
   });
 }
 
-export function useSaveCurriculumMap() {
+export function useUpdateSubject() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async ({
-      subjectId,
-      nodes,
-      edges,
-    }: {
-      subjectId: string;
-      nodes: Node[];
-      edges: Edge[];
-    }) => {
-      return saveCurriculumMap({ data: { subjectId, nodes, edges } });
+  return useMutation<
+    SerializedSubject,
+    Error,
+    { id: string; data: Partial<Omit<SerializedSubject, "id">> }
+  >({
+    mutationFn: async ({ id, data }) => {
+      return updateSubject({ data: { id, ...data } });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Invalidate the specific subject query
+      queryClient.invalidateQueries({ queryKey: ["subjects", data.id] });
+      // Also invalidate the general subjects list
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
     },
-  });
-}
-
-export function useSubjectCurriculumMapId(
-  subjectId: string | null,
-  enabled: boolean
-) {
-  return useQuery<{ curriculumMapId: string } | null>({
-    queryKey: ["subjects", subjectId, "curriculumMapId"],
-    queryFn: async () => {
-      if (!subjectId) return null;
-      return getSubjectCurriculumMapId({ data: { subjectId } });
-    },
-    enabled,
   });
 }

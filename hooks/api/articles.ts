@@ -13,6 +13,7 @@ import {
   getRootArticle,
 } from "@/prisma/articles";
 import type { Article } from "@/types/personal-learning-map";
+import type { ArticleMetadata } from "@/types/serialized";
 
 /**
  * Hook to fetch an article by ID
@@ -32,17 +33,17 @@ export function useArticle(id: string | null): UseQueryResult<Article | null> {
  * Hook to fetch all articles for a personal learning map
  */
 export function useArticlesByPersonalLearningMap(
-  personalLearningMapId: string | null
+  learningMapId: string | null
 ): UseQueryResult<Article[]> {
   return useQuery<Article[]>({
-    queryKey: ["articles", "byMap", personalLearningMapId || "null"],
+    queryKey: ["articles", "byMap", learningMapId || "null"],
     queryFn: async () => {
-      if (!personalLearningMapId) return [];
+      if (!learningMapId) return [];
       return getArticlesByPersonalLearningMap({
-        data: { personalLearningMapId },
+        data: { learningMapId },
       });
     },
-    enabled: Boolean(personalLearningMapId),
+    enabled: Boolean(learningMapId),
   });
 }
 
@@ -50,17 +51,17 @@ export function useArticlesByPersonalLearningMap(
  * Hook to fetch the root article for a personal learning map
  */
 export function useRootArticle(
-  personalLearningMapId: string | null
+  learningMapId: string | null
 ): UseQueryResult<Article | null> {
   return useQuery<Article | null>({
-    queryKey: ["articles", "root", personalLearningMapId || "null"],
+    queryKey: ["articles", "root", learningMapId || "null"],
     queryFn: async () => {
-      if (!personalLearningMapId) return null;
+      if (!learningMapId) return null;
       return getRootArticle({
-        data: { personalLearningMapId },
+        data: { learningMapId },
       });
     },
-    enabled: Boolean(personalLearningMapId),
+    enabled: Boolean(learningMapId),
   });
 }
 
@@ -74,7 +75,7 @@ export function useCreateArticle() {
     Article,
     Error,
     {
-      personalLearningMapId: string;
+      learningMapId: string;
       content: string;
       isRoot?: boolean;
     }
@@ -82,29 +83,14 @@ export function useCreateArticle() {
     mutationFn: async (data) => {
       return createArticle({ data });
     },
-    onSuccess: (article) => {
-      // Invalidate relevant queries
-      queryClient.invalidateQueries({
-        queryKey: ["articles", article.id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["articles", "byMap", article.personalLearningMapId],
-      });
-      if (article.isRoot) {
-        queryClient.invalidateQueries({
-          queryKey: ["articles", "root", article.personalLearningMapId],
-        });
-      }
-      // Also invalidate the personal learning map queries
-      queryClient.invalidateQueries({
-        queryKey: ["personalLearningMaps", article.personalLearningMapId],
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries();
     },
   });
 }
 
 /**
- * Hook to update an article's content
+ * Hook to update an article
  */
 export function useUpdateArticle() {
   const queryClient = useQueryClient();
@@ -114,25 +100,17 @@ export function useUpdateArticle() {
     Error,
     {
       id: string;
-      content: string;
+      content?: string;
+      summary?: string;
+      takeaways?: string[];
+      tooltips?: Record<string, string>;
     }
   >({
     mutationFn: async (data) => {
       return updateArticle({ data });
     },
-    onSuccess: (article) => {
-      // Invalidate relevant queries
-      queryClient.invalidateQueries({
-        queryKey: ["articles", article.id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["articles", "byMap", article.personalLearningMapId],
-      });
-      if (article.isRoot) {
-        queryClient.invalidateQueries({
-          queryKey: ["articles", "root", article.personalLearningMapId],
-        });
-      }
+    onSuccess: () => {
+      queryClient.invalidateQueries();
     },
   });
 }
@@ -146,28 +124,13 @@ export function useDeleteArticle() {
   return useMutation<
     { success: boolean; id: string },
     Error,
-    { id: string; personalLearningMapId?: string }
+    { id: string; learningMapId?: string }
   >({
     mutationFn: async ({ id }) => {
       return deleteArticle({ data: { id } });
     },
-    onSuccess: (result, variables) => {
-      // Invalidate relevant queries
-      queryClient.invalidateQueries({
-        queryKey: ["articles", result.id],
-      });
-      if (variables.personalLearningMapId) {
-        queryClient.invalidateQueries({
-          queryKey: ["articles", "byMap", variables.personalLearningMapId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["articles", "root", variables.personalLearningMapId],
-        });
-        // Also invalidate the personal learning map queries
-        queryClient.invalidateQueries({
-          queryKey: ["personalLearningMaps", variables.personalLearningMapId],
-        });
-      }
+    onSuccess: () => {
+      queryClient.invalidateQueries();
     },
   });
 }

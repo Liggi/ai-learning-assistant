@@ -154,3 +154,7 @@
     opacity: 1;
   }
 }
+
+.react-flow__attribution {
+  display: none;
+}

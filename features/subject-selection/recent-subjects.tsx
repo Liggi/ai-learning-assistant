@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { SerializedSubject } from "@/prisma/subjects";
+import { SerializedSubject } from "@/types/serialized";
 import { Link } from "@tanstack/react-router";
 
 export default function RecentSubjects({
@@ -22,7 +22,7 @@ export default function RecentSubjects({
           {subjects.map((subject) => (
             <li key={subject.id}>
               <Link
-                to="/learning-map/$subjectId"
+                to="/learning/$subjectId"
                 params={{ subjectId: subject.id }}
                 className="text-sm w-full text-left px-3 py-2 rounded-md hover:bg-accent transition-colors block"
               >

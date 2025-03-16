@@ -19,97 +19,37 @@ generator zod {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Subject {
-  id            String         @id @default(uuid())
-  title         String
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  curriculumMap CurriculumMap?
-  mapContexts   MapContext[]
+  id                        String        @id @default(uuid())
+  title                     String
+  initiallyFamiliarConcepts String[]      @default([])
+  createdAt                 DateTime      @default(now())
+  updatedAt                 DateTime      @updatedAt
+  learningMaps              LearningMap[]
 }
 
-model CurriculumMap {
-  id          String       @id @default(uuid())
-  subjectId   String       @unique
-  nodes       Json // Module nodes with their metadata
-  edges       Json // Connections between modules
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  subject     Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  mapContexts MapContext[]
-}
-
-model PersonalLearningMap {
-  id            String         @id @default(uuid())
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  articles      Article[]
-  userQuestions UserQuestion[]
-  layout        Layout?
-  mapContext    MapContext?
-}
-
-model MapContext {
-  id                    String              @id @default(uuid())
-  curriculumMapId       String
-  moduleId              String // ID of the specific module in the curriculum map
-  personalLearningMapId String              @unique
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-  curriculumMap         CurriculumMap       @relation(fields: [curriculumMapId], references: [id], onDelete: Cascade)
-  personalLearningMap   PersonalLearningMap @relation(fields: [personalLearningMapId], references: [id], onDelete: Cascade)
-  subject               Subject             @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  subjectId             String
+model LearningMap {
+  id        String    @id @default(uuid())
+  articles  Article[]
+  subjectId String
+  subject   Subject   @relation(fields: [subjectId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Article {
-  id                    String              @id @default(uuid())
-  content               String
-  personalLearningMapId String
-  isRoot                Boolean             @default(false)
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-  personalLearningMap   PersonalLearningMap @relation(fields: [personalLearningMapId], references: [id], onDelete: Cascade)
-  contextualTooltips    ContextualTooltip[]
-  sourceQuestions       UserQuestion[]      @relation("DestinationArticle")
-  destinationQuestions  UserQuestion[]      @relation("SourceArticle")
-}
-
-model UserQuestion {
-  id                    String              @id @default(uuid())
-  text                  String
-  personalLearningMapId String
-  sourceArticleId       String
-  destinationArticleId  String
-  isImplicit            Boolean             @default(false) // Whether question was explicitly asked or implicit (e.g., from tooltip exploration)
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-  personalLearningMap   PersonalLearningMap @relation(fields: [personalLearningMapId], references: [id], onDelete: Cascade)
-  sourceArticle         Article             @relation("SourceArticle", fields: [sourceArticleId], references: [id], onDelete: Cascade)
-  destinationArticle    Article             @relation("DestinationArticle", fields: [destinationArticleId], references: [id], onDelete: Cascade)
-}
-
-model ContextualTooltip {
-  id          String   @id @default(uuid())
-  term        String
-  explanation String
-  articleId   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  article     Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
-}
-
-model Layout {
-  id                    String              @id @default(uuid())
-  personalLearningMapId String              @unique
-  nodes                 Json // Positions and metadata for article nodes
-  edges                 Json // Visual properties for question edges
-  nodeHeights           Json // Height measurements for proper layout
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-  personalLearningMap   PersonalLearningMap @relation(fields: [personalLearningMapId], references: [id], onDelete: Cascade)
+  id            String      @id @default(uuid())
+  content       String
+  summary       String      @default("")
+  takeaways     String[]    @default([])
+  learningMapId String
+  tooltips      Json?
+  isRoot        Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  learningMap   LearningMap @relation(fields: [learningMapId], references: [id], onDelete: Cascade)
 }

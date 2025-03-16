@@ -1,41 +1,11 @@
 import { z } from "zod";
 import prisma from "@/prisma/client";
 import { createServerFn } from "@tanstack/start";
-import { SubjectSchema, CurriculumMapSchema } from "./generated/zod";
-import { SerializedCurriculumMapSchema } from "./curriculum-maps";
 import { Logger } from "@/lib/logger";
+import { SerializedSubject } from "@/types/serialized";
+import { serializeSubject } from "@/types/serializers";
 
-const logger = new Logger({ context: "SubjectsService" });
-
-type PrismaSubject = z.infer<typeof SubjectSchema>;
-type PrismaCurriculumMap = z.infer<typeof CurriculumMapSchema>;
-
-export const SerializedSubjectSchema = SubjectSchema.extend({
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  curriculumMap: SerializedCurriculumMapSchema.nullable().optional(),
-});
-
-export type SerializedSubject = z.infer<typeof SerializedSubjectSchema>;
-
-export function serializeSubject(
-  subject: PrismaSubject & { curriculumMap?: PrismaCurriculumMap | null }
-): SerializedSubject {
-  return SerializedSubjectSchema.parse({
-    ...subject,
-    createdAt: subject.createdAt.toISOString(),
-    updatedAt: subject.updatedAt.toISOString(),
-    curriculumMap: subject.curriculumMap
-      ? {
-          ...subject.curriculumMap,
-          createdAt: subject.curriculumMap.createdAt.toISOString(),
-          updatedAt: subject.curriculumMap.updatedAt.toISOString(),
-          nodes: subject.curriculumMap.nodes,
-          edges: subject.curriculumMap.edges,
-        }
-      : null,
-  });
-}
+const logger = new Logger({ context: "SubjectsService", enabled: false });
 
 const createSubjectSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -47,8 +17,10 @@ export const createSubject = createServerFn({ method: "POST" })
     logger.info("Creating subject", { title: data.title });
     try {
       const subject = await prisma.subject.create({
-        data: { title: data.title },
-        include: { curriculumMap: true },
+        data: {
+          title: data.title,
+          initiallyFamiliarConcepts: [],
+        },
       });
       logger.info("Subject created successfully", { id: subject.id });
       return serializeSubject(subject);
@@ -56,6 +28,37 @@ export const createSubject = createServerFn({ method: "POST" })
       logger.error("Failed to create subject", {
         error: error instanceof Error ? error.message : "Unknown error",
         title: data.title,
+      });
+      throw error;
+    }
+  });
+
+const updateSubjectSchema = z.object({
+  id: z.string().uuid("Invalid subject ID"),
+  title: z.string().min(1, "Title is required").optional(),
+  initiallyFamiliarConcepts: z.array(z.string()).optional(),
+});
+
+export const updateSubject = createServerFn({ method: "POST" })
+  .validator((data: unknown) => updateSubjectSchema.parse(data))
+  .handler(async ({ data }): Promise<SerializedSubject> => {
+    const { id, ...updateData } = data;
+
+    logger.info("Updating subject", { id, ...updateData });
+
+    try {
+      const updatedSubject = await prisma.subject.update({
+        where: { id },
+        data: updateData,
+      });
+
+      logger.info("Subject updated successfully", { id });
+      return serializeSubject(updatedSubject);
+    } catch (error) {
+      logger.error("Failed to update subject", {
+        error: error instanceof Error ? error.message : "Unknown error",
+        id,
+        updateData,
       });
       throw error;
     }
@@ -71,9 +74,7 @@ export const getAllSubjects = createServerFn({ method: "GET" })
   .handler(async () => {
     logger.info("Fetching all subjects");
     try {
-      const subjects = await prisma.subject.findMany({
-        include: { curriculumMap: true },
-      });
+      const subjects = await prisma.subject.findMany();
       logger.info("Subjects fetched successfully", { count: subjects.length });
       return subjects.map(serializeSubject);
     } catch (error) {
@@ -109,57 +110,6 @@ export const getSubject = createServerFn({ method: "GET" })
         error: error instanceof Error ? error.message : "Unknown error",
         id: data.id,
       });
-      throw error;
-    }
-  });
-
-export const getSubjectWithCurriculumMap = createServerFn({ method: "GET" })
-  .validator((data: unknown) => getSubjectSchema.parse(data))
-  .handler(async ({ data }): Promise<SerializedSubject | null> => {
-    logger.info("Fetching subject with curriculum map", { id: data.id });
-    try {
-      const subject = await prisma.subject.findUnique({
-        where: { id: data.id },
-        include: { curriculumMap: true },
-      });
-
-      if (!subject) {
-        logger.warn("Subject not found", { id: data.id });
-        return null;
-      }
-
-      logger.info("Subject fetched successfully", { id: data.id });
-      return serializeSubject(subject);
-    } catch (error) {
-      logger.error("Failed to fetch subject", {
-        error: error instanceof Error ? error.message : "Unknown error",
-        id: data.id,
-      });
-      throw error;
-    }
-  });
-
-export const getSubjectCurriculumMapId = createServerFn({ method: "GET" })
-  .validator((data: { subjectId: string }) => data)
-  .handler(async ({ data }) => {
-    logger.info("Getting curriculum map ID for subject", {
-      subjectId: data.subjectId,
-    });
-    try {
-      const subject = await prisma.subject.findUnique({
-        where: { id: data.subjectId },
-        include: { curriculumMap: true },
-      });
-
-      if (!subject || !subject.curriculumMap) {
-        throw new Error(
-          `Subject not found or has no curriculum map: ${data.subjectId}`
-        );
-      }
-
-      return { curriculumMapId: subject.curriculumMap.id };
-    } catch (error) {
-      logger.error("Error getting curriculum map ID for subject", { error });
       throw error;
     }
   });

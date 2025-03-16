@@ -10,7 +10,13 @@ const knowledgeNodesSchema = z.object({
   nodes: z.array(
     z.object({
       name: z.string(),
-      depth_level: z.number().min(1).max(5),
+      complexity: z.enum([
+        "basic",
+        "intermediate",
+        "advanced",
+        "expert",
+        "master",
+      ]),
     })
   ),
 });
@@ -31,7 +37,23 @@ export const generate = createServerFn({ method: "POST" })
       logger.info(
         `Successfully generated ${response.nodes.length} knowledge nodes`
       );
-      return response.nodes;
+
+      const sortedNodes = [...response.nodes].sort((a, b) => {
+        const complexityOrder = {
+          basic: 1,
+          intermediate: 2,
+          advanced: 3,
+          expert: 4,
+          master: 5,
+        };
+
+        if (complexityOrder[a.complexity] !== complexityOrder[b.complexity]) {
+          return complexityOrder[a.complexity] - complexityOrder[b.complexity];
+        }
+        return a.name.localeCompare(b.name);
+      });
+
+      return sortedNodes;
     } catch (error) {
       logger.error("Error generating knowledge nodes:", error);
 

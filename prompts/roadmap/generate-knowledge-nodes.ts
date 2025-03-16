@@ -13,17 +13,22 @@ Word the nodes as if the person selecting them is speaking in the first person.
 IMPORTANT: You MUST return ONLY a valid JSON object with EXACTLY this structure:
 {
   "nodes": [
-    { "name": "node name here", "depth_level": 1 },
-    { "name": "another node name", "depth_level": 2 }
+    { "name": "node name here", "complexity": "basic" },
+    { "name": "another node name", "complexity": "intermediate" }
     // more nodes...
   ]
 }
 
 The response MUST contain the outer "nodes" property that contains an array of node objects.
-Each node MUST have a "name" (string) and "depth_level" (number from 1-5).
+Each node MUST have a "name" (string) and "complexity" (string) which must be one of these exact values:
+- "basic" (fundamental concepts)
+- "intermediate" (building on fundamentals)
+- "advanced" (requires solid understanding)
+- "expert" (specialized knowledge)
+- "master" (cutting-edge or highly specialized knowledge)
 
 Generate at least 15-20 nodes representing a breadth of understanding in the subject: |${subject}|, ensuring that the nodes are ideally placed to illuminate a learner's current level of understanding and comprehension.
 
-Include at least three nodes that only a person EXTREMELY well versed in the subject would know (depth_level 5).
+Include at least three nodes with "master" complexity that only a person EXTREMELY well versed in the subject would know.
 
 DO NOT include any explanation, intro text, or anything other than the JSON object itself in your response.`;

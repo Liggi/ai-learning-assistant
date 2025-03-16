@@ -9,6 +9,29 @@ const logger = new Logger({ context: "Anthropic" });
 let activeCalls = 0;
 const maxConcurrentCalls = 2; // Adjust based on Anthropic's rate limits
 
+// Cache for storing responses to identical prompts
+type CacheEntry<T> = {
+  timestamp: number;
+  result: T;
+};
+
+// In-memory cache with TTL
+const responseCache = new Map<string, CacheEntry<any>>();
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour in milliseconds
+const MAX_CACHE_SIZE = 100; // Maximum number of entries to prevent memory issues
+
+// Function to generate a cache key from a prompt
+function generateCacheKey(prompt: string): string {
+  // Simple hash function for the prompt
+  let hash = 0;
+  for (let i = 0; i < prompt.length; i++) {
+    const char = prompt.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return `prompt_${hash}`;
+}
+
 // Helper function to extract JSON from a string that might contain other text
 function extractJSON(str: string): string {
   // Try to find JSON object in the string using regex
@@ -29,6 +52,7 @@ function extractJSON(str: string): string {
  * @param prompt - The prompt to send to Anthropic.
  * @param schema - A Zod schema that describes the expected response shape.
  * @param requestId - An optional request ID to track the request through its entire flow.
+ * @param options - Optional configuration for this specific call.
  *
  * @returns The parsed and validated response from Anthropic.
  *
@@ -37,13 +61,50 @@ function extractJSON(str: string): string {
 export async function callAnthropic<T>(
   prompt: string,
   schema: z.ZodType<T>,
-  requestId?: string
+  requestId?: string,
+  options?: {
+    bypassCache?: boolean;
+    cacheTTL?: number; // Override default TTL in milliseconds
+    maxRetries?: number;
+  }
 ): Promise<T> {
-  const maxRetries = 3;
+  const maxRetries = options?.maxRetries ?? 3;
   let attempt = 0;
   const reqId =
     requestId ||
     `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+  // Check cache for identical prompts
+  if (!options?.bypassCache) {
+    const cacheKey = generateCacheKey(prompt);
+    const cachedResponse = responseCache.get(cacheKey);
+
+    if (cachedResponse) {
+      const now = Date.now();
+      const ttl = options?.cacheTTL ?? CACHE_TTL;
+
+      // Check if the cached response is still valid
+      if (now - cachedResponse.timestamp < ttl) {
+        logger.info(
+          `[${reqId}] Cache hit for prompt - returning cached response`
+        );
+        console.log(
+          `[${reqId}] 🔍 CACHE_HIT: Using cached response instead of API call`
+        );
+        return cachedResponse.result;
+      } else {
+        // Remove expired entry
+        responseCache.delete(cacheKey);
+        logger.debug(
+          `[${reqId}] Cache entry expired, will make fresh API call`
+        );
+      }
+    } else {
+      logger.debug(`[${reqId}] Cache miss, will make API call`);
+    }
+  } else {
+    logger.debug(`[${reqId}] Cache bypass requested, will make fresh API call`);
+  }
 
   // Increment active calls counter
   activeCalls++;
@@ -197,6 +258,33 @@ export async function callAnthropic<T>(
           const result = schema.parse(parsedResponse);
           console.log(`[${reqId}] Response passed schema validation:`, result);
           logger.info(`[${reqId}] Response passed schema validation`);
+
+          // Cache the successful result if caching is enabled
+          if (!options?.bypassCache) {
+            const cacheKey = generateCacheKey(prompt);
+
+            // Ensure we don't exceed max cache size
+            if (responseCache.size >= MAX_CACHE_SIZE) {
+              // Remove oldest entry (first item in the Map)
+              const oldestKey = responseCache.keys().next().value;
+              responseCache.delete(oldestKey);
+              logger.debug(
+                `[${reqId}] Cache full, removed oldest entry. New size: ${responseCache.size}`
+              );
+            }
+
+            responseCache.set(cacheKey, {
+              timestamp: Date.now(),
+              result: result,
+            });
+            console.log(
+              `[${reqId}] 🔍 CACHE_STORE: Cached response for future use`
+            );
+            logger.info(
+              `[${reqId}] Cached response for future use. Cache size: ${responseCache.size}`
+            );
+          }
+
           return result;
         } catch (validationError: any) {
           console.error(`[${reqId}] Schema validation error:`, validationError);

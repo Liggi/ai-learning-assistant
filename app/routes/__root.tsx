@@ -2,13 +2,11 @@ import {
   Outlet,
   ScrollRestoration,
   createRootRoute,
-  useRouter,
 } from "@tanstack/react-router";
 import { Meta, Scripts } from "@tanstack/start";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const queryClient = new QueryClient();
@@ -32,38 +30,12 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-  const router = useRouter();
-
-  // Set up router-based view transitions for modern browsers
-  useEffect(() => {
-    // Check if View Transitions API is supported
-    if (document.startViewTransition) {
-      // Add transition handler for route changes
-      const unsubscribe = router.subscribe(
-        "onBeforeNavigate",
-        ({ toLocation }) => {
-          // Don't animate on initial load
-          if (!router.state.location) return;
-
-          // Use View Transitions API
-          document.startViewTransition?.(() => {
-            return new Promise((resolve) => {
-              // Give router time to update DOM
-              setTimeout(resolve, 0);
-            });
-          });
-        }
-      );
-
-      return unsubscribe;
-    }
-  }, [router]);
-
   return (
     <RootDocument>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider delayDuration={0}>
           <div className="relative w-full h-full">
+            <Toaster />
             <Outlet />
           </div>
           <ScrollRestoration />

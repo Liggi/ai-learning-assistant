@@ -5,27 +5,51 @@ import {
   Background,
   Controls,
 } from "@xyflow/react";
-import ArticleNode from "./react-flow/article-node";
-import QuestionNode from "./react-flow/question-node";
+import ConversationNode from "./react-flow/conversation-node";
+import { SerializedArticle } from "@/types/serialized";
 
-// Placeholder component for personal learning map visualization
-// This will be replaced with a proper implementation later
 interface PersonalLearningMapFlowProps {
-  nodes: any[];
-  edges: any[];
+  rootArticle?: SerializedArticle | null;
   onNodeClick?: (nodeId: string) => void;
 }
 
 const nodeTypes = {
-  articleNode: ArticleNode,
-  questionNode: QuestionNode,
+  conversationNode: ConversationNode,
 };
 
 const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
-  nodes,
-  edges,
+  rootArticle,
   onNodeClick,
 }) => {
+  const summary = rootArticle?.summary || "";
+  const takeaways = rootArticle?.takeaways || [];
+
+  const hasValidMetadata = !!(summary && takeaways.length > 0);
+
+  // Create a single node for the root article
+  const nodes = rootArticle
+    ? [
+        {
+          id: rootArticle.id,
+          type: "conversationNode",
+          position: { x: 150, y: 100 },
+          data: {
+            id: rootArticle.id,
+            content: {
+              summary: rootArticle.summary,
+              takeaways: rootArticle.takeaways,
+            },
+            isUser: false,
+            isLoading: !hasValidMetadata,
+            onClick: () => onNodeClick?.(rootArticle.id),
+          },
+        },
+      ]
+    : [];
+
+  // No edges for a single node
+  const edges = [];
+
   const handleNodeClick = useCallback(
     (event: any, node: any) => {
       if (onNodeClick) {
@@ -46,7 +70,6 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
           fitView
         >
           <Background color="#aaa" gap={16} />
-          <Controls />
         </ReactFlow>
       </ReactFlowProvider>
     </div>

@@ -1,63 +1,41 @@
 import { z } from "zod";
 import prisma from "@/prisma/client";
 import { createServerFn } from "@tanstack/start";
-import { ArticleSchema } from "./generated/zod";
-import { articleSchema } from "@/types/personal-learning-map";
 import { Logger } from "@/lib/logger";
+import { ArticleMetadata } from "@/types/serialized";
+import { serializeArticle } from "@/types/serializers";
+import { fromPrismaJson } from "@/lib/prisma-utils";
+import { generateSummary } from "@/features/generators/article-summary";
 
-const logger = new Logger({ context: "ArticleService" });
-
-// Type definitions using Prisma and Zod generated schemas
-type PrismaArticle = z.infer<typeof ArticleSchema>;
-
-/**
- * Serializes an Article from the database to a client-friendly format
- * Converts Date objects to ISO strings
- */
-export function serializeArticle(article: PrismaArticle) {
-  return {
-    ...article,
-    createdAt: article.createdAt.toISOString(),
-    updatedAt: article.updatedAt.toISOString(),
-  };
-}
+const logger = new Logger({ context: "ArticleService", enabled: true });
 
 /**
- * Server function to create a new article in a personal learning map
+ * Server function to create a new article in a learning map
  */
 export const createArticle = createServerFn({ method: "POST" })
   .validator(
-    (data: {
-      personalLearningMapId: string;
-      content: string;
-      isRoot?: boolean;
-    }) => data
+    (data: { learningMapId: string; content: string; isRoot?: boolean }) => data
   )
   .handler(async ({ data }) => {
     logger.info("Creating article", {
-      personalLearningMapId: data.personalLearningMapId,
+      learningMapId: data.learningMapId,
     });
     try {
-      // Check if the personal learning map exists
-      const existingMap = await prisma.personalLearningMap.findUnique({
-        where: { id: data.personalLearningMapId },
+      // Check if the learning map exists
+      const existingMap = await prisma.learningMap.findUnique({
+        where: { id: data.learningMapId },
       });
 
       if (!existingMap) {
-        throw new Error(
-          `Personal learning map not found: ${data.personalLearningMapId}`
-        );
+        throw new Error(`Learning map not found: ${data.learningMapId}`);
       }
 
       // Create the article
       const article = await prisma.article.create({
         data: {
           content: data.content,
-          personalLearningMapId: data.personalLearningMapId,
+          learningMapId: data.learningMapId,
           isRoot: data.isRoot ?? false,
-        },
-        include: {
-          contextualTooltips: true,
         },
       });
 
@@ -79,9 +57,6 @@ export const getArticle = createServerFn({ method: "GET" })
     try {
       const article = await prisma.article.findUnique({
         where: { id: data.id },
-        include: {
-          contextualTooltips: true,
-        },
       });
 
       if (!article) {
@@ -96,27 +71,24 @@ export const getArticle = createServerFn({ method: "GET" })
   });
 
 /**
- * Server function to get all articles for a personal learning map
+ * Server function to get all articles for a learning map
  */
 export const getArticlesByPersonalLearningMap = createServerFn({
   method: "GET",
 })
-  .validator((data: { personalLearningMapId: string }) => data)
+  .validator((data: { learningMapId: string }) => data)
   .handler(async ({ data }) => {
-    logger.info("Getting articles by personal learning map", {
-      personalLearningMapId: data.personalLearningMapId,
+    logger.info("Getting articles by learning map", {
+      learningMapId: data.learningMapId,
     });
     try {
       const articles = await prisma.article.findMany({
-        where: { personalLearningMapId: data.personalLearningMapId },
-        include: {
-          contextualTooltips: true,
-        },
+        where: { learningMapId: data.learningMapId },
       });
 
       return articles.map(serializeArticle);
     } catch (error) {
-      logger.error("Error getting articles by personal learning map", {
+      logger.error("Error getting articles by learning map", {
         error,
       });
       throw error;
@@ -127,9 +99,23 @@ export const getArticlesByPersonalLearningMap = createServerFn({
  * Server function to update an article's content
  */
 export const updateArticle = createServerFn({ method: "POST" })
-  .validator((data: { id: string; content: string }) => data)
+  .validator(
+    (data: {
+      id: string;
+      content?: string;
+      summary?: string;
+      takeaways?: string[];
+      tooltips?: Record<string, string>;
+    }) => data
+  )
   .handler(async ({ data }) => {
-    logger.info("Updating article", { id: data.id });
+    logger.info("Updating article", {
+      id: data.id,
+      hasContent: !!data.content,
+      hasSummary: !!data.summary,
+      hasTakeaways: !!data.takeaways,
+    });
+
     try {
       // Check if the article exists
       const existingArticle = await prisma.article.findUnique({
@@ -141,17 +127,25 @@ export const updateArticle = createServerFn({ method: "POST" })
       }
 
       // Update the article
+      logger.info("Update data being sent to Prisma:", {
+        updateData: JSON.stringify(data),
+        updateDataType: typeof data,
+      });
+
       const updatedArticle = await prisma.article.update({
         where: { id: data.id },
         data: {
-          content: data.content,
-        },
-        include: {
-          contextualTooltips: true,
+          ...(data.content !== undefined ? { content: data.content } : {}),
+          ...(data.summary !== undefined ? { summary: data.summary } : {}),
+          ...(data.takeaways !== undefined
+            ? { takeaways: data.takeaways }
+            : {}),
+          ...(data.tooltips !== undefined ? { tooltips: data.tooltips } : {}),
         },
       });
 
       logger.info("Article updated successfully", { id: updatedArticle.id });
+
       return serializeArticle(updatedArticle);
     } catch (error) {
       logger.error("Error updating article", { error });
@@ -176,7 +170,7 @@ export const deleteArticle = createServerFn({ method: "POST" })
         throw new Error(`Article not found: ${data.id}`);
       }
 
-      // Delete the article (cascades to related entities)
+      // Delete the article
       await prisma.article.delete({
         where: { id: data.id },
       });
@@ -190,22 +184,19 @@ export const deleteArticle = createServerFn({ method: "POST" })
   });
 
 /**
- * Server function to get the root article for a personal learning map
+ * Server function to get the root article for a learning map
  */
 export const getRootArticle = createServerFn({ method: "GET" })
-  .validator((data: { personalLearningMapId: string }) => data)
+  .validator((data: { learningMapId: string }) => data)
   .handler(async ({ data }) => {
     logger.info("Getting root article", {
-      personalLearningMapId: data.personalLearningMapId,
+      learningMapId: data.learningMapId,
     });
     try {
       const article = await prisma.article.findFirst({
         where: {
-          personalLearningMapId: data.personalLearningMapId,
+          learningMapId: data.learningMapId,
           isRoot: true,
-        },
-        include: {
-          contextualTooltips: true,
         },
       });
 

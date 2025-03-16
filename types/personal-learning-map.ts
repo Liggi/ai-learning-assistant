@@ -65,7 +65,9 @@ export const layoutDataSchema = z.object({
 export const articleSchema = z.object({
   id: z.string(),
   content: z.string(),
-  personalLearningMapId: z.string(),
+  summary: z.string(),
+  takeaways: z.array(z.string()),
+  learningMapId: z.string(),
   isRoot: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -76,7 +78,7 @@ export const articleSchema = z.object({
 export const userQuestionSchema = z.object({
   id: z.string(),
   text: z.string(),
-  personalLearningMapId: z.string(),
+  learningMapId: z.string(),
   sourceArticleId: z.string(),
   destinationArticleId: z.string(),
   isImplicit: z.boolean(),
@@ -89,7 +91,7 @@ export const mapContextSchema = z.object({
   id: z.string(),
   curriculumMapId: z.string(),
   moduleId: z.string(),
-  personalLearningMapId: z.string(),
+  learningMapId: z.string(),
   subjectId: z.string(),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -98,7 +100,7 @@ export const mapContextSchema = z.object({
 // Layout schema
 export const layoutSchema = z.object({
   id: z.string(),
-  personalLearningMapId: z.string(),
+  learningMapId: z.string(),
   nodes: articleNodesSchema,
   edges: questionEdgesSchema,
   nodeHeights: nodeHeightsSchema,
