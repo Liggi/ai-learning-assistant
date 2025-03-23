@@ -11,6 +11,8 @@ import {
   updateArticle,
   deleteArticle,
   getRootArticle,
+  createArticleFromQuestion,
+  getArticlesWithRelationships,
 } from "@/prisma/articles";
 import type { Article } from "@/types/personal-learning-map";
 import type { ArticleMetadata } from "@/types/serialized";
@@ -132,5 +134,53 @@ export function useDeleteArticle() {
     onSuccess: () => {
       queryClient.invalidateQueries();
     },
+  });
+}
+
+/**
+ * Hook to create a new article from a question
+ */
+export function useCreateArticleFromQuestion() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    Article,
+    Error,
+    {
+      questionId: string;
+    }
+  >({
+    mutationFn: async (data) => {
+      return createArticleFromQuestion({ data });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["articles"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["questions"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["learningMaps"],
+      });
+    },
+  });
+}
+
+/**
+ * Hook to fetch all articles with their relationships for a learning map
+ */
+export function useArticlesWithRelationships(
+  learningMapId: string | null
+): UseQueryResult<Article[]> {
+  return useQuery<Article[]>({
+    queryKey: ["articles", "withRelationships", learningMapId || "null"],
+    queryFn: async () => {
+      if (!learningMapId) return [];
+      return getArticlesWithRelationships({
+        data: { learningMapId },
+      });
+    },
+    enabled: Boolean(learningMapId),
   });
 }

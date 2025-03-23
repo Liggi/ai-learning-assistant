@@ -198,6 +198,9 @@ export const getRootArticle = createServerFn({ method: "GET" })
           learningMapId: data.learningMapId,
           isRoot: true,
         },
+        include: {
+          questions: true,
+        },
       });
 
       if (!article) {
@@ -207,6 +210,85 @@ export const getRootArticle = createServerFn({ method: "GET" })
       return serializeArticle(article);
     } catch (error) {
       logger.error("Error getting root article", { error });
+      throw error;
+    }
+  });
+
+/**
+ * Server function to create a new article from a question
+ * This establishes the relationship between a question and the article that answers it
+ */
+export const createArticleFromQuestion = createServerFn({ method: "POST" })
+  .validator((data: { questionId: string }) => data)
+  .handler(async ({ data }) => {
+    logger.info("Creating article from question", {
+      questionId: data.questionId,
+    });
+
+    try {
+      // 1. Get the question with its source article
+      const question = await prisma.question.findUnique({
+        where: { id: data.questionId },
+        include: { sourceArticle: true },
+      });
+
+      if (!question) throw new Error(`Question not found: ${data.questionId}`);
+
+      // 2. Create a new article linked to the same learning map
+      const newArticle = await prisma.article.create({
+        data: {
+          content: "", // Will be filled by streaming
+          learningMapId: question.sourceArticle.learningMapId,
+          isRoot: false,
+        },
+      });
+
+      // 3. Update the question to link to this article
+      await prisma.question.update({
+        where: { id: data.questionId },
+        data: { destinationArticleId: newArticle.id },
+      });
+
+      return serializeArticle(newArticle);
+    } catch (error) {
+      logger.error("Error creating article from question", { error });
+      throw error;
+    }
+  });
+
+/**
+ * Server function to get all articles for a learning map with relationships
+ */
+export const getArticlesWithRelationships = createServerFn({
+  method: "GET",
+})
+  .validator((data: { learningMapId: string }) => data)
+  .handler(async ({ data }) => {
+    logger.info("Getting articles with relationships", {
+      learningMapId: data.learningMapId,
+    });
+    try {
+      const articles = await prisma.article.findMany({
+        where: { learningMapId: data.learningMapId },
+        include: {
+          questions: {
+            include: {
+              destinationArticle: true,
+            },
+          },
+          answerToQuestions: {
+            include: {
+              sourceArticle: true,
+            },
+          },
+        },
+      });
+
+      return articles.map(serializeArticle);
+    } catch (error) {
+      logger.error("Error getting articles with relationships", {
+        error,
+      });
       throw error;
     }
   });

@@ -1,10 +1,12 @@
 import { Handle, Position } from "@xyflow/react";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 interface QuestionNodeData {
   id: string;
   text: string;
   isImplicit: boolean;
+  isActive?: boolean;
 }
 
 interface QuestionNodeProps {
@@ -15,59 +17,88 @@ interface QuestionNodeProps {
 function QuestionNode({ data, selected = false }: QuestionNodeProps) {
   const [isHovered, setIsHovered] = useState(false);
 
+  // Animation variants for active/inactive state
+  const variants = {
+    active: {
+      scale: 1.05,
+      boxShadow:
+        "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+    inactive: {
+      scale: 1,
+      boxShadow:
+        "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+    hover: {
+      scale: 1.02,
+    },
+  };
+
   return (
-    <div
+    <motion.div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      initial="inactive"
+      animate={data.isActive ? "active" : selected ? "active" : "inactive"}
+      whileHover="hover"
+      variants={variants}
+      style={{
+        zIndex: data.isActive ? 10 : 0,
+      }}
       className={`
-        max-w-[200px] rounded-lg overflow-hidden flex flex-col border
-        shadow-md backdrop-blur-sm 
+        w-[200px] rounded-xl overflow-hidden flex flex-col border 
+        shadow-lg backdrop-blur-sm 
         transition-all duration-300 ease-in-out 
         cursor-pointer
+        group
         relative
+        text-center
         ${
-          selected
-            ? "shadow-lg border-purple-500 ring-2 ring-purple-500/50 bg-slate-800/90"
-            : isHovered
-              ? "shadow-lg border-slate-600 bg-slate-800/90"
-              : data.isImplicit
-                ? "border-slate-800 bg-slate-900/70"
-                : "border-slate-700 bg-slate-900/80"
+          data.isActive
+            ? "shadow-xl border-blue-500/70 ring-2 ring-blue-500/30 bg-slate-800/90"
+            : selected
+              ? "shadow-xl border-slate-500 ring-2 ring-slate-500/50 bg-slate-800/90"
+              : isHovered
+                ? "shadow-xl border-amber-500/70 bg-slate-800/90"
+                : "border-slate-700 bg-slate-900/90"
         }
       `}
-      style={{
-        minWidth: "140px",
-      }}
     >
       <Handle
         type="target"
-        position={Position.Left}
+        position={Position.Top}
         className="!bg-transparent !border-0"
       />
 
-      <div className="px-3 py-2">
-        <div className="flex items-center gap-1 mb-1">
-          <span
-            className={`text-xs font-medium ${data.isImplicit ? "text-slate-500" : "text-purple-400"}`}
-          >
-            {data.isImplicit ? "Explored" : "Question"}
-          </span>
-        </div>
-        <p className="text-xs text-slate-300 line-clamp-3">{data.text}</p>
+      <div className="p-4 bg-slate-800/50 backdrop-blur-sm group-hover:bg-slate-700/50 relative">
+        {data.isActive && (
+          <div className="absolute top-2 right-2">
+            <span className="px-1.5 py-0.5 bg-blue-500/20 border border-blue-500/30 rounded-full text-[10px] font-semibold text-blue-300">
+              Active
+            </span>
+          </div>
+        )}
+        <p className="text-sm text-slate-300 group-hover:text-slate-200 line-clamp-3 font-medium">
+          {data.text}
+        </p>
       </div>
-
-      <div
-        className={`h-1 absolute bottom-0 left-0 transition-all duration-300 
-          ${data.isImplicit ? "bg-slate-600" : "bg-purple-500"}`}
-        style={{ width: "100%" }}
-      />
 
       <Handle
         type="source"
-        position={Position.Right}
+        position={Position.Bottom}
         className="!bg-transparent !border-0"
       />
-    </div>
+    </motion.div>
   );
 }
 

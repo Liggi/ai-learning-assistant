@@ -8,22 +8,14 @@ const suggestionsSchema = z.object({
 });
 
 export const generate = createServerFn({ method: "POST" })
-  .validator(
-    (data: {
-      subject: string;
-      moduleTitle: string;
-      moduleDescription: string;
-      currentMessage: string;
-    }) => {
-      return data;
-    }
-  )
+  .validator((data: { subject: string; currentMessage: string }) => {
+    return data;
+  })
   .handler(async ({ data }) => {
     const requestId = `question_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     try {
       console.log(`[${requestId}] Question generator called with data:`, {
         subject: data.subject,
-        moduleTitle: data.moduleTitle,
         contentLength: data.currentMessage.length,
       });
 

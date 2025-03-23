@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { extractTakeaways } from "@/lib/article-takeaway-parser";
-import { useStreamArticleContent } from "./use-stream-article-content";
+import {
+  useStreamArticleContent,
+  QuestionContext,
+} from "./use-stream-article-content";
 import { SerializedArticle, SerializedSubject } from "@/types/serialized";
 import { useUpdateArticle } from "@/hooks/api/articles";
 import { Logger } from "@/lib/logger";
@@ -11,7 +14,8 @@ const logger = new Logger({ context: "useArticleContent", enabled: true });
 
 export function useArticleContent(
   article: SerializedArticle | null | undefined,
-  subject: SerializedSubject
+  subject: SerializedSubject,
+  questionContext?: QuestionContext
 ) {
   const updateArticleMutation = useUpdateArticle();
   const [isSummaryLoading, setSummaryLoading] = useState(false);
@@ -26,7 +30,7 @@ export function useArticleContent(
     isStreaming,
     streamComplete,
     hasExistingContent,
-  } = useStreamArticleContent(article, subject.title);
+  } = useStreamArticleContent(article, subject.title, questionContext);
 
   const content =
     streamedContent || (hasExistingContent ? article?.content : "");

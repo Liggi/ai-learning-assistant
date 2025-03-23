@@ -17,7 +17,39 @@ const logger = new Logger({ context: "Serializers", enabled: false });
 type PrismaSubject = z.infer<typeof SubjectSchema>;
 
 // Type for Prisma Article
-type PrismaArticle = z.infer<typeof ArticleSchema>;
+type PrismaArticle = z.infer<typeof ArticleSchema> & {
+  questions?: {
+    id: string;
+    text: string;
+    articleId: string;
+    destinationArticleId?: string | null;
+    destinationArticle?: {
+      id: string;
+      isRoot: boolean;
+      learningMapId: string;
+    } | null;
+    positionX?: number | null;
+    positionY?: number | null;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+  answerToQuestions?: {
+    id: string;
+    text: string;
+    articleId: string;
+    sourceArticle?: {
+      id: string;
+      isRoot: boolean;
+      learningMapId: string;
+    } | null;
+    positionX?: number | null;
+    positionY?: number | null;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+  positionX?: number | null;
+  positionY?: number | null;
+};
 
 /**
  * Schema for validating serialized subjects
@@ -49,11 +81,79 @@ export function serializeSubject(subject: PrismaSubject): SerializedSubject {
 export function serializeArticle(article: PrismaArticle): SerializedArticle {
   logger.debug("Serializing article", { id: article.id });
 
+  // Process questions array, including nested destinationArticle if present
+  const serializedQuestions =
+    article.questions?.map((question) => {
+      // Basic question serialization
+      const serializedQuestion: {
+        id: string;
+        text: string;
+        articleId: string;
+        destinationArticleId: string | null;
+        positionX: number | null;
+        positionY: number | null;
+        createdAt: string;
+        updatedAt: string;
+        destinationArticle?: {
+          id: string;
+          isRoot: boolean;
+          learningMapId: string;
+        };
+      } = {
+        id: question.id,
+        text: question.text,
+        articleId: question.articleId,
+        destinationArticleId: question.destinationArticleId || null,
+        positionX: question.positionX || null,
+        positionY: question.positionY || null,
+        createdAt: question.createdAt.toISOString(),
+        updatedAt: question.updatedAt.toISOString(),
+      };
+
+      // If the question includes a destinationArticle (nested), add basic info
+      if (question.destinationArticle) {
+        serializedQuestion.destinationArticle = {
+          id: question.destinationArticle.id,
+          isRoot: question.destinationArticle.isRoot,
+          learningMapId: question.destinationArticle.learningMapId,
+        };
+      }
+
+      return serializedQuestion;
+    }) || [];
+
+  // Process answerToQuestions if present
+  const serializedAnswerToQuestions =
+    article.answerToQuestions?.map((question) => {
+      return {
+        id: question.id,
+        text: question.text,
+        articleId: question.articleId,
+        destinationArticleId: article.id, // This article is the destination
+        positionX: question.positionX || null,
+        positionY: question.positionY || null,
+        createdAt: question.createdAt.toISOString(),
+        updatedAt: question.updatedAt.toISOString(),
+        sourceArticle: question.sourceArticle
+          ? {
+              id: question.sourceArticle.id,
+              isRoot: question.sourceArticle.isRoot,
+              learningMapId: question.sourceArticle.learningMapId,
+            }
+          : undefined,
+      };
+    }) || [];
+
+  // Return the serialized article with all related data
   return {
     ...article,
     tooltips: article.tooltips as Record<string, string>,
+    positionX: article.positionX || null,
+    positionY: article.positionY || null,
     createdAt: article.createdAt.toISOString(),
     updatedAt: article.updatedAt.toISOString(),
+    questions: serializedQuestions,
+    answerToQuestions: serializedAnswerToQuestions,
   };
 }
 

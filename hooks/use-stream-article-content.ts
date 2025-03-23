@@ -7,20 +7,36 @@ const logger = new Logger({
   enabled: false,
 });
 
+/**
+ * QuestionContext type for question-based article generation
+ */
+export interface QuestionContext {
+  id: string;
+  text: string;
+  sourceArticleId: string;
+}
+
 const streamContentFromAPI = async (
   subjectTitle: string,
   onChunk: (chunk: string) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  questionContext?: QuestionContext
 ): Promise<string> => {
   let fullContent = "";
 
   try {
-    const requestData = {
-      subject: subjectTitle,
-      moduleTitle: `Introduction to ${subjectTitle}`,
-      moduleDescription: `A comprehensive introduction to ${subjectTitle} covering the fundamental concepts and principles.`,
-      message: `This is the first article in an exploratory learning space for the subject (${subjectTitle}). Think a minuature Wikipedia article.`,
-    };
+    const requestData = questionContext
+      ? {
+          subject: subjectTitle,
+          question: questionContext.text,
+          message: `This article should answer the question: "${questionContext.text}"`,
+        }
+      : {
+          subject: subjectTitle,
+          moduleTitle: `Introduction to ${subjectTitle}`,
+          moduleDescription: `A comprehensive introduction to ${subjectTitle} covering the fundamental concepts and principles.`,
+          message: `This is the first article in an exploratory learning space for the subject (${subjectTitle}). Think a minuature Wikipedia article.`,
+        };
 
     const response = await fetch("/api/lesson-stream", {
       method: "POST",
@@ -65,7 +81,8 @@ const streamContentFromAPI = async (
 
 export function useStreamArticleContent(
   article: { id: string; content: string } | null | undefined,
-  subjectTitle: string
+  subjectTitle: string,
+  questionContext?: QuestionContext
 ) {
   const [content, setContent] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -92,6 +109,7 @@ export function useStreamArticleContent(
       isStreaming,
       streamComplete,
       hasAbortController: !!abortController,
+      hasQuestionContext: !!questionContext,
     });
   });
 
@@ -99,7 +117,12 @@ export function useStreamArticleContent(
   const startStreaming = useCallback(async () => {
     if (!article?.id || isStreaming) return;
 
-    logger.info("Starting content streaming", { articleId: article.id });
+    logger.info("Starting content streaming", {
+      articleId: article.id,
+      isQuestionBased: !!questionContext,
+      questionText: questionContext?.text,
+    });
+
     setIsStreaming(true);
     setStreamComplete(false);
     setContent("");
@@ -113,7 +136,8 @@ export function useStreamArticleContent(
         (chunk) => {
           setContent((prev) => prev + chunk);
         },
-        controller.signal
+        controller.signal,
+        questionContext
       );
 
       logger.info("Streaming complete, updating article", {
@@ -138,7 +162,13 @@ export function useStreamArticleContent(
       setIsStreaming(false);
       setAbortController(null);
     }
-  }, [article?.id, subjectTitle, isStreaming, updateArticleMutation]);
+  }, [
+    article?.id,
+    subjectTitle,
+    isStreaming,
+    updateArticleMutation,
+    questionContext,
+  ]);
 
   // Stop streaming if in progress
   const stopStreaming = useCallback(() => {
@@ -166,6 +196,7 @@ export function useStreamArticleContent(
         isStreaming,
         streamComplete,
         shouldAutoStart: shouldAutoStartStreaming,
+        hasQuestionContext: !!questionContext,
       });
     });
 
@@ -186,6 +217,7 @@ export function useStreamArticleContent(
     streamComplete,
     startStreaming,
     shouldAutoStartStreaming,
+    questionContext,
   ]);
 
   // Clean up on unmount

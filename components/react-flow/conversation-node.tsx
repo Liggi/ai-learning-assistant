@@ -2,6 +2,7 @@ import { Handle, Position } from "@xyflow/react";
 import { useRef, useEffect, useCallback } from "react";
 import debounce from "lodash/debounce";
 import MarkdownDisplay from "../markdown-display";
+import { motion } from "framer-motion";
 
 interface ConversationNodeData {
   id: string;
@@ -11,6 +12,7 @@ interface ConversationNodeData {
   };
   isUser: boolean;
   isLoading?: boolean;
+  isActive?: boolean;
   onClick?: (data: ConversationNodeData) => void;
 }
 
@@ -75,25 +77,77 @@ export default function ConversationNode({
   // Ensure takeaways is always an array
   const takeaways = data.content?.takeaways || [];
 
+  // Animation variants for active/inactive state
+  const variants = {
+    active: {
+      scale: 1.05,
+      boxShadow:
+        "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+    inactive: {
+      scale: 1,
+      boxShadow:
+        "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+    hover: {
+      scale: 1.02,
+    },
+  };
+
   return (
-    <div
+    <motion.div
       ref={containerRef}
       onClick={() => data.onClick?.(data)}
-      style={style}
+      initial="inactive"
+      animate={data.isActive ? "active" : selected ? "active" : "inactive"}
+      whileHover="hover"
+      variants={variants}
       className={`
         p-4 transition-all duration-200
         ${isQuestion ? "hover:bg-blue-900/20" : "hover:bg-green-900/20"}
-        ${selected ? "scale-105 shadow-lg" : "hover:scale-[1.02]"}
         rounded-xl backdrop-blur-sm min-w-[350px] max-w-[350px]
+        ${
+          data.isActive
+            ? "border-2 bg-slate-800/90 shadow-lg"
+            : selected
+              ? "border border-slate-500 bg-slate-800/60 shadow-md"
+              : "border border-slate-700 bg-slate-900/60"
+        }
+        ${
+          data.isActive
+            ? isQuestion
+              ? "border-blue-500/70 ring-2 ring-blue-400/30"
+              : "border-green-500/70 ring-2 ring-green-400/30"
+            : ""
+        }
       `}
+      style={{
+        ...style,
+        zIndex: data.isActive ? 10 : 0,
+      }}
     >
       <div
         className={`
-        text-xs font-medium mb-2
+        text-xs font-medium mb-2 flex justify-between items-center
         ${isQuestion ? "text-blue-400" : "text-green-400"}
       `}
       >
-        {isQuestion ? "Question" : "Article"}
+        <span>{isQuestion ? "Question" : "Article"}</span>
+        {data.isActive && (
+          <span className="px-2 py-0.5 bg-blue-500/20 border border-blue-500/30 rounded-full text-xs font-semibold text-blue-300">
+            Active
+          </span>
+        )}
       </div>
 
       {data.isLoading ? (
@@ -148,6 +202,6 @@ export default function ConversationNode({
         position={Position.Bottom}
         className="!bg-transparent !border-0 !w-4 !h-4"
       />
-    </div>
+    </motion.div>
   );
 }

@@ -1,5 +1,5 @@
-import React from "react";
-import { LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import MarkdownDisplay from "./markdown-display";
 import { SuggestedQuestions } from "./suggested-questions";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";
@@ -10,6 +10,9 @@ import { useArticleContent } from "@/hooks/use-article-content";
 import { Logger } from "@/lib/logger";
 import { useContextualTooltips } from "@/hooks/use-contextual-tooltips";
 import { TooltipLoadingIndicator } from "./ui/tooltip-loading-indicator";
+import { useSuggestedQuestions } from "@/hooks/use-suggested-questions";
+import { useCreateQuestion } from "@/hooks/api/questions";
+import { useLearningMapState } from "@/hooks/use-learning-map-state";
 
 const logger = new Logger({ context: "LearningInterface", enabled: true });
 
@@ -26,41 +29,92 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
     setIsMapExpanded((prev) => !prev);
   };
 
+  // Get learning map data
   const {
     data: learningMap,
     isLoading: isLoadingMap,
     error: mapError,
   } = useGetOrCreateLearningMap(subject.id);
 
+  // Get root article data
   const {
     article: rootArticle,
     isLoading: isLoadingRootArticle,
     error: rootArticleError,
   } = useRootArticle(learningMap);
 
+  // Initialize learning map state
+  const { activeArticle, initializeLearningMap, setIsStreamingContent } =
+    useLearningMapState();
+
+  // Initialize Jotai state when learning map data is available
+  useEffect(() => {
+    if (learningMap) {
+      logger.info("Initializing learning map state from data", {
+        learningMapId: learningMap.id,
+        articleCount: learningMap.articles?.length || 0,
+      });
+      initializeLearningMap(learningMap);
+    }
+  }, [learningMap, initializeLearningMap]);
+
+  // Use active article from state or fallback to root article
+  const currentArticle = activeArticle || rootArticle;
+
+  // Stream article content
   const {
     content: articleContent,
     isStreaming,
     streamComplete,
     hasExistingContent,
-  } = useArticleContent(rootArticle, subject);
+  } = useArticleContent(currentArticle, subject);
 
+  // Update streaming state in Jotai
+  useEffect(() => {
+    setIsStreamingContent(isStreaming);
+  }, [isStreaming, setIsStreamingContent]);
+
+  // Generate tooltips and suggested questions
   const { tooltips, isGeneratingTooltips, tooltipsReady } =
     useContextualTooltips(
-      rootArticle,
+      currentArticle,
       subject,
       articleContent,
       isStreaming,
       streamComplete
     );
 
-  logger.info("Learning Map", {
-    learningMap,
-  });
+  const { questions, isGeneratingQuestions, questionsReady } =
+    useSuggestedQuestions(
+      currentArticle,
+      subject,
+      articleContent,
+      isStreaming,
+      streamComplete
+    );
 
-  logger.info("Root Article", {
-    rootArticle,
-  });
+  const createQuestion = useCreateQuestion();
+
+  const handleQuestionClick = React.useCallback(
+    async (questionText: string) => {
+      if (!currentArticle?.id) return;
+
+      logger.info("Creating new question", {
+        questionText,
+        articleId: currentArticle.id,
+      });
+
+      try {
+        await createQuestion.mutateAsync({
+          articleId: currentArticle.id,
+          text: questionText,
+        });
+      } catch (error) {
+        logger.error("Failed to create question", { error });
+      }
+    },
+    [currentArticle?.id, createQuestion]
+  );
 
   const isLoading = isLoadingMap || isLoadingRootArticle;
   const error = mapError || rootArticleError;
@@ -84,10 +138,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
           className={`${isMapExpanded ? "w-2/3" : "w-1/3"} bg-slate-900 border-r border-slate-800 hidden md:block transition-all duration-300`}
         >
           <div className="h-full">
-            <PersonalLearningMapFlow
-              rootArticle={rootArticle}
-              onNodeClick={() => {}}
-            />
+            <PersonalLearningMapFlow />
           </div>
         </div>
 
@@ -140,10 +191,10 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
 
           <div className="border-t border-slate-800 p-4">
             <SuggestedQuestions
-              questions={[]}
-              onQuestionClick={() => {}}
-              isLoading={isStreaming}
-              isReady={isContentReady}
+              questions={questions}
+              onQuestionClick={handleQuestionClick}
+              isLoading={isGeneratingQuestions}
+              isReady={questionsReady}
             />
           </div>
         </div>

@@ -60,7 +60,9 @@ export const SubjectScalarFieldEnumSchema = z.enum(['id','title','initiallyFamil
 
 export const LearningMapScalarFieldEnumSchema = z.enum(['id','subjectId','createdAt','updatedAt']);
 
-export const ArticleScalarFieldEnumSchema = z.enum(['id','content','summary','takeaways','learningMapId','tooltips','isRoot','createdAt','updatedAt']);
+export const ArticleScalarFieldEnumSchema = z.enum(['id','content','summary','takeaways','learningMapId','tooltips','isRoot','positionX','positionY','createdAt','updatedAt']);
+
+export const QuestionScalarFieldEnumSchema = z.enum(['id','text','articleId','destinationArticleId','positionX','positionY','createdAt','updatedAt']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
@@ -114,8 +116,27 @@ export const ArticleSchema = z.object({
   learningMapId: z.string(),
   tooltips: JsonValueSchema.nullable(),
   isRoot: z.boolean(),
+  positionX: z.number().nullable(),
+  positionY: z.number().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 })
 
 export type Article = z.infer<typeof ArticleSchema>
+
+/////////////////////////////////////////
+// QUESTION SCHEMA
+/////////////////////////////////////////
+
+export const QuestionSchema = z.object({
+  id: z.string().uuid(),
+  text: z.string(),
+  articleId: z.string(),
+  destinationArticleId: z.string().nullable(),
+  positionX: z.number().nullable(),
+  positionY: z.number().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+})
+
+export type Question = z.infer<typeof QuestionSchema>

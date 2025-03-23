@@ -8,12 +8,17 @@ import {
 import ReactMarkdown from "react-markdown";
 import { motion, useAnimationControls, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
+import { Logger } from "@/lib/logger";
+
+const logger = new Logger({ context: "MarkdownDisplay", enabled: true });
 
 interface MarkdownDisplayProps {
   content: string;
   tooltips?: Record<string, string>;
   tooltipsReady?: boolean;
   onLearnMore?: (concept: string) => void;
+  tooltipQuestions?: { tooltipId: string; id: string }[];
 }
 
 const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
@@ -21,9 +26,11 @@ const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
   tooltips = {},
   tooltipsReady = false,
   onLearnMore,
+  tooltipQuestions = [],
 }) => {
   // Track all StrongText components with tooltips for staggered animation
   const [tooltipElements, setTooltipElements] = useState<string[]>([]);
+  const createArticleMutation = useCreateArticleFromQuestion();
 
   // Reset tooltip elements when content changes
   useEffect(() => {
@@ -38,6 +45,33 @@ const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
       }
       return prev;
     });
+  };
+
+  // Handle tooltip-based article creation
+  const handleTooltipClick = async (tooltipId: string) => {
+    try {
+      // Find if we have a question for this tooltip
+      const question = tooltipQuestions.find((q) => q.tooltipId === tooltipId);
+
+      if (question) {
+        logger.info("Creating article from tooltip question", {
+          tooltipId,
+          questionId: question.id,
+        });
+
+        // Create article from the question
+        await createArticleMutation.mutateAsync({
+          questionId: question.id,
+        });
+
+        logger.info("Article created from tooltip question", { tooltipId });
+      } else {
+        logger.info("No question found for tooltip", { tooltipId });
+        // Could potentially create a question first if needed
+      }
+    } catch (error) {
+      logger.error("Error handling tooltip click", { error, tooltipId });
+    }
   };
 
   // Define the staggered animation variants for the container and items
@@ -79,6 +113,7 @@ const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
               registerTooltipElement={registerTooltipElement}
               index={tooltipElements.length}
               onLearnMore={onLearnMore}
+              onTooltipClick={handleTooltipClick}
             />
           ),
           blockquote: Blockquote,
@@ -160,6 +195,7 @@ interface StrongTextProps {
   registerTooltipElement: (concept: string) => void;
   index: number;
   onLearnMore?: (concept: string) => void;
+  onTooltipClick?: (tooltipId: string) => void;
 }
 
 const StrongText: React.FC<StrongTextProps> = ({
@@ -170,6 +206,7 @@ const StrongText: React.FC<StrongTextProps> = ({
   registerTooltipElement,
   index,
   onLearnMore,
+  onTooltipClick,
 }) => {
   const concept = String(children).trim();
   const tooltipText = tooltips[concept];
@@ -233,6 +270,8 @@ const StrongText: React.FC<StrongTextProps> = ({
                 onClick={() => {
                   console.log(`Tell me more about: ${concept}`);
                   onLearnMore?.(concept);
+                  // Also trigger tooltip click handler which will create an article if there's an associated question
+                  onTooltipClick?.(concept);
                 }}
               >
                 <span className="text-cyan-400">
@@ -252,7 +291,7 @@ const StrongText: React.FC<StrongTextProps> = ({
                     <path d="M12 8h.01"></path>
                   </svg>
                 </span>
-                Tell me more about this
+                <span>Tell me more about this</span>
               </button>
             </div>
           </TooltipContent>

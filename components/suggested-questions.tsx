@@ -52,7 +52,7 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
   }
 
   return (
-    <div className="mt-6">
+    <div>
       <h3 className="text-sm font-medium mb-3">Explore further:</h3>
       <motion.div
         variants={container}

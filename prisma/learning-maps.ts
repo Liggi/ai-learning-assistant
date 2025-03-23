@@ -32,7 +32,11 @@ export const getOrCreateLearningMap = createServerFn({ method: "POST" })
     const existingMap = await prisma.learningMap.findFirst({
       where: { subjectId },
       include: {
-        articles: true,
+        articles: {
+          include: {
+            questions: true,
+          },
+        },
       },
     });
 
@@ -48,7 +52,13 @@ export const getOrCreateLearningMap = createServerFn({ method: "POST" })
       data: {
         subjectId,
       },
-      include: { articles: true },
+      include: {
+        articles: {
+          include: {
+            questions: true,
+          },
+        },
+      },
     });
 
     return serializeLearningMap(newMap);
