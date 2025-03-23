@@ -9,6 +9,7 @@ import { useRootArticle } from "@/hooks/use-root-article";
 import { useArticleContent } from "@/hooks/use-article-content";
 import { Logger } from "@/lib/logger";
 import { useContextualTooltips } from "@/hooks/use-contextual-tooltips";
+import { useSuggestedQuestions } from "@/hooks/use-suggested-questions";
 import { TooltipLoadingIndicator } from "./ui/tooltip-loading-indicator";
 
 const logger = new Logger({ context: "LearningInterface", enabled: true });
@@ -54,6 +55,15 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
       streamComplete
     );
 
+  const { questions, isGeneratingQuestions, questionsReady } =
+    useSuggestedQuestions(
+      rootArticle,
+      subject,
+      articleContent,
+      isStreaming,
+      streamComplete
+    );
+
   logger.info("Learning Map", {
     learningMap,
   });
@@ -64,9 +74,6 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
 
   const isLoading = isLoadingMap || isLoadingRootArticle;
   const error = mapError || rootArticleError;
-
-  const isContentReady =
-    !isStreaming && (streamComplete || !!hasExistingContent);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -140,10 +147,12 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
 
           <div className="border-t border-slate-800 p-4">
             <SuggestedQuestions
-              questions={[]}
-              onQuestionClick={() => {}}
-              isLoading={isStreaming}
-              isReady={isContentReady}
+              questions={questions}
+              onQuestionClick={() => {
+                // @TODO
+              }}
+              isLoading={isGeneratingQuestions}
+              isReady={questionsReady}
             />
           </div>
         </div>
