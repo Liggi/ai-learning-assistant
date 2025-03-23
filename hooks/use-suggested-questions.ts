@@ -8,7 +8,6 @@ const logger = new Logger({ context: "useSuggestedQuestions", enabled: false });
 export function useSuggestedQuestions(
   article: SerializedArticle | null | undefined,
   subject: SerializedSubject,
-  content: string | undefined,
   isStreaming: boolean,
   streamComplete: boolean
 ) {
@@ -19,7 +18,7 @@ export function useSuggestedQuestions(
   const questionGenerationAttempted = useRef<boolean>(false);
 
   useEffect(() => {
-    const hasRequiredData = article?.id && content;
+    const hasRequiredData = article?.id && article?.content;
     if (!hasRequiredData) return;
 
     const contentIsReady = !isStreaming && streamComplete;
@@ -41,7 +40,7 @@ export function useSuggestedQuestions(
         const result = await generate({
           data: {
             subject: subject.title,
-            currentMessage: content,
+            currentMessage: article.content,
           },
         });
 
@@ -64,7 +63,13 @@ export function useSuggestedQuestions(
     };
 
     generateQuestions();
-  }, [article?.id, content, isStreaming, streamComplete, subject.title]);
+  }, [
+    article?.id,
+    article?.content,
+    isStreaming,
+    streamComplete,
+    subject.title,
+  ]);
 
   // Reset question generation state when the article changes
   useEffect(() => {

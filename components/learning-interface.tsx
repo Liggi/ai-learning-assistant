@@ -56,13 +56,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
     );
 
   const { questions, isGeneratingQuestions, questionsReady } =
-    useSuggestedQuestions(
-      rootArticle,
-      subject,
-      articleContent,
-      isStreaming,
-      streamComplete
-    );
+    useSuggestedQuestions(rootArticle, subject, isStreaming, streamComplete);
 
   logger.info("Learning Map", {
     learningMap,
