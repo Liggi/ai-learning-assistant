@@ -29,7 +29,7 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
 
   // Animation variants for questions
   const item = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 100, opacity: 0 },
     show: { y: 0, opacity: 1 },
   };
 
@@ -52,8 +52,10 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
   }
 
   return (
-    <div className="mt-6">
-      <h3 className="text-sm font-medium mb-3">Explore further:</h3>
+    <div>
+      {/* @TODO: If I remove this div, the questions don't show up */}
+      <div></div>
+
       <motion.div
         variants={container}
         initial="hidden"
@@ -64,7 +66,7 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
           <motion.button
             key={index}
             variants={item}
-            className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-sm transition-colors"
+            className="px-4 py-2 rounded-lg border border-slate-800 bg-slate-900/90 hover:bg-slate-800/90 hover:border-slate-500 hover:scale-[1.02] shadow-sm hover:shadow-md text-sm transition-all duration-300 ease-in-out"
             onClick={() => onQuestionClick?.(question)}
           >
             {question}
