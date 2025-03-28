@@ -62,6 +62,8 @@ export const LearningMapScalarFieldEnumSchema = z.enum(['id','subjectId','create
 
 export const ArticleScalarFieldEnumSchema = z.enum(['id','content','summary','takeaways','learningMapId','tooltips','isRoot','createdAt','updatedAt']);
 
+export const QuestionScalarFieldEnumSchema = z.enum(['id','text','learningMapId','parentArticleId','childArticleId','createdAt','updatedAt']);
+
 export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const NullableJsonNullValueInputSchema = z.enum(['DbNull','JsonNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.DbNull : value);
@@ -119,3 +121,19 @@ export const ArticleSchema = z.object({
 })
 
 export type Article = z.infer<typeof ArticleSchema>
+
+/////////////////////////////////////////
+// QUESTION SCHEMA
+/////////////////////////////////////////
+
+export const QuestionSchema = z.object({
+  id: z.string().uuid(),
+  text: z.string(),
+  learningMapId: z.string(),
+  parentArticleId: z.string(),
+  childArticleId: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+})
+
+export type Question = z.infer<typeof QuestionSchema>

@@ -33,23 +33,40 @@ model Subject {
 }
 
 model LearningMap {
-  id        String    @id @default(uuid())
+  id        String     @id @default(uuid())
   articles  Article[]
   subjectId String
-  subject   Subject   @relation(fields: [subjectId], references: [id])
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  subject   Subject    @relation(fields: [subjectId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  questions Question[]
 }
 
 model Article {
-  id            String      @id @default(uuid())
-  content       String
-  summary       String      @default("")
-  takeaways     String[]    @default([])
-  learningMapId String
-  tooltips      Json?
-  isRoot        Boolean     @default(false)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id             String      @id @default(uuid())
+  content        String
+  summary        String      @default("")
+  takeaways      String[]    @default([])
+  learningMapId  String
+  tooltips       Json?
+  isRoot         Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  learningMap    LearningMap @relation(fields: [learningMapId], references: [id], onDelete: Cascade)
+  parentQuestion Question?   @relation("ParentQuestion")
+  childQuestions Question[]  @relation("ChildQuestions")
+}
+
+model Question {
+  id              String   @id @default(uuid())
+  text            String
+  learningMapId   String
+  parentArticleId String
+  childArticleId  String   @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
   learningMap   LearningMap @relation(fields: [learningMapId], references: [id], onDelete: Cascade)
+  parentArticle Article     @relation("ChildQuestions", fields: [parentArticleId], references: [id], onDelete: Cascade) // If parent deleted, delete question
+  childArticle  Article     @relation("ParentQuestion", fields: [childArticleId], references: [id], onDelete: Cascade) // If child deleted, delete question
 }
