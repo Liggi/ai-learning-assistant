@@ -41,7 +41,7 @@ function QuestionNode({ data, selected = false }: QuestionNodeProps) {
     >
       <Handle
         type="target"
-        position={Position.Left}
+        position={Position.Top}
         className="!bg-transparent !border-0"
       />
 
@@ -64,7 +64,7 @@ function QuestionNode({ data, selected = false }: QuestionNodeProps) {
 
       <Handle
         type="source"
-        position={Position.Right}
+        position={Position.Bottom}
         className="!bg-transparent !border-0"
       />
     </div>
