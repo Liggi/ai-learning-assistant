@@ -1,9 +1,9 @@
 import {
   Outlet,
-  ScrollRestoration,
   createRootRoute,
+  HeadContent,
+  Scripts,
 } from "@tanstack/react-router";
-import { Meta, Scripts } from "@tanstack/start";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { Toaster } from "sonner";
@@ -38,7 +38,6 @@ function RootComponent() {
             <Toaster />
             <Outlet />
           </div>
-          <ScrollRestoration />
           <Scripts />
         </TooltipProvider>
       </QueryClientProvider>
@@ -50,7 +49,7 @@ function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html className="dark">
       <head>
-        <Meta />
+        <HeadContent />
       </head>
       <body>{children}</body>
     </html>

@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/start";
+import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { callAnthropic } from "@/features/llm";
 import { createPrompt } from "@/prompts/chat/lesson";

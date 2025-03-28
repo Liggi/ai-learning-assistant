@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { callAnthropic } from "@/features/llm";
 import { createPrompt } from "@/prompts/chat/suggested-questions";
-import { createServerFn } from "@tanstack/start";
+import { createServerFn } from "@tanstack/react-start";
 
 const suggestionsSchema = z.object({
   questions: z.array(z.string()),

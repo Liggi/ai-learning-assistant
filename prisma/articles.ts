@@ -1,6 +1,6 @@
 import { z } from "zod";
 import prisma from "@/prisma/client";
-import { createServerFn } from "@tanstack/start";
+import { createServerFn } from "@tanstack/react-start";
 import { Logger } from "@/lib/logger";
 import { ArticleMetadata } from "@/types/serialized";
 import { serializeArticle } from "@/types/serializers";

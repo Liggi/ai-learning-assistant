@@ -24,7 +24,7 @@ global.ResizeObserver = MockResizeObserver;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-vi.mock("@tanstack/start", () => ({
+vi.mock("@tanstack/react-start", () => ({
   createServerFn: () => {
     const mockFn = vi.fn();
     return {
