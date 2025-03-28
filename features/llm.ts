@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { TextBlock } from "@anthropic-ai/sdk/src/resources/messages/messages.js";
+import type { TextBlock } from "@anthropic-ai/sdk/resources/messages/messages.js";
 import { z } from "zod";
 import { Logger } from "@/lib/logger";
 
