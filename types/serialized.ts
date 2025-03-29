@@ -24,6 +24,8 @@ export type SerializedArticle = {
   tooltips: Record<string, string>;
   learningMapId: string;
   isRoot: boolean;
+  parentQuestion?: SerializedQuestion;
+  childQuestions?: SerializedQuestion[];
   createdAt: string;
   updatedAt: string;
 };
@@ -37,6 +39,7 @@ export type SerializedLearningMap = {
   createdAt: string;
   updatedAt: string;
   articles?: SerializedArticle[];
+  questions?: SerializedQuestion[];
 };
 
 /**
@@ -46,6 +49,19 @@ export type SerializedSubject = {
   id: string;
   title: string;
   initiallyFamiliarConcepts?: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+/**
+ * Type for serialized question data
+ */
+export type SerializedQuestion = {
+  id: string;
+  text: string;
+  learningMapId: string;
+  parentArticleId: string;
+  childArticleId: string;
   createdAt: string;
   updatedAt: string;
 };

@@ -210,3 +210,76 @@ export const getRootArticle = createServerFn({ method: "GET" })
       throw error;
     }
   });
+
+/**
+ * Server function to create a new article in response to a question,
+ * linking it to a parent article
+ */
+export const createArticleFromQuestion = createServerFn({ method: "POST" })
+  .validator(
+    (data: {
+      learningMapId: string;
+      parentArticleId: string;
+      questionText: string;
+    }) => data
+  )
+  .handler(async ({ data }) => {
+    logger.info("Creating article from question", {
+      learningMapId: data.learningMapId,
+      parentArticleId: data.parentArticleId,
+      questionText: data.questionText,
+    });
+
+    try {
+      return await prisma.$transaction(async (tx) => {
+        const existingMap = await tx.learningMap.findUnique({
+          where: { id: data.learningMapId },
+        });
+
+        if (!existingMap) {
+          throw new Error(`Learning map not found: ${data.learningMapId}`);
+        }
+
+        const parentArticle = await tx.article.findUnique({
+          where: { id: data.parentArticleId },
+        });
+
+        if (!parentArticle) {
+          throw new Error(`Parent article not found: ${data.parentArticleId}`);
+        }
+
+        // 1. Create the child article first
+        const childArticle = await tx.article.create({
+          data: {
+            content: "",
+            learningMapId: data.learningMapId,
+            isRoot: false,
+            summary: "",
+            takeaways: [],
+          },
+        });
+
+        // 2. Create the question linking parent and child articles
+        const question = await tx.question.create({
+          data: {
+            text: data.questionText,
+            learningMapId: data.learningMapId,
+            parentArticleId: data.parentArticleId,
+            childArticleId: childArticle.id,
+          },
+        });
+
+        const result = serializeArticle(childArticle);
+
+        logger.info("Article created from question successfully", {
+          articleId: childArticle.id,
+          questionId: question.id,
+        });
+
+        return result;
+      });
+    } catch (error) {
+      logger.error("Error creating article from question", { error });
+      throw error;
+    }
+  });

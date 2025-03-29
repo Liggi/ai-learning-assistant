@@ -11,6 +11,7 @@ import {
   updateArticle,
   deleteArticle,
   getRootArticle,
+  createArticleFromQuestion,
 } from "@/prisma/articles";
 import type { Article } from "@/types/personal-learning-map";
 import type { ArticleMetadata } from "@/types/serialized";
@@ -85,6 +86,30 @@ export function useCreateArticle() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries();
+    },
+  });
+}
+
+/**
+ * Hook to create a new article from a question
+ */
+export function useCreateArticleFromQuestion() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    Article,
+    Error,
+    {
+      learningMapId: string;
+      parentArticleId: string;
+      questionText: string;
+    }
+  >({
+    mutationFn: async (data) => {
+      return createArticleFromQuestion({ data });
+    },
+    onSuccess: (newArticle) => {
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
     },
   });
 }
