@@ -27,6 +27,10 @@ export function useLearningMapTree(
       return null;
     }
 
+    if (learningMap.articles.length > 1 && learningMap.questions.length === 0) {
+      return null;
+    }
+
     // Create maps for quick lookups
     const articlesMap = new Map<string, SerializedArticle>();
     const questionsByParentId = new Map<string, SerializedQuestion[]>();
