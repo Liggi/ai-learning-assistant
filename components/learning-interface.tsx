@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react";
+import React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import MarkdownDisplay from "./markdown-display";
 import { SuggestedQuestions } from "./suggested-questions";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";
@@ -11,24 +11,24 @@ import { Logger } from "@/lib/logger";
 import { useContextualTooltips } from "@/hooks/use-contextual-tooltips";
 import { useSuggestedQuestions } from "@/hooks/use-suggested-questions";
 import { TooltipLoadingIndicator } from "./ui/tooltip-loading-indicator";
-import { useArticle } from "@/hooks/api/articles";
-import { serializeArticle } from "@/types/serializers";
 
 const logger = new Logger({ context: "LearningInterface", enabled: true });
 
 interface LearningInterfaceProps {
   subject: SerializedSubject;
+  activeArticle: SerializedArticle | null | undefined;
 }
 
-const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
-  logger.info("Rendering LearningInterface", { subjectId: subject.id });
+const LearningInterface: React.FC<LearningInterfaceProps> = ({
+  subject,
+  activeArticle,
+}) => {
+  logger.info("Rendering LearningInterface", {
+    subjectId: subject.id,
+    activeArticleId: activeArticle?.id,
+  });
 
   const [isMapExpanded, setIsMapExpanded] = React.useState(false);
-  const [currentArticleId, setCurrentArticleId] = useState<string | null>(null);
-
-  const toggleLayout = () => {
-    setIsMapExpanded((prev) => !prev);
-  };
 
   const {
     data: learningMap,
@@ -41,24 +41,6 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
     isLoading: isLoadingRootArticle,
     error: rootArticleError,
   } = useRootArticle(learningMap);
-
-  useEffect(() => {
-    if (rootArticle && !currentArticleId) {
-      setCurrentArticleId(rootArticle.id);
-    }
-  }, [rootArticle, currentArticleId]);
-
-  const { data: fetchedArticle, isLoading: isLoadingCurrentArticle } =
-    useArticle(
-      currentArticleId && currentArticleId !== rootArticle?.id
-        ? currentArticleId
-        : null
-    );
-
-  const activeArticle = fetchedArticle
-    ? learningMap?.articles?.find((a) => a.id === fetchedArticle.id) ||
-      rootArticle
-    : rootArticle;
 
   const {
     content: articleContent,
@@ -79,41 +61,42 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
   const { questions, isGeneratingQuestions, questionsReady } =
     useSuggestedQuestions(activeArticle, subject, isStreaming, streamComplete);
 
-  logger.info("Learning Map", {
-    learningMap,
-  });
-
-  logger.info("Current Article", {
-    currentArticleId,
-    activeArticle,
-  });
+  const toggleLayout = () => {
+    setIsMapExpanded((prev) => !prev);
+  };
 
   const handleNodeClick = (nodeId: string) => {
-    logger.info("Node clicked", { nodeId });
-
-    const articleId = nodeId.startsWith("article-")
-      ? nodeId.replace("article-", "")
-      : nodeId;
-
-    setCurrentArticleId(articleId);
+    logger.info("Node clicked (noop)", { nodeId });
   };
 
   const handleArticleCreated = (newArticleId: string) => {
-    logger.info("New article created from question", { newArticleId });
-    setCurrentArticleId(newArticleId);
+    logger.info("New article created from question (noop)", { newArticleId });
   };
 
-  const isLoading =
-    isLoadingMap || isLoadingRootArticle || isLoadingCurrentArticle;
-  const error = mapError || rootArticleError;
+  const isLoadingInitialData = isLoadingMap || isLoadingRootArticle;
+  const overallError = mapError || rootArticleError;
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (overallError) {
+    logger.error("Error in LearningInterface data fetching", {
+      error: overallError,
+    });
+    return <div>Error: {overallError.message}</div>;
   }
 
-  if (error) {
-    logger.error("Error in LearningInterface", { error });
-    return <div>Error: {error.message}</div>;
+  if (isLoadingInitialData && !learningMap) {
+    return <div>Loading Learning Map...</div>;
+  }
+
+  if (!rootArticle && learningMap && isLoadingRootArticle) {
+    return <div>Initializing Root Article...</div>;
+  }
+
+  if (!learningMap || !rootArticle) {
+    logger.warn(
+      "Missing learning map or root article despite no loading/error state",
+      { learningMapId: learningMap?.id, rootArticleId: rootArticle?.id }
+    );
+    return <div>Error initializing the learning interface.</div>;
   }
 
   return (
@@ -158,39 +141,49 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
             </div>
 
             <div className="flex-1 overflow-y-auto p-8">
-              <MarkdownDisplay
-                content={articleContent || ""}
-                onLearnMore={() => {
-                  console.log("Learn more");
-                }}
-                tooltips={tooltips}
-                tooltipsReady={tooltipsReady}
-              />
-              {isStreaming && (
-                <div className="mt-4 flex items-center justify-center text-slate-400">
-                  <div className="flex items-center space-x-1">
-                    <span className="animate-bounce delay-100">.</span>
-                    <span className="animate-bounce delay-200">.</span>
-                    <span className="animate-bounce delay-300">.</span>
-                  </div>
-                </div>
+              {activeArticle ? (
+                <>
+                  <MarkdownDisplay
+                    content={articleContent || ""}
+                    onLearnMore={() => {
+                      console.log("Learn more");
+                    }}
+                    tooltips={tooltips}
+                    tooltipsReady={tooltipsReady}
+                  />
+                  {isStreaming && (
+                    <div className="mt-4 flex items-center justify-center text-slate-400">
+                      <div className="flex items-center space-x-1">
+                        <span className="animate-bounce delay-100">.</span>
+                        <span className="animate-bounce delay-200">.</span>
+                        <span className="animate-bounce delay-300">.</span>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div>Select an article or topic on the map to learn more.</div>
               )}
             </div>
           </div>
 
           <div className="border-t border-slate-800 p-4">
-            {learningMap && activeArticle && (
+            {activeArticle ? (
               <SuggestedQuestions
                 learningMapId={learningMap.id}
                 currentArticleId={activeArticle.id}
                 questions={questions}
                 onQuestionClick={(question) => {
-                  logger.info("Question clicked", { question });
+                  logger.info("Question clicked (noop)", { question });
                 }}
                 onArticleCreated={handleArticleCreated}
                 isLoading={isGeneratingQuestions}
                 isReady={questionsReady}
               />
+            ) : (
+              <div className="text-slate-500">
+                Select an article to see suggested questions.
+              </div>
             )}
           </div>
         </div>

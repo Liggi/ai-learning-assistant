@@ -149,7 +149,12 @@ describe("<LearningInterface />", () => {
   });
 
   it("renders without errors", async () => {
-    await render(<LearningInterface subject={mockSubject} />);
+    await render(
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+      />
+    );
 
     expect(document.body).toBeDefined();
   });
@@ -157,7 +162,12 @@ describe("<LearningInterface />", () => {
   it("passes the correct learning map to useRootArticle", async () => {
     const useRootArticleSpy = vi.spyOn(rootArticleHook, "useRootArticle");
 
-    await render(<LearningInterface subject={mockSubject} />);
+    await render(
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+      />
+    );
 
     expect(useRootArticleSpy).toHaveBeenCalledWith(mockLearningMap);
   });
@@ -170,9 +180,13 @@ describe("<LearningInterface />", () => {
       error: null,
     });
 
-    await render(<LearningInterface subject={mockSubject} />);
+    await render(
+      <LearningInterface subject={mockSubject} activeArticle={null} />
+    );
 
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(
+      screen.getByText("Initializing Root Article...")
+    ).toBeInTheDocument();
   });
 
   it("renders error state when there is an error", async () => {
@@ -183,7 +197,9 @@ describe("<LearningInterface />", () => {
       error: new Error(errorMessage),
     });
 
-    await render(<LearningInterface subject={mockSubject} />);
+    await render(
+      <LearningInterface subject={mockSubject} activeArticle={null} />
+    );
 
     expect(screen.getByText(`Error: ${errorMessage}`)).toBeInTheDocument();
   });
@@ -194,7 +210,12 @@ describe("<LearningInterface />", () => {
       "useArticleContent"
     );
 
-    await render(<LearningInterface subject={mockSubject} />);
+    await render(
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+      />
+    );
 
     expect(useArticleContentSpy).toHaveBeenCalledWith(
       mockRootArticle,
@@ -208,7 +229,12 @@ describe("<LearningInterface />", () => {
       "useContextualTooltips"
     );
 
-    await render(<LearningInterface subject={mockSubject} />);
+    await render(
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+      />
+    );
 
     expect(useContextualTooltipsSpy).toHaveBeenCalledWith(
       mockRootArticle,
@@ -225,7 +251,12 @@ describe("<LearningInterface />", () => {
       "useSuggestedQuestions"
     );
 
-    await render(<LearningInterface subject={mockSubject} />);
+    await render(
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+      />
+    );
 
     expect(useSuggestedQuestionsSpy).toHaveBeenCalledWith(
       mockRootArticle,
@@ -245,7 +276,10 @@ describe("<LearningInterface />", () => {
     });
 
     const { container } = await render(
-      <LearningInterface subject={mockSubject} />
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+      />
     );
 
     // @TODO: There's probably a better way check this
@@ -262,7 +296,12 @@ describe("<LearningInterface />", () => {
       tooltipsReady: false,
     });
 
-    await render(<LearningInterface subject={mockSubject} />);
+    await render(
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+      />
+    );
 
     // @TODO: Mocked for now
     const tooltipLoadingIndicator = document.querySelector(
@@ -291,7 +330,12 @@ describe("<LearningInterface />", () => {
       tooltipsReady: true,
     });
 
-    await render(<LearningInterface subject={mockSubject} />);
+    await render(
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+      />
+    );
 
     // @TODO: Mocked for now
     const markdownDisplay = document.querySelector(".MarkdownDisplay");
@@ -314,7 +358,12 @@ describe("<LearningInterface />", () => {
       questionsReady: true,
     });
 
-    await render(<LearningInterface subject={mockSubject} />);
+    await render(
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+      />
+    );
 
     // @TODO: Mocked for now
     const suggestedQuestions = document.querySelector(".SuggestedQuestions");
@@ -329,7 +378,12 @@ describe("<LearningInterface />", () => {
   });
 
   it("passes the root article to PersonalLearningMapFlow", async () => {
-    await render(<LearningInterface subject={mockSubject} />);
+    await render(
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+      />
+    );
 
     // @TODO: Mocked for now
     expect(PersonalLearningMapFlow).toHaveBeenCalled();
@@ -340,7 +394,10 @@ describe("<LearningInterface />", () => {
 
   it("toggles layout when toggle button is clicked", async () => {
     const { container } = await render(
-      <LearningInterface subject={mockSubject} />
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+      />
     );
 
     // Initially the map should have w-1/3 class
@@ -374,5 +431,41 @@ describe("<LearningInterface />", () => {
       );
       expect(updatedToggleButton).toBeInTheDocument();
     }
+  });
+
+  it("renders placeholder message when no article is selected", async () => {
+    await render(
+      <LearningInterface subject={mockSubject} activeArticle={null} />
+    );
+
+    expect(
+      screen.getByText("Select an article or topic on the map to learn more.")
+    ).toBeInTheDocument();
+  });
+
+  it("renders placeholder for questions when no article is selected", async () => {
+    await render(
+      <LearningInterface subject={mockSubject} activeArticle={null} />
+    );
+
+    expect(
+      screen.getByText("Select an article to see suggested questions.")
+    ).toBeInTheDocument();
+  });
+
+  it("displays initialization message when root article is being loaded", async () => {
+    vi.spyOn(rootArticleHook, "useRootArticle").mockReturnValue({
+      article: null,
+      isLoading: true,
+      error: null,
+    });
+
+    await render(
+      <LearningInterface subject={mockSubject} activeArticle={null} />
+    );
+
+    expect(
+      screen.getByText("Initializing Root Article...")
+    ).toBeInTheDocument();
   });
 });

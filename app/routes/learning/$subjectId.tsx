@@ -70,7 +70,16 @@ export const Route = createFileRoute("/learning/$subjectId")({
   },
   component: function LearningRoute() {
     const { subject, learningMap } = Route.useLoaderData();
-    return <LearningInterface subject={subject} />;
+
+    const rootArticle =
+      learningMap.articles?.find((article) => article.isRoot) || null;
+
+    logger.info("Found root article", {
+      rootArticleId: rootArticle?.id,
+      isRoot: rootArticle?.isRoot,
+    });
+
+    return <LearningInterface subject={subject} activeArticle={rootArticle} />;
   },
   errorComponent: ({ error }) => {
     logger.error("Error in LearningRoute loader/component", {
