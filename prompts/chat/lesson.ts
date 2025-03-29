@@ -1,8 +1,11 @@
 interface LessonPromptVariables {
   subject: string;
-  moduleTitle: string;
-  moduleDescription: string;
+  moduleTitle?: string;
+  moduleDescription?: string;
   message: string;
+  contextType?: "introduction" | "question";
+  triggeringQuestion?: string;
+  parentContent?: string;
 }
 
 export const createPrompt = ({
@@ -10,13 +13,36 @@ export const createPrompt = ({
   moduleTitle,
   moduleDescription,
   message,
-}: LessonPromptVariables) => `You are an AI tutor specializing in micro-learning. Your goal is to teach one concept at a time through clear, focused explanations.
+  contextType = "introduction",
+  triggeringQuestion,
+  parentContent,
+}: LessonPromptVariables) => {
+  // Base prompt that applies to all contexts
+  let prompt = `You are an AI tutor specializing in micro-learning. Your goal is to teach one concept at a time through clear, focused explanations.
 
 Parameters:
 <subject>${subject}</subject>
-<module_title>${moduleTitle}</module_title>
-<module_description>${moduleDescription}</module_description>
+`;
 
+  // Add appropriate context-specific parameters
+  if (contextType === "introduction") {
+    prompt += `<module_title>${moduleTitle}</module_title>
+<module_description>${moduleDescription}</module_description>
+`;
+  } else if (
+    contextType === "question" &&
+    triggeringQuestion &&
+    parentContent
+  ) {
+    prompt += `<triggering_question>${triggeringQuestion}</triggering_question>
+<parent_content>
+${parentContent}
+</parent_content>
+`;
+  }
+
+  // Common guidelines and rules
+  prompt += `
 Guidelines:
 - Focus on one concept or entity per response.
 - Resist adding tangential information.
@@ -48,3 +74,6 @@ Format your answer entirely in markdown with no other text.
 
 ${message}
 `;
+
+  return prompt;
+};

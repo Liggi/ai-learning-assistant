@@ -47,20 +47,28 @@ export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
         );
       }
 
-      const { subject, moduleTitle, moduleDescription, message } = requestData;
+      const {
+        subject,
+        message,
+        contextType = "introduction",
+        // Introduction-specific fields
+        moduleTitle,
+        moduleDescription,
+        // Question-specific fields
+        triggeringQuestion,
+        parentContent,
+      } = requestData;
 
-      // Validate required fields
-      if (!subject || !moduleTitle || !moduleDescription || !message) {
+      // Validate required fields based on context type
+      if (!subject || !message) {
         console.error("[lesson-stream] Missing required fields:", {
           subject,
-          moduleTitle,
-          moduleDescription,
           message,
         });
         return new Response(
           JSON.stringify({
-            error: "Missing required fields",
-            fields: { subject, moduleTitle, moduleDescription, message },
+            error:
+              "Missing required fields: subject and message are always required",
           }),
           {
             status: 400,
@@ -69,14 +77,63 @@ export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
         );
       }
 
-      // Generate the prompt
+      // Context-specific validation
+      if (
+        contextType === "introduction" &&
+        (!moduleTitle || !moduleDescription)
+      ) {
+        console.error(
+          "[lesson-stream] Missing required fields for introduction context:",
+          {
+            moduleTitle,
+            moduleDescription,
+          }
+        );
+        return new Response(
+          JSON.stringify({
+            error:
+              "Introduction context requires moduleTitle and moduleDescription",
+          }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      } else if (
+        contextType === "question" &&
+        (!triggeringQuestion || !parentContent)
+      ) {
+        console.error(
+          "[lesson-stream] Missing required fields for question context:",
+          {
+            triggeringQuestion,
+            hasParentContent: !!parentContent,
+          }
+        );
+        return new Response(
+          JSON.stringify({
+            error:
+              "Question context requires triggeringQuestion and parentContent",
+          }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      // Generate the prompt with appropriate context
       let prompt;
       try {
         prompt = createPrompt({
           subject,
+          message,
+          contextType,
+          // Include all possible parameters, the createPrompt function will use what it needs
           moduleTitle,
           moduleDescription,
-          message,
+          triggeringQuestion,
+          parentContent,
         });
         console.log(
           "[lesson-stream] Generated prompt (first 200 chars):",
