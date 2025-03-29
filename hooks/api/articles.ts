@@ -110,6 +110,7 @@ export function useCreateArticleFromQuestion() {
     },
     onSuccess: (newArticle) => {
       queryClient.invalidateQueries({ queryKey: ["articles"] });
+      queryClient.invalidateQueries({ queryKey: ["learningMaps"] });
     },
   });
 }

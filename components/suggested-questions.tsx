@@ -14,6 +14,7 @@ interface SuggestedQuestionsProps {
   isLoading: boolean;
   isReady: boolean;
   onQuestionClick?: (question: string) => void;
+  onArticleCreated?: (articleId: string) => void;
   learningMapId: string;
   currentArticleId: string;
 }
@@ -23,6 +24,7 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
   isLoading,
   isReady,
   onQuestionClick,
+  onArticleCreated,
   learningMapId,
   currentArticleId,
 }) => {
@@ -62,6 +64,7 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
         onSuccess: (data) => {
           logger.info("Successfully created article from question:", data);
           console.log("Mutation Success:", data);
+          onArticleCreated?.(data.id);
         },
         onError: (error) => {
           logger.error("Failed to create article from question:", error);
