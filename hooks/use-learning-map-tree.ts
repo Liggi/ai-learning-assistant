@@ -5,14 +5,14 @@ import {
   SerializedQuestion,
 } from "@/types/serialized";
 
-interface TreeArticleNode {
+export interface TreeArticleNode {
   id: string;
   type: "article";
   data: SerializedArticle;
   outgoingQuestions: TreeQuestionNode[];
 }
 
-interface TreeQuestionNode {
+export interface TreeQuestionNode {
   id: string;
   type: "question";
   data: SerializedQuestion;
