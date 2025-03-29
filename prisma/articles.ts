@@ -342,3 +342,50 @@ export const getLearningMapAndSubjectForArticle = createServerFn({
       }
     }
   );
+
+/**
+ * Server function to get a question by child article ID
+ */
+export const getQuestionByChildArticleId = createServerFn({ method: "GET" })
+  .validator((data: { childArticleId: string }) => data)
+  .handler(async ({ data }) => {
+    logger.info("Getting question by child article ID", {
+      childArticleId: data.childArticleId,
+    });
+    try {
+      const question = await prisma.question.findFirst({
+        where: { childArticleId: data.childArticleId },
+        include: {
+          parentArticle: true,
+        },
+      });
+
+      if (!question) {
+        logger.info("No question found for child article", {
+          childArticleId: data.childArticleId,
+        });
+        return null;
+      }
+
+      return {
+        question: {
+          id: question.id,
+          text: question.text,
+          learningMapId: question.learningMapId,
+          parentArticleId: question.parentArticleId,
+          childArticleId: question.childArticleId,
+          createdAt: question.createdAt.toISOString(),
+          updatedAt: question.updatedAt.toISOString(),
+        },
+        parentArticle: question.parentArticle
+          ? serializeArticle(question.parentArticle)
+          : null,
+      };
+    } catch (error) {
+      logger.error("Error getting question by child article ID", {
+        error,
+        childArticleId: data.childArticleId,
+      });
+      throw error;
+    }
+  });

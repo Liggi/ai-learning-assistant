@@ -65,6 +65,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
     isStreaming,
     streamComplete,
     hasExistingContent,
+    contentFinallyReady,
   } = useArticleContent(activeArticle, subject);
 
   const { tooltips, isGeneratingTooltips, tooltipsReady } =
@@ -73,11 +74,18 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
       subject,
       articleContent,
       isStreaming,
-      streamComplete
+      streamComplete,
+      contentFinallyReady
     );
 
   const { questions, isGeneratingQuestions, questionsReady } =
-    useSuggestedQuestions(activeArticle, subject, isStreaming, streamComplete);
+    useSuggestedQuestions(
+      activeArticle,
+      subject,
+      isStreaming,
+      streamComplete,
+      contentFinallyReady
+    );
 
   const toggleLayout = () => {
     setIsMapExpanded((prev) => !prev);
