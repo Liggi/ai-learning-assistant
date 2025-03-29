@@ -2,58 +2,126 @@ import { createAPIFileRoute } from "@tanstack/react-start/api";
 import Anthropic from "@anthropic-ai/sdk";
 import { createPrompt } from "@/prompts/chat/lesson";
 
-// Simple in-memory cache for active streaming requests
-const activeStreams = new Map<string, ReadableStream>();
-const STREAM_TTL = 60 * 1000; // 1 minute TTL for active streams
-
-// Create a unique key for request deduplication
-function createRequestKey(data: any): string {
-  return `lesson:${JSON.stringify(data)}`;
-}
-
-// Cleanup function for stale stream references
-setInterval(() => {
-  for (const [key, stream] of activeStreams.entries()) {
-    // After TTL, we'll remove the reference even if it might still be active
-    // This allows new requests to go through after sufficient time
-    activeStreams.delete(key);
-  }
-}, STREAM_TTL);
+// Remove the stream caching system as it's causing Response body locking issues
+// Each request will now get its own independent stream
 
 export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
   POST: async ({ request }) => {
     try {
-      const requestData = await request.json();
-      const { subject, moduleTitle, moduleDescription, message } = requestData;
+      console.log("[lesson-stream] Received request");
 
-      // Create a unique request key for deduplication
-      const requestKey = createRequestKey(requestData);
-
-      // Check if we already have an active stream for this exact request
-      if (activeStreams.has(requestKey)) {
-        console.log(`Reusing existing stream for request: ${requestKey}`);
-        return new Response(activeStreams.get(requestKey), {
-          headers: {
-            "Content-Type": "text/plain; charset=utf-8",
-          },
-        });
+      // Validate request integrity
+      if (!request.body) {
+        console.error("[lesson-stream] Request body is null or undefined");
+        return new Response(
+          JSON.stringify({ error: "Request body is missing" }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
       }
 
-      const prompt = createPrompt({
-        subject,
-        moduleTitle,
-        moduleDescription,
-        message,
-      });
+      // Parse request data
+      let requestData;
+      try {
+        requestData = await request.json();
+        console.log(
+          "[lesson-stream] Request data:",
+          JSON.stringify(requestData, null, 2)
+        );
+      } catch (parseError) {
+        console.error(
+          "[lesson-stream] Failed to parse request body:",
+          parseError
+        );
+        return new Response(
+          JSON.stringify({
+            error: "Failed to parse request body",
+            details: String(parseError),
+          }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
 
+      const { subject, moduleTitle, moduleDescription, message } = requestData;
+
+      // Validate required fields
+      if (!subject || !moduleTitle || !moduleDescription || !message) {
+        console.error("[lesson-stream] Missing required fields:", {
+          subject,
+          moduleTitle,
+          moduleDescription,
+          message,
+        });
+        return new Response(
+          JSON.stringify({
+            error: "Missing required fields",
+            fields: { subject, moduleTitle, moduleDescription, message },
+          }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      // Generate the prompt
+      let prompt;
+      try {
+        prompt = createPrompt({
+          subject,
+          moduleTitle,
+          moduleDescription,
+          message,
+        });
+        console.log(
+          "[lesson-stream] Generated prompt (first 200 chars):",
+          prompt.substring(0, 200) + "..."
+        );
+      } catch (promptError) {
+        console.error("[lesson-stream] Error generating prompt:", promptError);
+        return new Response(
+          JSON.stringify({
+            error: "Failed to generate prompt",
+            details: String(promptError),
+          }),
+          {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      // Check Anthropic API key
+      if (!process.env.ANTHROPIC_API_KEY) {
+        console.error(
+          "[lesson-stream] ANTHROPIC_API_KEY is missing in environment variables"
+        );
+        return new Response(
+          JSON.stringify({ error: "API configuration error: Missing API key" }),
+          {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      console.log("[lesson-stream] Initializing Anthropic client");
       const anthropic = new Anthropic({
         apiKey: process.env.ANTHROPIC_API_KEY,
       });
 
       // Create a streaming response using ReadableStream
+      console.log("[lesson-stream] Creating ReadableStream");
       const stream = new ReadableStream({
         async start(controller) {
           try {
+            console.log("[lesson-stream] Starting to stream from Anthropic");
+
             // Stream response events using the Anthropic SDK
             const stream = await anthropic.messages.create({
               max_tokens: 4096,
@@ -62,44 +130,69 @@ export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
               stream: true,
             });
 
+            console.log(
+              "[lesson-stream] Anthropic stream created successfully"
+            );
+
             // Process the stream of events from Anthropic
+            let chunkCount = 0;
+            let totalBytes = 0;
+
             for await (const messageStreamEvent of stream) {
               if (messageStreamEvent.type === "content_block_delta") {
                 if (messageStreamEvent.delta.type === "text_delta") {
                   // Send text fragments as they arrive
                   const text = messageStreamEvent.delta.text;
-                  controller.enqueue(new TextEncoder().encode(text));
+                  const encoded = new TextEncoder().encode(text);
+                  totalBytes += encoded.length;
+                  chunkCount++;
+
+                  if (chunkCount % 10 === 0) {
+                    console.log(
+                      `[lesson-stream] Streamed ${chunkCount} chunks, ${totalBytes} bytes so far`
+                    );
+                  }
+
+                  controller.enqueue(encoded);
                 }
               }
             }
+
+            console.log(
+              `[lesson-stream] Stream complete. Total: ${chunkCount} chunks, ${totalBytes} bytes`
+            );
             controller.close();
           } catch (error) {
-            console.error("Stream error:", error);
+            console.error("[lesson-stream] Stream error:", error);
+            if (error.name === "AnthropicError") {
+              console.error("[lesson-stream] Anthropic API error details:", {
+                status: error.status,
+                type: error.type,
+                message: error.message,
+              });
+            }
             controller.error(error);
-
-            // Remove from active streams on error
-            activeStreams.delete(requestKey);
           }
         },
       });
 
-      // Store the stream for potential reuse
-      activeStreams.set(requestKey, stream);
-
-      // Set a timeout to remove this stream from active streams
-      setTimeout(() => {
-        activeStreams.delete(requestKey);
-      }, STREAM_TTL);
-
+      console.log("[lesson-stream] Returning response stream");
       return new Response(stream, {
         headers: {
           "Content-Type": "text/plain; charset=utf-8",
         },
       });
     } catch (err) {
-      console.error("Error in streaming chat:", err);
+      console.error("[lesson-stream] Fatal error in endpoint handler:", err);
+      console.error("[lesson-stream] Error stack:", err.stack);
       return new Response(
-        JSON.stringify({ error: "Failed to stream lesson" }),
+        JSON.stringify({
+          error: "Failed to stream lesson",
+          message: err.message,
+          name: err.name,
+          // Include stack in development only
+          stack: process.env.NODE_ENV !== "production" ? err.stack : undefined,
+        }),
         {
           status: 500,
           headers: {

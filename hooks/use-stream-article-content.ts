@@ -4,7 +4,7 @@ import { Logger } from "@/lib/logger";
 
 const logger = new Logger({
   context: "useStreamArticleContent",
-  enabled: false,
+  enabled: true,
 });
 
 const streamContentFromAPI = async (
@@ -73,35 +73,27 @@ export function useStreamArticleContent(
   const [abortController, setAbortController] =
     useState<AbortController | null>(null);
 
-  // For debugging - track render count
-  const renderCount = useRef(0);
-  renderCount.current++;
+  // Track the previous article ID to detect changes
+  const previousArticleId = useRef<string | null>(null);
 
   const updateArticleMutation = useUpdateArticle();
 
-  // Log the current state on each render
-  logger.group(`Render #${renderCount.current}`, () => {
-    logger.debug("Article state:", {
-      id: article?.id,
-      contentLength: article?.content?.length || 0,
-      contentPreview: article?.content?.substring(0, 50) + "..." || "none",
-    });
-    logger.debug("Hook state:", {
-      contentLength: content.length,
-      contentPreview: content.substring(0, 50) + "..." || "none",
-      isStreaming,
-      streamComplete,
-      hasAbortController: !!abortController,
-    });
-  });
-
-  // Start streaming content
+  // Start streaming content (memoized)
   const startStreaming = useCallback(async () => {
-    if (!article?.id || isStreaming) return;
+    const currentArticleId = article?.id; // Get ID at the time of call
+    // Guard clauses inside startStreaming check current state
+    if (!currentArticleId || isStreaming || streamComplete) {
+      logger.debug("Skipping startStreaming call", {
+        articleId: currentArticleId,
+        isStreaming,
+        streamComplete,
+      });
+      return;
+    }
 
-    logger.info("Starting content streaming", { articleId: article.id });
+    logger.info("Executing startStreaming", { articleId: currentArticleId });
     setIsStreaming(true);
-    setStreamComplete(false);
+    setStreamComplete(false); // Explicitly set here too
     setContent("");
 
     const controller = new AbortController();
@@ -117,78 +109,135 @@ export function useStreamArticleContent(
       );
 
       logger.info("Streaming complete, updating article", {
-        articleId: article.id,
+        articleId: currentArticleId, // Use captured ID
         contentLength: fullContent.length,
       });
 
-      // Update the article in the database with the full content
       await updateArticleMutation.mutateAsync({
-        id: article.id,
+        id: currentArticleId, // Use captured ID
         content: fullContent,
       });
 
       setStreamComplete(true);
     } catch (error) {
-      if (error.message !== "Streaming aborted") {
+      if (
+        error.name !== "AbortError" &&
+        error.message !== "Streaming aborted"
+      ) {
         logger.error("Streaming error:", error);
       } else {
-        logger.info("Streaming aborted");
+        logger.info("Streaming aborted or interrupted");
       }
+      setStreamComplete(false); // Ensure not marked complete on error/abort
     } finally {
       setIsStreaming(false);
       setAbortController(null);
     }
-  }, [article?.id, subjectTitle, isStreaming, updateArticleMutation]);
-
-  // Stop streaming if in progress
-  const stopStreaming = useCallback(() => {
-    if (abortController) {
-      logger.info("Manually stopping streaming");
-      abortController.abort();
-      setAbortController(null);
-      setIsStreaming(false);
-    }
-  }, [abortController]);
-
-  // Auto-start streaming only if the article exists but has no content
-  const shouldAutoStartStreaming =
-    article?.id &&
-    (!article.content || article.content.trim() === "") &&
-    !isStreaming &&
-    !streamComplete;
-
-  useEffect(() => {
-    logger.group("Content initialization effect", () => {
-      logger.debug("Effect dependencies:", {
-        articleId: article?.id,
-        hasContent: !!article?.content,
-        contentLength: article?.content?.length || 0,
-        isStreaming,
-        streamComplete,
-        shouldAutoStart: shouldAutoStartStreaming,
-      });
-    });
-
-    if (shouldAutoStartStreaming) {
-      logger.info("Auto-starting content streaming");
-      startStreaming();
-    } else if (article?.content) {
-      logger.info("Setting content from existing article", {
-        contentPreview: article.content.substring(0, 50) + "...",
-      });
-      setContent(article.content);
-      setStreamComplete(true);
-    }
+    // Ensure article?.id is a dependency if used directly, but better to capture it
   }, [
-    article?.id,
-    article?.content,
+    subjectTitle,
     isStreaming,
     streamComplete,
+    updateArticleMutation,
+    article?.id,
+  ]); // Added article.id
+
+  // Effect 1: Reset state on article ID change ONLY
+  useEffect(() => {
+    const currentArticleId = article?.id || null;
+    if (currentArticleId !== previousArticleId.current) {
+      logger.info("Effect 1: Article ID changed, resetting stream state", {
+        prevId: previousArticleId.current,
+        newId: currentArticleId,
+      });
+
+      setContent("");
+      setStreamComplete(false);
+      setIsStreaming(false);
+
+      if (abortController) {
+        logger.info("Effect 1: Aborting previous stream");
+        abortController.abort();
+        setAbortController(null);
+      }
+
+      // Update the ref *after* resetting state for the next comparison
+      previousArticleId.current = currentArticleId;
+    }
+    // This effect only runs when article ID changes or abortController instance changes
+  }, [article?.id, abortController]);
+
+  // Effect 2: Handle content setting or trigger stream based on CURRENT state
+  useEffect(() => {
+    const currentArticleId = article?.id || null;
+
+    // Wait until the ID is stable (matches the ref updated by Effect 1)
+    if (currentArticleId !== previousArticleId.current) {
+      logger.debug("Effect 2: Skipping, waiting for ID stabilization/reset", {
+        currentArticleId,
+        trackedId: previousArticleId.current,
+      });
+      return;
+    }
+
+    // If we are currently streaming, do nothing in this effect
+    if (isStreaming) {
+      logger.debug("Effect 2: Skipping, currently streaming", {
+        articleId: currentArticleId,
+      });
+      return;
+    }
+
+    // --- ID is stable and not currently streaming ---
+
+    if (currentArticleId) {
+      // We have a valid, stable article ID
+      const articleHasContent =
+        article?.content && article.content.trim() !== "";
+
+      if (articleHasContent) {
+        // Article has content - set local state if it differs
+        if (content !== article.content) {
+          logger.info("Effect 2: Setting content from prop", {
+            articleId: currentArticleId,
+          });
+          setContent(article.content);
+          // Ensure stream is marked complete if we receive full content
+          if (!streamComplete) {
+            setStreamComplete(true);
+          }
+        }
+      } else {
+        // Article has NO content - attempt to stream if not already complete
+        if (!streamComplete) {
+          logger.info(
+            "Effect 2: Attempting to start stream for empty article",
+            { articleId: currentArticleId }
+          );
+          startStreaming();
+        } else {
+          logger.debug(
+            "Effect 2: Skipping stream start, already marked complete",
+            { articleId: currentArticleId }
+          );
+        }
+      }
+    } else {
+      logger.debug("Effect 2: Skipping, no valid article ID", {
+        currentArticleId,
+      });
+    }
+
+    // This effect runs when the article object, local state (isStreaming, streamComplete, content), or startStreaming function changes
+  }, [
+    article, // Use whole article object as dep
+    isStreaming,
+    streamComplete,
+    content, // Include local content to detect external updates
     startStreaming,
-    shouldAutoStartStreaming,
   ]);
 
-  // Clean up on unmount
+  // Clean up stream on unmount (remains the same)
   useEffect(() => {
     return () => {
       if (abortController) {
@@ -202,6 +251,6 @@ export function useStreamArticleContent(
     content,
     isStreaming,
     streamComplete,
-    hasExistingContent: article?.content && article.content.trim() !== "",
+    hasExistingContent: !!(article?.content && article.content.trim() !== ""),
   };
 }

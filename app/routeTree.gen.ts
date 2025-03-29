@@ -15,6 +15,7 @@ import { Route as LoadingImport } from './routes/loading'
 import { Route as IndexImport } from './routes/index'
 import { Route as LearningSubjectIdImport } from './routes/learning/$subjectId'
 import { Route as CalibrationSubjectIdImport } from './routes/calibration/$subjectId'
+import { Route as LearningArticleArticleIdImport } from './routes/learning/article/$articleId'
 
 // Create/Update Routes
 
@@ -39,6 +40,12 @@ const LearningSubjectIdRoute = LearningSubjectIdImport.update({
 const CalibrationSubjectIdRoute = CalibrationSubjectIdImport.update({
   id: '/calibration/$subjectId',
   path: '/calibration/$subjectId',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LearningArticleArticleIdRoute = LearningArticleArticleIdImport.update({
+  id: '/learning/article/$articleId',
+  path: '/learning/article/$articleId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -74,6 +81,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearningSubjectIdImport
       parentRoute: typeof rootRoute
     }
+    '/learning/article/$articleId': {
+      id: '/learning/article/$articleId'
+      path: '/learning/article/$articleId'
+      fullPath: '/learning/article/$articleId'
+      preLoaderRoute: typeof LearningArticleArticleIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -84,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/loading': typeof LoadingRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning/$subjectId': typeof LearningSubjectIdRoute
+  '/learning/article/$articleId': typeof LearningArticleArticleIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -91,6 +106,7 @@ export interface FileRoutesByTo {
   '/loading': typeof LoadingRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning/$subjectId': typeof LearningSubjectIdRoute
+  '/learning/article/$articleId': typeof LearningArticleArticleIdRoute
 }
 
 export interface FileRoutesById {
@@ -99,6 +115,7 @@ export interface FileRoutesById {
   '/loading': typeof LoadingRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning/$subjectId': typeof LearningSubjectIdRoute
+  '/learning/article/$articleId': typeof LearningArticleArticleIdRoute
 }
 
 export interface FileRouteTypes {
@@ -108,14 +125,21 @@ export interface FileRouteTypes {
     | '/loading'
     | '/calibration/$subjectId'
     | '/learning/$subjectId'
+    | '/learning/article/$articleId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/loading' | '/calibration/$subjectId' | '/learning/$subjectId'
+  to:
+    | '/'
+    | '/loading'
+    | '/calibration/$subjectId'
+    | '/learning/$subjectId'
+    | '/learning/article/$articleId'
   id:
     | '__root__'
     | '/'
     | '/loading'
     | '/calibration/$subjectId'
     | '/learning/$subjectId'
+    | '/learning/article/$articleId'
   fileRoutesById: FileRoutesById
 }
 
@@ -124,6 +148,7 @@ export interface RootRouteChildren {
   LoadingRoute: typeof LoadingRoute
   CalibrationSubjectIdRoute: typeof CalibrationSubjectIdRoute
   LearningSubjectIdRoute: typeof LearningSubjectIdRoute
+  LearningArticleArticleIdRoute: typeof LearningArticleArticleIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -131,6 +156,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoadingRoute: LoadingRoute,
   CalibrationSubjectIdRoute: CalibrationSubjectIdRoute,
   LearningSubjectIdRoute: LearningSubjectIdRoute,
+  LearningArticleArticleIdRoute: LearningArticleArticleIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -146,7 +172,8 @@ export const routeTree = rootRoute
         "/",
         "/loading",
         "/calibration/$subjectId",
-        "/learning/$subjectId"
+        "/learning/$subjectId",
+        "/learning/article/$articleId"
       ]
     },
     "/": {
@@ -160,6 +187,9 @@ export const routeTree = rootRoute
     },
     "/learning/$subjectId": {
       "filePath": "learning/$subjectId.tsx"
+    },
+    "/learning/article/$articleId": {
+      "filePath": "learning/article/$articleId.tsx"
     }
   }
 }

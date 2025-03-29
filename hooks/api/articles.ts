@@ -109,8 +109,26 @@ export function useCreateArticleFromQuestion() {
       return createArticleFromQuestion({ data });
     },
     onSuccess: (newArticle) => {
+      queryClient.invalidateQueries({ queryKey: ["articles", newArticle.id] });
+
+      queryClient.invalidateQueries({
+        queryKey: ["articles", "byMap", newArticle.learningMapId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["articles", "root", newArticle.learningMapId],
+      });
+
       queryClient.invalidateQueries({ queryKey: ["articles"] });
+
       queryClient.invalidateQueries({ queryKey: ["learningMaps"] });
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "routeData",
+          "/learning/article/$articleId",
+          { articleId: newArticle.id },
+        ],
+      });
     },
   });
 }

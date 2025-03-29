@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
 import { Logger } from "@/lib/logger";
+import { useNavigate } from "@tanstack/react-router";
 
 const logger = new Logger({
   context: "SuggestedQuestions",
@@ -29,6 +30,7 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
   currentArticleId,
 }) => {
   const createArticleMutation = useCreateArticleFromQuestion();
+  const navigate = useNavigate();
 
   const container = {
     hidden: { opacity: 0 },
@@ -63,12 +65,25 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
       {
         onSuccess: (data) => {
           logger.info("Successfully created article from question:", data);
-          console.log("Mutation Success:", data);
-          onArticleCreated?.(data.id);
+
+          // Call onArticleCreated before navigation to ensure parent components are notified
+          if (onArticleCreated) {
+            onArticleCreated(data.id);
+          }
+
+          // Add a small delay before navigation to ensure state updates have propagated
+          setTimeout(() => {
+            // Navigate to the new article route
+            navigate({
+              to: "/learning/article/$articleId",
+              params: { articleId: data.id },
+              // Use replace to prevent back button from returning to the current article
+              replace: true,
+            });
+          }, 10);
         },
         onError: (error) => {
           logger.error("Failed to create article from question:", error);
-          console.error("Mutation Error:", error);
         },
       }
     );

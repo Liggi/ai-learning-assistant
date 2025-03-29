@@ -11,6 +11,7 @@ import { Logger } from "@/lib/logger";
 import { useContextualTooltips } from "@/hooks/use-contextual-tooltips";
 import { useSuggestedQuestions } from "@/hooks/use-suggested-questions";
 import { TooltipLoadingIndicator } from "./ui/tooltip-loading-indicator";
+import { useNavigate } from "@tanstack/react-router";
 
 const logger = new Logger({ context: "LearningInterface", enabled: true });
 
@@ -26,9 +27,26 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
   logger.info("Rendering LearningInterface", {
     subjectId: subject.id,
     activeArticleId: activeArticle?.id,
+    timestamp: new Date().toISOString(),
   });
 
+  // Keep track of the current active article ID to detect changes
+  const prevArticleIdRef = React.useRef<string | null>(
+    activeArticle?.id || null
+  );
+  React.useEffect(() => {
+    // Check if the article ID has changed
+    if (activeArticle?.id && prevArticleIdRef.current !== activeArticle.id) {
+      logger.info("Article ID changed in LearningInterface", {
+        prevArticleId: prevArticleIdRef.current,
+        newArticleId: activeArticle.id,
+      });
+      prevArticleIdRef.current = activeArticle.id;
+    }
+  }, [activeArticle?.id]);
+
   const [isMapExpanded, setIsMapExpanded] = React.useState(false);
+  const navigate = useNavigate();
 
   const {
     data: learningMap,
@@ -66,11 +84,27 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
   };
 
   const handleNodeClick = (nodeId: string) => {
-    logger.info("Node clicked (noop)", { nodeId });
+    logger.info("Node clicked, navigating to article view", { nodeId });
+    navigate({
+      to: "/learning/article/$articleId",
+      params: { articleId: nodeId },
+    });
   };
 
   const handleArticleCreated = (newArticleId: string) => {
-    logger.info("New article created from question (noop)", { newArticleId });
+    logger.info(
+      "New article created from question, navigating to article view",
+      { newArticleId, currentArticleId: activeArticle?.id }
+    );
+    // Update our local reference to avoid any inconsistency
+    prevArticleIdRef.current = newArticleId;
+
+    // Use replace to avoid back button issues
+    navigate({
+      to: "/learning/article/$articleId",
+      params: { articleId: newArticleId },
+      replace: true,
+    });
   };
 
   const isLoadingInitialData = isLoadingMap || isLoadingRootArticle;

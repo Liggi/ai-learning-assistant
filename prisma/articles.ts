@@ -3,7 +3,11 @@ import prisma from "@/prisma/client";
 import { createServerFn } from "@tanstack/react-start";
 import { Logger } from "@/lib/logger";
 import { ArticleMetadata } from "@/types/serialized";
-import { serializeArticle } from "@/types/serializers";
+import {
+  serializeArticle,
+  serializeLearningMap,
+  serializeSubject,
+} from "@/types/serializers";
 import { fromPrismaJson } from "@/lib/prisma-utils";
 import { generateSummary } from "@/features/generators/article-summary";
 
@@ -283,3 +287,58 @@ export const createArticleFromQuestion = createServerFn({ method: "POST" })
       throw error;
     }
   });
+
+/**
+ * Server function to get the learning map and subject for an article
+ */
+export const getLearningMapAndSubjectForArticle = createServerFn({
+  method: "GET",
+})
+  .validator((data: { articleId: string }) => data)
+  .handler(
+    async ({
+      data,
+    }): Promise<{
+      article: ReturnType<typeof serializeArticle>;
+      learningMap: ReturnType<typeof serializeLearningMap>;
+      subject: ReturnType<typeof serializeSubject>;
+    }> => {
+      logger.info("Getting learning map and subject for article", {
+        articleId: data.articleId,
+      });
+      try {
+        const article = await prisma.article.findUnique({
+          where: { id: data.articleId },
+          include: {
+            learningMap: {
+              include: {
+                subject: true,
+                articles: true,
+                questions: true,
+              },
+            },
+          },
+        });
+
+        if (!article) {
+          logger.error("Article not found", { articleId: data.articleId });
+          throw new Error(`Article not found: ${data.articleId}`);
+        }
+
+        const { learningMap } = article;
+        const { subject, ...learningMapWithoutSubject } = learningMap;
+
+        return {
+          article: serializeArticle(article),
+          learningMap: serializeLearningMap(learningMapWithoutSubject),
+          subject: serializeSubject(subject),
+        };
+      } catch (error) {
+        logger.error("Error getting learning map and subject for article", {
+          error,
+          articleId: data.articleId,
+        });
+        throw error;
+      }
+    }
+  );
