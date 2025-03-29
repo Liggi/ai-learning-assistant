@@ -18,7 +18,10 @@ export const Route = createFileRoute("/learning/$subjectId")({
       subject,
     };
   },
-  component: LearningRoute,
+  component: function LearningRoute() {
+    const { subject } = Route.useLoaderData();
+    return <LearningInterface subject={subject} />;
+  },
   errorComponent: ({ error }) => {
     return (
       <ErrorDisplay
@@ -31,9 +34,3 @@ export const Route = createFileRoute("/learning/$subjectId")({
     );
   },
 });
-
-function LearningRoute() {
-  const { subject } = Route.useLoaderData();
-
-  return <LearningInterface subject={subject} />;
-}
