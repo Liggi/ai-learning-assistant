@@ -17,6 +17,12 @@ export function useArticleContent(
   const [isSummaryLoading, setSummaryLoading] = useState(false);
   const queryClient = useQueryClient();
 
+  // New state to track when content is truly ready for dependent operations
+  const [contentFinallyReady, setContentFinallyReady] = useState(false);
+  const contentStabilizationTimer = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+
   // Track article ID changes to reset state
   const previousArticleId = useRef<string | null>(null);
 
@@ -44,6 +50,13 @@ export function useArticleContent(
       lastProcessedContent.current = null;
       summaryGenerationAttempted.current = false;
       previousArticleId.current = article.id;
+
+      // Clear content ready flag and any pending timers
+      setContentFinallyReady(false);
+      if (contentStabilizationTimer.current) {
+        clearTimeout(contentStabilizationTimer.current);
+        contentStabilizationTimer.current = null;
+      }
     }
   }, [article?.id]);
 
@@ -57,11 +70,51 @@ export function useArticleContent(
   const content =
     streamedContent || (hasExistingContent ? article?.content : "");
 
+  // Effect to determine when content is truly ready and stable
+  useEffect(() => {
+    // Clear any existing timer when content or stream status changes
+    if (contentStabilizationTimer.current) {
+      clearTimeout(contentStabilizationTimer.current);
+      contentStabilizationTimer.current = null;
+    }
+
+    // If streaming is complete and we have content, start a timer to verify stability
+    if (streamComplete && content && content.length > 0) {
+      logger.debug(
+        "Stream is complete and content exists, starting stabilization timer",
+        {
+          contentLength: content.length,
+        }
+      );
+
+      // Wait a short period to ensure the content is stable
+      contentStabilizationTimer.current = setTimeout(() => {
+        logger.info("Content has stabilized after streaming", {
+          contentLength: content.length,
+        });
+        setContentFinallyReady(true);
+      }, 200); // 200ms should be enough to ensure any final content updates have propagated
+    } else {
+      // Reset the flag if conditions aren't met
+      if (contentFinallyReady) {
+        setContentFinallyReady(false);
+      }
+    }
+
+    // Clean up timer on unmount
+    return () => {
+      if (contentStabilizationTimer.current) {
+        clearTimeout(contentStabilizationTimer.current);
+      }
+    };
+  }, [content, streamComplete, contentFinallyReady]);
+
   logger.debug("Content state", {
     hasStreamedContent: !!streamedContent,
     contentLength: content?.length || 0,
     isStreaming,
     streamComplete,
+    contentFinallyReady,
     hasExistingContent,
   });
 
@@ -77,6 +130,7 @@ export function useArticleContent(
       summaryGenerationAttempted: summaryGenerationAttempted.current,
       isStreaming,
       streamComplete,
+      contentFinallyReady,
     });
 
     if (
@@ -96,9 +150,9 @@ export function useArticleContent(
       return;
     }
 
-    // Skip if we're still streaming content
-    if (isStreaming && !streamComplete) {
-      logger.debug("Deferring summary generation until streaming completes");
+    // Skip if content isn't truly ready yet
+    if (!contentFinallyReady) {
+      logger.debug("Deferring summary generation until content is fully ready");
       return;
     }
 
@@ -165,8 +219,7 @@ export function useArticleContent(
     article?.learningMapId,
     article?.summary,
     content,
-    isStreaming,
-    streamComplete,
+    contentFinallyReady,
     isSummaryLoading,
   ]);
 
@@ -176,8 +229,7 @@ export function useArticleContent(
       articleId: article?.id,
       hasContent: !!content,
       contentLength: content?.length || 0,
-      isStreaming,
-      streamComplete,
+      contentFinallyReady,
       takeawaysCount: article?.takeaways?.length || 0,
     });
 
@@ -195,9 +247,11 @@ export function useArticleContent(
       return;
     }
 
-    // Skip if we're still streaming (wait until complete)
-    if (isStreaming && !streamComplete) {
-      logger.debug("Deferring takeaway extraction until streaming completes");
+    // Skip if content isn't truly ready yet
+    if (!contentFinallyReady) {
+      logger.debug(
+        "Deferring takeaway extraction until content is fully ready"
+      );
       return;
     }
 
@@ -271,15 +325,13 @@ export function useArticleContent(
       });
     }
   }, [
-    content,
-    streamComplete,
-    isStreaming,
     article?.id,
-    article?.content,
     article?.takeaways,
+    content,
     updateArticleMutation,
     queryClient,
     subject.id,
+    contentFinallyReady,
   ]);
 
   return {
@@ -287,6 +339,7 @@ export function useArticleContent(
     isStreaming,
     streamComplete,
     hasExistingContent,
+    contentFinallyReady,
     isSummaryLoading,
   };
 }
