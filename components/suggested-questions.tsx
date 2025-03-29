@@ -1,12 +1,21 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
+import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
+import { Logger } from "@/lib/logger";
+
+const logger = new Logger({
+  context: "SuggestedQuestions",
+  enabled: true,
+});
 
 interface SuggestedQuestionsProps {
   questions: string[];
   isLoading: boolean;
   isReady: boolean;
   onQuestionClick?: (question: string) => void;
+  learningMapId: string;
+  currentArticleId: string;
 }
 
 export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
@@ -14,8 +23,11 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
   isLoading,
   isReady,
   onQuestionClick,
+  learningMapId,
+  currentArticleId,
 }) => {
-  // Animation variants for container
+  const createArticleMutation = useCreateArticleFromQuestion();
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -27,10 +39,36 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
     },
   };
 
-  // Animation variants for questions
   const item = {
     hidden: { y: 100, opacity: 0 },
     show: { y: 0, opacity: 1 },
+  };
+
+  const handleQuestionClick = (question: string) => {
+    onQuestionClick?.(question);
+
+    logger.info("Attempting to create article from question", {
+      question,
+      learningMapId,
+      parentArticleId: currentArticleId,
+    });
+    createArticleMutation.mutate(
+      {
+        learningMapId: learningMapId,
+        parentArticleId: currentArticleId,
+        questionText: question,
+      },
+      {
+        onSuccess: (data) => {
+          logger.info("Successfully created article from question:", data);
+          console.log("Mutation Success:", data);
+        },
+        onError: (error) => {
+          logger.error("Failed to create article from question:", error);
+          console.error("Mutation Error:", error);
+        },
+      }
+    );
   };
 
   if (isLoading) {
@@ -53,7 +91,6 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
 
   return (
     <div>
-      {/* @TODO: If I remove this div, the questions don't show up */}
       <div></div>
 
       <motion.div
@@ -66,12 +103,25 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
           <motion.button
             key={index}
             variants={item}
-            className="px-4 py-2 rounded-lg border border-slate-800 bg-slate-900/90 hover:bg-slate-800/90 hover:border-slate-500 hover:scale-[1.02] shadow-sm hover:shadow-md text-sm transition-all duration-300 ease-in-out"
-            onClick={() => onQuestionClick?.(question)}
+            className={`px-4 py-2 rounded-lg border border-slate-800 bg-slate-900/90 hover:bg-slate-800/90 hover:border-slate-500 hover:scale-[1.02] shadow-sm hover:shadow-md text-sm transition-all duration-300 ease-in-out ${
+              createArticleMutation.isPending
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }`}
+            onClick={() => handleQuestionClick(question)}
+            disabled={createArticleMutation.isPending}
           >
-            {question}
+            {createArticleMutation.isPending &&
+            createArticleMutation.variables?.questionText === question
+              ? "Creating..."
+              : question}
           </motion.button>
         ))}
+        {createArticleMutation.isError && (
+          <p className="text-red-500 text-sm mt-2 w-full">
+            Error: {createArticleMutation.error.message}
+          </p>
+        )}
       </motion.div>
     </div>
   );

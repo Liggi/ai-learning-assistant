@@ -88,6 +88,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
             <PersonalLearningMapFlow
               rootArticle={rootArticle}
               onNodeClick={() => {}}
+              learningMap={learningMap}
             />
           </div>
         </div>
@@ -140,14 +141,18 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({ subject }) => {
           </div>
 
           <div className="border-t border-slate-800 p-4">
-            <SuggestedQuestions
-              questions={questions}
-              onQuestionClick={() => {
-                // @TODO
-              }}
-              isLoading={isGeneratingQuestions}
-              isReady={questionsReady}
-            />
+            {learningMap && rootArticle && (
+              <SuggestedQuestions
+                learningMapId={learningMap.id}
+                currentArticleId={rootArticle.id}
+                questions={questions}
+                onQuestionClick={() => {
+                  // @TODO
+                }}
+                isLoading={isGeneratingQuestions}
+                isReady={questionsReady}
+              />
+            )}
           </div>
         </div>
       </div>
