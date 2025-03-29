@@ -16,7 +16,7 @@ export const getOrCreateLearningMap = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<SerializedLearningMap> => {
     const { subjectId } = data;
 
-    logger.info("Getting or creating learning map", { subjectId });
+    logger.info("Handler: Getting or creating learning map", { subjectId });
 
     const subject = await prisma.subject.findUnique({
       where: { id: subjectId },
