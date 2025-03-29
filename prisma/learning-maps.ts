@@ -18,7 +18,6 @@ export const getOrCreateLearningMap = createServerFn({ method: "POST" })
 
     logger.info("Getting or creating learning map", { subjectId });
 
-    // Check if subject exists
     const subject = await prisma.subject.findUnique({
       where: { id: subjectId },
     });
@@ -28,27 +27,25 @@ export const getOrCreateLearningMap = createServerFn({ method: "POST" })
       throw new Error(`Subject not found: ${subjectId}`);
     }
 
-    // Find existing learning map for this subject
     const existingMap = await prisma.learningMap.findFirst({
       where: { subjectId },
       include: {
         articles: true,
+        questions: true,
       },
     });
 
-    // Return existing map if found
     if (existingMap) {
       logger.info("Found existing learning map", { id: existingMap.id });
       return serializeLearningMap(existingMap);
     }
 
-    // Create new learning map if none exists
     logger.info("Creating new learning map for subject", { subjectId });
     const newMap = await prisma.learningMap.create({
       data: {
         subjectId,
       },
-      include: { articles: true },
+      include: { articles: true, questions: true },
     });
 
     return serializeLearningMap(newMap);
