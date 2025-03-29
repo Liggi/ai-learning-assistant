@@ -9,7 +9,8 @@ export function useSuggestedQuestions(
   article: SerializedArticle | null | undefined,
   subject: SerializedSubject,
   isStreaming: boolean,
-  streamComplete: boolean
+  streamComplete: boolean,
+  contentFinallyReady: boolean = false
 ) {
   const [questions, setQuestions] = useState<string[]>([]);
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
@@ -21,7 +22,7 @@ export function useSuggestedQuestions(
     const hasRequiredData = article?.id && article?.content;
     if (!hasRequiredData) return;
 
-    const contentIsReady = !isStreaming && streamComplete;
+    const contentIsReady = contentFinallyReady;
     if (!contentIsReady) return;
 
     const generationAlreadyHandled =
@@ -63,13 +64,7 @@ export function useSuggestedQuestions(
     };
 
     generateQuestions();
-  }, [
-    article?.id,
-    article?.content,
-    isStreaming,
-    streamComplete,
-    subject.title,
-  ]);
+  }, [article?.id, article?.content, contentFinallyReady, subject.title]);
 
   // Reset question generation state when the article changes
   useEffect(() => {
