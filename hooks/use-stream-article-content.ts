@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useUpdateArticle } from "@/hooks/api/articles";
 import { Logger } from "@/lib/logger";
+import { useQuestionByChildArticleId } from "@/hooks/api/questions";
+import { SerializedArticle } from "@/types/serialized";
 
 const logger = new Logger({
   context: "useStreamArticleContent",
@@ -10,17 +12,45 @@ const logger = new Logger({
 const streamContentFromAPI = async (
   subjectTitle: string,
   onChunk: (chunk: string) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  context?: {
+    triggeringQuestion?: string;
+    parentArticleContent?: string;
+  }
 ): Promise<string> => {
   let fullContent = "";
 
   try {
-    const requestData = {
-      subject: subjectTitle,
-      moduleTitle: `Introduction to ${subjectTitle}`,
-      moduleDescription: `A comprehensive introduction to ${subjectTitle} covering the fundamental concepts and principles.`,
-      message: `This is the first article in an exploratory learning space for the subject (${subjectTitle}). Think a minuature Wikipedia article.`,
-    };
+    let requestData;
+
+    if (context?.triggeringQuestion && context?.parentArticleContent) {
+      // If we have a contextual prompt, use it
+      logger.info("Using contextual prompt for content generation", {
+        hasQuestion: !!context.triggeringQuestion,
+        parentContentLength: context.parentArticleContent?.length || 0,
+      });
+
+      requestData = {
+        subject: subjectTitle,
+        contextType: "question",
+        triggeringQuestion: context.triggeringQuestion,
+        parentContent: context.parentArticleContent,
+        message: `Answer this question about ${subjectTitle}: "${context.triggeringQuestion}". Use the context from the previous article as a reference.`,
+      };
+    } else {
+      // Default to the original generic introduction prompt
+      logger.info("Using generic prompt for content generation", {
+        subject: subjectTitle,
+      });
+
+      requestData = {
+        subject: subjectTitle,
+        contextType: "introduction",
+        moduleTitle: `Introduction to ${subjectTitle}`,
+        moduleDescription: `A comprehensive introduction to ${subjectTitle} covering the fundamental concepts and principles.`,
+        message: `This is the first article in an exploratory learning space for the subject (${subjectTitle}). Think a minuature Wikipedia article.`,
+      };
+    }
 
     const response = await fetch("/api/lesson-stream", {
       method: "POST",
@@ -64,7 +94,7 @@ const streamContentFromAPI = async (
 };
 
 export function useStreamArticleContent(
-  article: { id: string; content: string } | null | undefined,
+  article: { id: string; content: string; isRoot?: boolean } | null | undefined,
   subjectTitle: string
 ) {
   const [content, setContent] = useState("");
@@ -77,6 +107,14 @@ export function useStreamArticleContent(
   const previousArticleId = useRef<string | null>(null);
 
   const updateArticleMutation = useUpdateArticle();
+
+  // For non-root articles, fetch the parent question information
+  const needsContext = article?.id && article?.isRoot === false;
+  const {
+    data: questionData,
+    isLoading: isLoadingQuestion,
+    error: questionError,
+  } = useQuestionByChildArticleId(needsContext ? article.id : null);
 
   // Start streaming content (memoized)
   const startStreaming = useCallback(async () => {
@@ -91,7 +129,24 @@ export function useStreamArticleContent(
       return;
     }
 
-    logger.info("Executing startStreaming", { articleId: currentArticleId });
+    // Check if we need to wait for question data to load
+    if (needsContext && isLoadingQuestion) {
+      logger.debug("Deferring streaming until question data is loaded");
+      return;
+    }
+
+    // If there was an error fetching question data, log it but continue with generic prompt
+    if (questionError) {
+      logger.warn("Error fetching question data, using generic prompt", {
+        error: questionError,
+      });
+    }
+
+    logger.info("Executing startStreaming", {
+      articleId: currentArticleId,
+      hasQuestionContext: !!questionData,
+    });
+
     setIsStreaming(true);
     setStreamComplete(false); // Explicitly set here too
     setContent("");
@@ -99,18 +154,28 @@ export function useStreamArticleContent(
     const controller = new AbortController();
     setAbortController(controller);
 
+    // Prepare context if available
+    const streamContext = questionData
+      ? {
+          triggeringQuestion: questionData.question.text,
+          parentArticleContent: questionData.parentArticle?.content || "",
+        }
+      : undefined;
+
     try {
       const fullContent = await streamContentFromAPI(
         subjectTitle,
         (chunk) => {
           setContent((prev) => prev + chunk);
         },
-        controller.signal
+        controller.signal,
+        streamContext // Pass the context to the streaming function
       );
 
       logger.info("Streaming complete, updating article", {
         articleId: currentArticleId, // Use captured ID
         contentLength: fullContent.length,
+        hadContext: !!streamContext,
       });
 
       await updateArticleMutation.mutateAsync({
@@ -133,14 +198,18 @@ export function useStreamArticleContent(
       setIsStreaming(false);
       setAbortController(null);
     }
-    // Ensure article?.id is a dependency if used directly, but better to capture it
   }, [
     subjectTitle,
     isStreaming,
     streamComplete,
     updateArticleMutation,
     article?.id,
-  ]); // Added article.id
+    article?.isRoot,
+    needsContext,
+    isLoadingQuestion,
+    questionData,
+    questionError,
+  ]);
 
   // Effect 1: Reset state on article ID change ONLY
   useEffect(() => {
