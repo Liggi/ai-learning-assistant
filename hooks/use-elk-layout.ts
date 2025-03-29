@@ -7,10 +7,10 @@ import { Logger } from "@/lib/logger";
 const log = new Logger({ context: "useElkLayout" });
 
 // Constants for node dimensions
-const ARTICLE_NODE_WIDTH = 300;
-const ARTICLE_NODE_HEIGHT = 180;
+const ARTICLE_NODE_WIDTH = 350;
+const ARTICLE_NODE_HEIGHT = 350;
 const QUESTION_NODE_WIDTH = 200;
-const QUESTION_NODE_HEIGHT = 80;
+const QUESTION_NODE_HEIGHT = 100;
 
 // Initialize ELK
 const elk = new ELK();
@@ -52,7 +52,7 @@ interface ElkLayoutResult<
 function isQuestionNode(
   node: ReactFlowNode<Record<string, unknown>>
 ): node is ReactFlowNode<{ nodeType: "question"; [key: string]: unknown }> {
-  return node.data?.nodeType === "question";
+  return node.type === "questionNode";
 }
 
 /**

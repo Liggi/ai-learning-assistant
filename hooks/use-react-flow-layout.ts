@@ -14,6 +14,17 @@ interface ArticleNodeData {
   [key: string]: unknown;
 }
 
+interface ConversationNodeData {
+  id: string;
+  content?: {
+    summary: string;
+    takeaways: string[];
+  };
+  isUser: boolean;
+  isLoading?: boolean;
+  [key: string]: unknown;
+}
+
 interface QuestionNodeData {
   nodeType: "question";
   id: string;
@@ -22,7 +33,9 @@ interface QuestionNodeData {
   [key: string]: unknown;
 }
 
-type LearningMapFlowNode = ReactFlowNode<ArticleNodeData | QuestionNodeData>;
+type LearningMapFlowNode = ReactFlowNode<
+  ArticleNodeData | QuestionNodeData | ConversationNodeData
+>;
 
 interface ReactFlowLayout {
   nodes: LearningMapFlowNode[];
@@ -56,15 +69,16 @@ export function useReactFlowLayout(
       const articleFlowNodeId = `article-${articleNode.id}`;
       nodes.push({
         id: articleFlowNodeId,
-        type: "articleNode",
+        type: "conversationNode",
         position: initialPosition,
         data: {
-          nodeType: "article",
-          label:
-            articleNode.data.content.substring(0, 30) ||
-            `Article ${articleNode.id}`,
-          description: articleNode.data.summary || null,
-          status: "not-started",
+          id: articleNode.id,
+          content: {
+            summary: articleNode.data.summary || "",
+            takeaways: articleNode.data.takeaways || [],
+          },
+          isUser: false,
+          isLoading: false,
         },
       });
 
@@ -142,7 +156,7 @@ export function useLearningMapElkLayout(
 
   // Then apply the ELK layout algorithm to position the nodes
   return useElkLayout<
-    ArticleNodeData | QuestionNodeData,
+    ArticleNodeData | QuestionNodeData | ConversationNodeData,
     Record<string, unknown>
   >(initialNodes, initialEdges, options);
 }

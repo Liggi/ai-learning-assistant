@@ -6,7 +6,7 @@ import {
   Controls,
   Edge,
 } from "@xyflow/react";
-import ArticleNode from "./react-flow/article-node";
+import ConversationNode from "./react-flow/conversation-node";
 import QuestionNode from "./react-flow/question-node";
 import { SerializedLearningMap } from "@/types/serialized";
 import { useLearningMapElkLayout } from "@/hooks/use-react-flow-layout";
@@ -19,7 +19,7 @@ interface LearningMapFlowProps {
 
 // Define node types for React Flow
 const nodeTypes = {
-  articleNode: ArticleNode,
+  conversationNode: ConversationNode,
   questionNode: QuestionNode,
 };
 

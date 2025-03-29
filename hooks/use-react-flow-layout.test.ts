@@ -185,11 +185,14 @@ describe("useReactFlowLayout", () => {
 
     expect(nodes[0]).toMatchObject({
       id: "article-a1",
-      type: "articleNode",
+      type: "conversationNode",
       data: {
-        nodeType: "article",
-        label: mockArticle1.content.substring(0, 30),
-        description: mockArticle1.summary,
+        id: "a1",
+        content: {
+          summary: mockArticle1.summary,
+          takeaways: mockArticle1.takeaways,
+        },
+        isUser: false,
       },
     });
   });
@@ -205,7 +208,9 @@ describe("useReactFlowLayout", () => {
     expect(nodes.find((n) => n.id === "article-a2")).toBeDefined();
 
     // Check node types and basic data
-    expect(nodes.find((n) => n.id === "article-a1")?.type).toBe("articleNode");
+    expect(nodes.find((n) => n.id === "article-a1")?.type).toBe(
+      "conversationNode"
+    );
     expect(nodes.find((n) => n.id === "question-q1")?.type).toBe(
       "questionNode"
     );
@@ -213,10 +218,16 @@ describe("useReactFlowLayout", () => {
       nodeType: "question",
       text: "Q1 Text",
     });
-    expect(nodes.find((n) => n.id === "article-a2")?.type).toBe("articleNode");
+    expect(nodes.find((n) => n.id === "article-a2")?.type).toBe(
+      "conversationNode"
+    );
     expect(nodes.find((n) => n.id === "article-a2")?.data).toMatchObject({
-      nodeType: "article",
-      description: "Summary A2",
+      id: "a2",
+      content: {
+        summary: "Summary A2",
+        takeaways: [],
+      },
+      isUser: false,
     });
 
     // Edges: article-a1 -> question-q1, question-q1 -> article-a2

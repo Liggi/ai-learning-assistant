@@ -6,7 +6,6 @@ import {
   Controls,
 } from "@xyflow/react";
 import ConversationNode from "./react-flow/conversation-node";
-import ArticleNode from "./react-flow/article-node";
 import QuestionNode from "./react-flow/question-node";
 import { SerializedArticle, SerializedLearningMap } from "@/types/serialized";
 import { useLearningMapElkLayout } from "@/hooks/use-react-flow-layout";
@@ -20,7 +19,6 @@ interface PersonalLearningMapFlowProps {
 
 const nodeTypes = {
   conversationNode: ConversationNode,
-  articleNode: ArticleNode,
   questionNode: QuestionNode,
 };
 
