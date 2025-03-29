@@ -3,6 +3,7 @@ import { Node as ReactFlowNode, Edge } from "@xyflow/react";
 import { SerializedLearningMap } from "@/types/serialized";
 import { useLearningMapTree } from "./use-learning-map-tree";
 import type { TreeArticleNode } from "./use-learning-map-tree";
+import { useElkLayout } from "./use-elk-layout";
 
 interface ArticleNodeData {
   nodeType: "article";
@@ -120,4 +121,28 @@ export function useLearningMapFlowLayout(
 ): ReactFlowLayout {
   const rootNode = useLearningMapTree(learningMap);
   return useReactFlowLayout(rootNode);
+}
+
+/**
+ * Enhanced learning map layout that automatically positions nodes using the ELK algorithm.
+ * Returns the layouted nodes/edges plus loading state for UI feedback.
+ */
+export function useLearningMapElkLayout(
+  learningMap: SerializedLearningMap | null | undefined,
+  options?: { direction?: "UP" | "DOWN" | "LEFT" | "RIGHT" }
+): {
+  nodes: LearningMapFlowNode[];
+  edges: Edge[];
+  isLayouting: boolean;
+  error: string | null;
+} {
+  // First, get the basic node structure without proper layout
+  const { nodes: initialNodes, edges: initialEdges } =
+    useLearningMapFlowLayout(learningMap);
+
+  // Then apply the ELK layout algorithm to position the nodes
+  return useElkLayout<
+    ArticleNodeData | QuestionNodeData,
+    Record<string, unknown>
+  >(initialNodes, initialEdges, options);
 }
