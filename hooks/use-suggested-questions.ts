@@ -6,28 +6,17 @@ import { generate } from "@/features/generators/suggested-questions";
 const logger = new Logger({ context: "useSuggestedQuestions", enabled: false });
 
 export function useSuggestedQuestions(
-  article: SerializedArticle | null | undefined,
   subject: SerializedSubject,
-  isStreaming: boolean,
-  streamComplete: boolean,
-  contentFinallyReady: boolean = false
+  article: SerializedArticle | null | undefined
 ) {
   const [questions, setQuestions] = useState<string[]>([]);
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
-  const [questionsReady, setQuestionsReady] = useState(false);
 
   const questionGenerationAttempted = useRef<boolean>(false);
 
   useEffect(() => {
     const hasRequiredData = article?.id && article?.content;
     if (!hasRequiredData) return;
-
-    const contentIsReady = contentFinallyReady;
-    if (!contentIsReady) return;
-
-    const generationAlreadyHandled =
-      isGeneratingQuestions || questionGenerationAttempted.current;
-    if (generationAlreadyHandled) return;
 
     logger.info("Generating suggested questions", {
       articleId: article.id,
@@ -51,20 +40,17 @@ export function useSuggestedQuestions(
         });
 
         setQuestions(result.suggestions);
-        setQuestionsReady(true);
       } catch (error) {
         logger.error("Question generation failed", {
           errorMessage: error instanceof Error ? error.message : String(error),
         });
-
-        setQuestionsReady(true);
       } finally {
         setIsGeneratingQuestions(false);
       }
     };
 
     generateQuestions();
-  }, [article?.id, article?.content, contentFinallyReady, subject.title]);
+  }, [article?.id, article?.content, subject.title]);
 
   // Reset question generation state when the article changes
   useEffect(() => {
@@ -74,13 +60,11 @@ export function useSuggestedQuestions(
       });
       questionGenerationAttempted.current = false;
       setQuestions([]);
-      setQuestionsReady(false);
     }
   }, [article?.id]);
 
   return {
     questions,
     isGeneratingQuestions,
-    questionsReady,
   };
 }

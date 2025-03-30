@@ -70,15 +70,6 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
       contentFinallyReady
     );
 
-  const { questions, isGeneratingQuestions, questionsReady } =
-    useSuggestedQuestions(
-      activeArticle,
-      subject,
-      isStreaming,
-      streamComplete,
-      contentFinallyReady
-    );
-
   const toggleLayout = () => {
     setIsMapExpanded((prev) => !prev);
   };
@@ -186,15 +177,12 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
           <div className="border-t border-slate-800 p-4">
             {activeArticle ? (
               <SuggestedQuestions
-                learningMapId={learningMap.id}
-                currentArticleId={activeArticle.id}
-                questions={questions}
+                subject={subject}
+                article={activeArticle}
                 onQuestionClick={(question) => {
                   logger.info("Question clicked (noop)", { question });
                 }}
                 onArticleCreated={handleArticleCreated}
-                isLoading={isGeneratingQuestions}
-                isReady={questionsReady}
               />
             ) : (
               <div className="text-slate-500">

@@ -4,31 +4,32 @@ import { Sparkles } from "lucide-react";
 import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
 import { Logger } from "@/lib/logger";
 import { useNavigate } from "@tanstack/react-router";
+import { useSuggestedQuestions } from "@/hooks/use-suggested-questions";
+import { SerializedArticle, SerializedSubject } from "@/types/serialized";
 
 const logger = new Logger({
   context: "SuggestedQuestions",
-  enabled: true,
+  enabled: false,
 });
 
 interface SuggestedQuestionsProps {
-  questions: string[];
-  isLoading: boolean;
-  isReady: boolean;
+  subject: SerializedSubject;
+  article: SerializedArticle;
   onQuestionClick?: (question: string) => void;
   onArticleCreated?: (articleId: string) => void;
-  learningMapId: string;
-  currentArticleId: string;
 }
 
 export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
-  questions,
-  isLoading,
-  isReady,
+  subject,
+  article,
   onQuestionClick,
   onArticleCreated,
-  learningMapId,
-  currentArticleId,
 }) => {
+  const { questions, isGeneratingQuestions } = useSuggestedQuestions(
+    subject,
+    article
+  );
+
   const createArticleMutation = useCreateArticleFromQuestion();
   const navigate = useNavigate();
 
@@ -53,34 +54,23 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
 
     logger.info("Attempting to create article from question", {
       question,
-      learningMapId,
-      parentArticleId: currentArticleId,
+      learningMapId: article.learningMapId,
+      parentArticleId: article.id,
     });
     createArticleMutation.mutate(
       {
-        learningMapId: learningMapId,
-        parentArticleId: currentArticleId,
+        learningMapId: article.learningMapId,
+        parentArticleId: article.id,
         questionText: question,
       },
       {
         onSuccess: (data) => {
           logger.info("Successfully created article from question:", data);
 
-          // Call onArticleCreated before navigation to ensure parent components are notified
-          if (onArticleCreated) {
-            onArticleCreated(data.id);
-          }
-
-          // Add a small delay before navigation to ensure state updates have propagated
-          setTimeout(() => {
-            // Navigate to the new article route
-            navigate({
-              to: "/learning/article/$articleId",
-              params: { articleId: data.id },
-              // Use replace to prevent back button from returning to the current article
-              replace: true,
-            });
-          }, 10);
+          navigate({
+            to: "/learning/article/$articleId",
+            params: { articleId: data.id },
+          });
         },
         onError: (error) => {
           logger.error("Failed to create article from question:", error);
@@ -89,7 +79,7 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
     );
   };
 
-  if (isLoading) {
+  if (isGeneratingQuestions) {
     return (
       <div className="flex items-center space-x-2 text-sm text-gray-400 mt-6">
         <motion.div
@@ -103,7 +93,7 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
     );
   }
 
-  if (!isReady || questions.length === 0) {
+  if (questions.length === 0) {
     return null;
   }
 

@@ -2,17 +2,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import LearningInterface from "./learning-interface";
 import { SerializedLearningMap, SerializedSubject } from "@/types/serialized";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  render as rtlRender,
-  RenderResult,
-  screen,
-} from "@testing-library/react";
+import { render as rtlRender, RenderResult } from "@testing-library/react";
 import { act } from "react";
 import * as rootArticleHook from "@/hooks/use-root-article";
 import * as articleContentHook from "@/hooks/use-article-content";
 import * as contextualTooltipsHook from "@/hooks/use-contextual-tooltips";
-import * as suggestedQuestionsHook from "@/hooks/use-suggested-questions";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";
+import { SuggestedQuestions } from "./suggested-questions";
 import * as reactRouter from "@tanstack/react-router";
 
 vi.mock("@tanstack/react-router", () => ({
@@ -46,6 +42,12 @@ vi.mock("@/prisma/learning-maps", () => {
 
 vi.mock("./personal-learning-map-flow", () => ({
   default: vi.fn(() => <div data-testid="mock-flow" />),
+}));
+
+vi.mock("./suggested-questions", () => ({
+  SuggestedQuestions: vi.fn(() => (
+    <div data-testid="mock-suggested-questions" />
+  )),
 }));
 
 const mockNavigate = vi.fn();
@@ -145,12 +147,6 @@ describe("<LearningInterface />", () => {
       isGeneratingTooltips: false,
       tooltipsReady: true,
     });
-
-    vi.spyOn(suggestedQuestionsHook, "useSuggestedQuestions").mockReturnValue({
-      questions: ["What is computer science?", "How does a CPU work?"],
-      isGeneratingQuestions: false,
-      questionsReady: true,
-    });
   });
 
   it("renders without errors", async () => {
@@ -224,29 +220,6 @@ describe("<LearningInterface />", () => {
     );
   });
 
-  it("passes the correct parameters to useSuggestedQuestions", async () => {
-    const useSuggestedQuestionsSpy = vi.spyOn(
-      suggestedQuestionsHook,
-      "useSuggestedQuestions"
-    );
-
-    await render(
-      <LearningInterface
-        subject={mockSubject}
-        activeArticle={mockRootArticle}
-        learningMap={mockLearningMap}
-      />
-    );
-
-    expect(useSuggestedQuestionsSpy).toHaveBeenCalledWith(
-      mockRootArticle,
-      mockSubject,
-      false,
-      true,
-      true
-    );
-  });
-
   it("passes tooltip loading state to TooltipLoadingIndicator", async () => {
     vi.spyOn(contextualTooltipsHook, "useContextualTooltips").mockReturnValue({
       tooltips: {},
@@ -304,34 +277,6 @@ describe("<LearningInterface />", () => {
         JSON.stringify(mockTooltips)
       );
       expect(markdownDisplay).toHaveAttribute("data-tooltips-ready", "true");
-    }
-  });
-
-  it("passes questions, loading state, and ready state to SuggestedQuestions", async () => {
-    const mockQuestions = ["Question 1", "Question 2"];
-
-    vi.spyOn(suggestedQuestionsHook, "useSuggestedQuestions").mockReturnValue({
-      questions: mockQuestions,
-      isGeneratingQuestions: false,
-      questionsReady: true,
-    });
-
-    await render(
-      <LearningInterface
-        subject={mockSubject}
-        activeArticle={mockRootArticle}
-        learningMap={mockLearningMap}
-      />
-    );
-
-    const suggestedQuestions = document.querySelector(".SuggestedQuestions");
-    if (suggestedQuestions) {
-      expect(suggestedQuestions).toHaveAttribute(
-        "data-questions",
-        JSON.stringify(mockQuestions)
-      );
-      expect(suggestedQuestions).toHaveAttribute("data-loading", "false");
-      expect(suggestedQuestions).toHaveAttribute("data-ready", "true");
     }
   });
 
