@@ -1,6 +1,5 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import MarkdownDisplay from "./markdown-display";
 import { SuggestedQuestions } from "./suggested-questions";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";
 import {
@@ -8,13 +7,10 @@ import {
   SerializedArticle,
   SerializedLearningMap,
 } from "@/types/serialized";
-import { useArticleContent } from "@/hooks/use-article-content";
 import { Logger } from "@/lib/logger";
-import { useContextualTooltips } from "@/hooks/use-contextual-tooltips";
-import { useSuggestedQuestions } from "@/hooks/use-suggested-questions";
-import { TooltipLoadingIndicator } from "./ui/tooltip-loading-indicator";
 import StreamingArticleDisplay from "./streaming-article-display/streaming-article-display";
 import { useNavigate } from "@tanstack/react-router";
+import ArticleContent from "./article-content";
 
 const logger = new Logger({ context: "LearningInterface", enabled: true });
 
@@ -53,22 +49,8 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
   const [isMapExpanded, setIsMapExpanded] = React.useState(false);
   const navigate = useNavigate();
 
-  const {
-    content: articleContent,
-    isStreaming,
-    streamComplete,
-    contentFinallyReady,
-  } = useArticleContent(activeArticle, subject);
-
-  const { tooltips, isGeneratingTooltips, tooltipsReady } =
-    useContextualTooltips(
-      activeArticle,
-      subject,
-      articleContent,
-      isStreaming,
-      streamComplete,
-      contentFinallyReady
-    );
+  // @TODO: We've removed `useArticleContent` - but it was handling takeaway
+  // extraction and summary generation. We need to move this functionality elsewhere.
 
   const toggleLayout = () => {
     setIsMapExpanded((prev) => !prev);
@@ -144,23 +126,11 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
           className={`${isMapExpanded ? "w-1/3" : "w-2/3"} flex-1 flex flex-col overflow-hidden bg-slate-950 transition-all duration-300`}
         >
           <div className="flex-1 overflow-hidden flex flex-col">
-            <div className="absolute top-4 right-4 z-10">
-              <TooltipLoadingIndicator isLoading={isGeneratingTooltips} />
-            </div>
-
             <div className="flex-1 overflow-y-auto p-8">
               {activeArticle ? (
                 <>
                   {activeArticle.content ? (
-                    // If article already has content, use the regular MarkdownDisplay
-                    <MarkdownDisplay
-                      content={activeArticle.content}
-                      onLearnMore={() => {
-                        console.log("Learn more");
-                      }}
-                      tooltips={tooltips}
-                      tooltipsReady={tooltipsReady}
-                    />
+                    <ArticleContent article={activeArticle} subject={subject} />
                   ) : (
                     <StreamingArticleDisplay
                       article={activeArticle}

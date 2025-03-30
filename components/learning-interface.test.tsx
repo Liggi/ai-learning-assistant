@@ -5,10 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render as rtlRender, RenderResult } from "@testing-library/react";
 import { act } from "react";
 import * as rootArticleHook from "@/hooks/use-root-article";
-import * as articleContentHook from "@/hooks/use-article-content";
 import * as contextualTooltipsHook from "@/hooks/use-contextual-tooltips";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";
-import { SuggestedQuestions } from "./suggested-questions";
 import * as reactRouter from "@tanstack/react-router";
 
 vi.mock("@tanstack/react-router", () => ({
@@ -125,28 +123,6 @@ describe("<LearningInterface />", () => {
       `getOrCreateLearningMap-${mockSubject.id}`,
       mockLearningMap
     );
-
-    vi.spyOn(rootArticleHook, "useRootArticle").mockReturnValue({
-      article: mockRootArticle,
-      isLoading: false,
-      error: null,
-    });
-
-    vi.spyOn(articleContentHook, "useArticleContent").mockReturnValue({
-      content: "This is sample article content",
-      isStreaming: false,
-      streamComplete: true,
-      contentFinallyReady: true,
-      isSummaryLoading: false,
-    });
-
-    vi.spyOn(contextualTooltipsHook, "useContextualTooltips").mockReturnValue({
-      tooltips: {
-        "Computer Science": "The study of computers and computation",
-      },
-      isGeneratingTooltips: false,
-      tooltipsReady: true,
-    });
   });
 
   it("renders without errors", async () => {
@@ -174,110 +150,6 @@ describe("<LearningInterface />", () => {
     expect(calls[0][0].rootArticle).toEqual(mockRootArticle);
     expect(calls[0][0].learningMap).toEqual(mockLearningMap);
     expect(typeof calls[0][0].onNodeClick).toBe("function");
-  });
-
-  it("passes the correct parameters to useArticleContent", async () => {
-    const useArticleContentSpy = vi.spyOn(
-      articleContentHook,
-      "useArticleContent"
-    );
-
-    await render(
-      <LearningInterface
-        subject={mockSubject}
-        activeArticle={mockRootArticle}
-        learningMap={mockLearningMap}
-      />
-    );
-
-    expect(useArticleContentSpy).toHaveBeenCalledWith(
-      mockRootArticle,
-      mockSubject
-    );
-  });
-
-  it("passes the correct parameters to useContextualTooltips", async () => {
-    const useContextualTooltipsSpy = vi.spyOn(
-      contextualTooltipsHook,
-      "useContextualTooltips"
-    );
-
-    await render(
-      <LearningInterface
-        subject={mockSubject}
-        activeArticle={mockRootArticle}
-        learningMap={mockLearningMap}
-      />
-    );
-
-    expect(useContextualTooltipsSpy).toHaveBeenCalledWith(
-      mockRootArticle,
-      mockSubject,
-      "This is sample article content",
-      false,
-      true,
-      true
-    );
-  });
-
-  it("passes tooltip loading state to TooltipLoadingIndicator", async () => {
-    vi.spyOn(contextualTooltipsHook, "useContextualTooltips").mockReturnValue({
-      tooltips: {},
-      isGeneratingTooltips: true,
-      tooltipsReady: false,
-    });
-
-    await render(
-      <LearningInterface
-        subject={mockSubject}
-        activeArticle={mockRootArticle}
-        learningMap={mockLearningMap}
-      />
-    );
-
-    const tooltipLoadingIndicator = document.querySelector(
-      ".TooltipLoadingIndicator"
-    );
-    if (tooltipLoadingIndicator) {
-      expect(tooltipLoadingIndicator).toHaveAttribute("data-loading", "true");
-    }
-  });
-
-  it("passes article content and tooltips to MarkdownDisplay", async () => {
-    const mockContent = "Test article content";
-    const mockTooltips = { Test: "A test tooltip" };
-
-    vi.spyOn(articleContentHook, "useArticleContent").mockReturnValue({
-      content: mockContent,
-      isStreaming: false,
-      streamComplete: true,
-      contentFinallyReady: true,
-      isSummaryLoading: false,
-    });
-
-    vi.spyOn(contextualTooltipsHook, "useContextualTooltips").mockReturnValue({
-      tooltips: mockTooltips,
-      isGeneratingTooltips: false,
-      tooltipsReady: true,
-    });
-
-    await render(
-      <LearningInterface
-        subject={mockSubject}
-        activeArticle={mockRootArticle}
-        learningMap={mockLearningMap}
-      />
-    );
-
-    const markdownDisplay = document.querySelector(".MarkdownDisplay");
-    if (markdownDisplay) {
-      expect(markdownDisplay).toHaveAttribute("data-content", mockContent);
-      expect(markdownDisplay).toHaveAttribute(
-        "data-tooltips",
-        JSON.stringify(mockTooltips)
-      );
-      expect(markdownDisplay).toHaveAttribute("data-tooltips-ready", "true");
-    }
   });
 
   it("toggles layout when toggle button is clicked", async () => {

@@ -10,11 +10,7 @@ const logger = new Logger({ context: "useContextualTooltips", enabled: true });
 
 export function useContextualTooltips(
   article: SerializedArticle | null | undefined,
-  subject: SerializedSubject,
-  content: string | undefined,
-  isStreaming: boolean,
-  streamComplete: boolean,
-  contentFinallyReady: boolean = false
+  subject: SerializedSubject
 ) {
   const [tooltips, setTooltips] = useState<Record<string, string>>({});
   const [isGeneratingTooltips, setIsGeneratingTooltips] = useState(false);
@@ -27,14 +23,9 @@ export function useContextualTooltips(
   const updateArticleMutation = useUpdateArticle();
 
   useEffect(() => {
-    const hasRequiredData = article?.id && content;
+    const hasRequiredData = article?.id && article.content;
     if (!hasRequiredData) {
       logger.debug("Missing required data for tooltip generation");
-      return;
-    }
-
-    if (!contentFinallyReady) {
-      logger.debug("Content not fully ready, deferring tooltip generation");
       return;
     }
 
@@ -43,7 +34,7 @@ export function useContextualTooltips(
       return;
     }
 
-    const boldedTerms = extractBoldFromMarkdown(content);
+    const boldedTerms = extractBoldFromMarkdown(article.content);
     if (boldedTerms.length === 0) {
       logger.info("No bolded terms found in content");
       setTooltipsReady(true);
@@ -100,8 +91,7 @@ export function useContextualTooltips(
     generateTooltips();
   }, [
     article?.id,
-    content,
-    contentFinallyReady,
+    article?.content,
     subject.title,
     isGeneratingTooltips,
     updateArticleMutation,
