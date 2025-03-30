@@ -3,9 +3,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import MarkdownDisplay from "./markdown-display";
 import { SuggestedQuestions } from "./suggested-questions";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";
-import { SerializedSubject, SerializedArticle } from "@/types/serialized";
-import { useGetOrCreateLearningMap } from "@/hooks/api/learning-maps";
-import { useRootArticle } from "@/hooks/use-root-article";
+import {
+  SerializedSubject,
+  SerializedArticle,
+  SerializedLearningMap,
+} from "@/types/serialized";
 import { useArticleContent } from "@/hooks/use-article-content";
 import { Logger } from "@/lib/logger";
 import { useContextualTooltips } from "@/hooks/use-contextual-tooltips";
@@ -17,11 +19,13 @@ const logger = new Logger({ context: "LearningInterface", enabled: true });
 
 interface LearningInterfaceProps {
   subject: SerializedSubject;
+  learningMap: SerializedLearningMap;
   activeArticle: SerializedArticle | null | undefined;
 }
 
 const LearningInterface: React.FC<LearningInterfaceProps> = ({
   subject,
+  learningMap,
   activeArticle,
 }) => {
   logger.info("Rendering LearningInterface", {
@@ -47,18 +51,6 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
 
   const [isMapExpanded, setIsMapExpanded] = React.useState(false);
   const navigate = useNavigate();
-
-  const {
-    data: learningMap,
-    isLoading: isLoadingMap,
-    error: mapError,
-  } = useGetOrCreateLearningMap(subject.id);
-
-  const {
-    article: rootArticle,
-    isLoading: isLoadingRootArticle,
-    error: rootArticleError,
-  } = useRootArticle(learningMap);
 
   const {
     content: articleContent,
@@ -115,28 +107,10 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
     });
   };
 
-  const isLoadingInitialData = isLoadingMap || isLoadingRootArticle;
-  const overallError = mapError || rootArticleError;
-
-  if (overallError) {
-    logger.error("Error in LearningInterface data fetching", {
-      error: overallError,
-    });
-    return <div>Error: {overallError.message}</div>;
-  }
-
-  if (isLoadingInitialData && !learningMap) {
-    return <div>Loading Learning Map...</div>;
-  }
-
-  if (!rootArticle && learningMap && isLoadingRootArticle) {
-    return <div>Initializing Root Article...</div>;
-  }
-
-  if (!learningMap || !rootArticle) {
+  if (!learningMap || !activeArticle) {
     logger.warn(
       "Missing learning map or root article despite no loading/error state",
-      { learningMapId: learningMap?.id, rootArticleId: rootArticle?.id }
+      { learningMapId: learningMap?.id, rootArticleId: activeArticle?.id }
     );
     return <div>Error initializing the learning interface.</div>;
   }
@@ -148,8 +122,9 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
           className={`${isMapExpanded ? "w-2/3" : "w-1/3"} bg-slate-900 border-r border-slate-800 hidden md:block transition-all duration-300`}
         >
           <div className="h-full">
+            {/* @TODO: Passing activeArticle as rootArticle is temporary */}
             <PersonalLearningMapFlow
-              rootArticle={rootArticle}
+              rootArticle={activeArticle}
               onNodeClick={handleNodeClick}
               learningMap={learningMap}
             />

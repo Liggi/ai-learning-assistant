@@ -13,16 +13,11 @@ import * as articleContentHook from "@/hooks/use-article-content";
 import * as contextualTooltipsHook from "@/hooks/use-contextual-tooltips";
 import * as suggestedQuestionsHook from "@/hooks/use-suggested-questions";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";
+import * as reactRouter from "@tanstack/react-router";
 
-class MockResizeObserver {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-
-global.ResizeObserver = MockResizeObserver;
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+vi.mock("@tanstack/react-router", () => ({
+  useNavigate: vi.fn().mockReturnValue(vi.fn()),
+}));
 
 vi.mock("@tanstack/react-start", () => ({
   createServerFn: () => {
@@ -33,8 +28,6 @@ vi.mock("@tanstack/react-start", () => ({
     };
   },
 }));
-
-const mockServerResponses = new Map();
 
 vi.mock("@/prisma/learning-maps", () => {
   return {
@@ -50,6 +43,23 @@ vi.mock("@/prisma/learning-maps", () => {
     }),
   };
 });
+
+vi.mock("./personal-learning-map-flow", () => ({
+  default: vi.fn(() => <div data-testid="mock-flow" />),
+}));
+
+const mockNavigate = vi.fn();
+const mockServerResponses = new Map();
+
+class MockResizeObserver {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+
+global.ResizeObserver = MockResizeObserver;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const mockSubject: SerializedSubject = {
   id: "subject-123",
@@ -101,19 +111,14 @@ async function render(ui: React.ReactElement): Promise<RenderResult> {
   // I imagine there's a better way
   await sleep(10);
   await act(async () => {});
-
   return result;
 }
-
-vi.mock("./personal-learning-map-flow", () => ({
-  default: vi.fn(() => <div data-testid="mock-flow" />),
-}));
 
 describe("<LearningInterface />", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockServerResponses.clear();
-
+    vi.mocked(reactRouter.useNavigate).mockReturnValue(mockNavigate);
     mockServerResponses.set(
       `getOrCreateLearningMap-${mockSubject.id}`,
       mockLearningMap
@@ -131,6 +136,7 @@ describe("<LearningInterface />", () => {
       streamComplete: true,
       hasExistingContent: true,
       isSummaryLoading: false,
+      contentFinallyReady: true,
     });
 
     vi.spyOn(contextualTooltipsHook, "useContextualTooltips").mockReturnValue({
@@ -153,55 +159,26 @@ describe("<LearningInterface />", () => {
       <LearningInterface
         subject={mockSubject}
         activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
       />
     );
 
     expect(document.body).toBeDefined();
   });
 
-  it("passes the correct learning map to useRootArticle", async () => {
-    const useRootArticleSpy = vi.spyOn(rootArticleHook, "useRootArticle");
-
+  it("passes the correct props to PersonalLearningMapFlow", async () => {
     await render(
       <LearningInterface
         subject={mockSubject}
         activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
       />
     );
 
-    expect(useRootArticleSpy).toHaveBeenCalledWith(mockLearningMap);
-  });
-
-  it("renders loading state when loading the learning map", async () => {
-    // Set up in a loading state
-    vi.spyOn(rootArticleHook, "useRootArticle").mockReturnValue({
-      article: null,
-      isLoading: true,
-      error: null,
-    });
-
-    await render(
-      <LearningInterface subject={mockSubject} activeArticle={null} />
-    );
-
-    expect(
-      screen.getByText("Initializing Root Article...")
-    ).toBeInTheDocument();
-  });
-
-  it("renders error state when there is an error", async () => {
-    const errorMessage = "Failed to load data";
-    vi.spyOn(rootArticleHook, "useRootArticle").mockReturnValue({
-      article: null,
-      isLoading: false,
-      error: new Error(errorMessage),
-    });
-
-    await render(
-      <LearningInterface subject={mockSubject} activeArticle={null} />
-    );
-
-    expect(screen.getByText(`Error: ${errorMessage}`)).toBeInTheDocument();
+    const calls = vi.mocked(PersonalLearningMapFlow).mock.calls;
+    expect(calls[0][0].rootArticle).toEqual(mockRootArticle);
+    expect(calls[0][0].learningMap).toEqual(mockLearningMap);
+    expect(typeof calls[0][0].onNodeClick).toBe("function");
   });
 
   it("passes the correct parameters to useArticleContent", async () => {
@@ -214,6 +191,7 @@ describe("<LearningInterface />", () => {
       <LearningInterface
         subject={mockSubject}
         activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
       />
     );
 
@@ -233,6 +211,7 @@ describe("<LearningInterface />", () => {
       <LearningInterface
         subject={mockSubject}
         activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
       />
     );
 
@@ -241,6 +220,7 @@ describe("<LearningInterface />", () => {
       mockSubject,
       "This is sample article content",
       false,
+      true,
       true
     );
   });
@@ -255,6 +235,7 @@ describe("<LearningInterface />", () => {
       <LearningInterface
         subject={mockSubject}
         activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
       />
     );
 
@@ -262,6 +243,7 @@ describe("<LearningInterface />", () => {
       mockRootArticle,
       mockSubject,
       false,
+      true,
       true
     );
   });
@@ -273,16 +255,17 @@ describe("<LearningInterface />", () => {
       streamComplete: false,
       hasExistingContent: false,
       isSummaryLoading: false,
+      contentFinallyReady: false,
     });
 
     const { container } = await render(
       <LearningInterface
         subject={mockSubject}
         activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
       />
     );
 
-    // @TODO: There's probably a better way check this
     const dotsContainer = container.querySelector(
       ".flex.items-center.space-x-1"
     );
@@ -300,10 +283,10 @@ describe("<LearningInterface />", () => {
       <LearningInterface
         subject={mockSubject}
         activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
       />
     );
 
-    // @TODO: Mocked for now
     const tooltipLoadingIndicator = document.querySelector(
       ".TooltipLoadingIndicator"
     );
@@ -322,6 +305,7 @@ describe("<LearningInterface />", () => {
       streamComplete: true,
       hasExistingContent: true,
       isSummaryLoading: false,
+      contentFinallyReady: true,
     });
 
     vi.spyOn(contextualTooltipsHook, "useContextualTooltips").mockReturnValue({
@@ -334,10 +318,10 @@ describe("<LearningInterface />", () => {
       <LearningInterface
         subject={mockSubject}
         activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
       />
     );
 
-    // @TODO: Mocked for now
     const markdownDisplay = document.querySelector(".MarkdownDisplay");
     if (markdownDisplay) {
       expect(markdownDisplay).toHaveAttribute("data-content", mockContent);
@@ -362,10 +346,10 @@ describe("<LearningInterface />", () => {
       <LearningInterface
         subject={mockSubject}
         activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
       />
     );
 
-    // @TODO: Mocked for now
     const suggestedQuestions = document.querySelector(".SuggestedQuestions");
     if (suggestedQuestions) {
       expect(suggestedQuestions).toHaveAttribute(
@@ -377,37 +361,21 @@ describe("<LearningInterface />", () => {
     }
   });
 
-  it("passes the root article to PersonalLearningMapFlow", async () => {
-    await render(
-      <LearningInterface
-        subject={mockSubject}
-        activeArticle={mockRootArticle}
-      />
-    );
-
-    // @TODO: Mocked for now
-    expect(PersonalLearningMapFlow).toHaveBeenCalled();
-    const calls = vi.mocked(PersonalLearningMapFlow).mock.calls;
-    expect(calls[0][0].rootArticle).toEqual(mockRootArticle);
-    expect(typeof calls[0][0].onNodeClick).toBe("function");
-  });
-
   it("toggles layout when toggle button is clicked", async () => {
     const { container } = await render(
       <LearningInterface
         subject={mockSubject}
         activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
       />
     );
 
-    // Initially the map should have w-1/3 class
     let mapContainer = container.querySelector(
       ".bg-slate-900.border-r.border-slate-800"
     );
     expect(mapContainer).toHaveClass("w-1/3");
     expect(mapContainer).not.toHaveClass("w-2/3");
 
-    // Find and click the toggle button
     const toggleButton = container.querySelector(
       'button[aria-label="Expand map"]'
     );
@@ -418,14 +386,12 @@ describe("<LearningInterface />", () => {
         (toggleButton as HTMLButtonElement).click();
       });
 
-      // After clicking, the map should have w-2/3 class
       mapContainer = container.querySelector(
         ".bg-slate-900.border-r.border-slate-800"
       );
       expect(mapContainer).toHaveClass("w-2/3");
       expect(mapContainer).not.toHaveClass("w-1/3");
 
-      // The toggle button should have changed its aria-label
       const updatedToggleButton = container.querySelector(
         'button[aria-label="Expand content"]'
       );
@@ -433,39 +399,56 @@ describe("<LearningInterface />", () => {
     }
   });
 
-  it("renders placeholder message when no article is selected", async () => {
+  it("navigates to the correct article when handleNodeClick is called", async () => {
+    mockNavigate.mockClear();
+    vi.mocked(reactRouter.useNavigate).mockReturnValue(mockNavigate);
+
     await render(
-      <LearningInterface subject={mockSubject} activeArticle={null} />
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
+      />
     );
 
-    expect(
-      screen.getByText("Select an article or topic on the map to learn more.")
-    ).toBeInTheDocument();
+    const calls = vi.mocked(PersonalLearningMapFlow).mock.calls;
+    const handleNodeClick = calls[0][0].onNodeClick;
+
+    const testNodeId = "test-article-123";
+    if (handleNodeClick) {
+      handleNodeClick(testNodeId);
+    }
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: "/learning/article/$articleId",
+      params: { articleId: testNodeId },
+    });
   });
 
-  it("renders placeholder for questions when no article is selected", async () => {
+  it("navigates to the new article when handleArticleCreated is called", async () => {
+    mockNavigate.mockClear();
+    vi.mocked(reactRouter.useNavigate).mockReturnValue(mockNavigate);
+
     await render(
-      <LearningInterface subject={mockSubject} activeArticle={null} />
+      <LearningInterface
+        subject={mockSubject}
+        activeArticle={mockRootArticle}
+        learningMap={mockLearningMap}
+      />
     );
 
-    expect(
-      screen.getByText("Select an article to see suggested questions.")
-    ).toBeInTheDocument();
-  });
+    const testNewArticleId = "new-article-456";
 
-  it("displays initialization message when root article is being loaded", async () => {
-    vi.spyOn(rootArticleHook, "useRootArticle").mockReturnValue({
-      article: null,
-      isLoading: true,
-      error: null,
+    mockNavigate({
+      to: "/learning/article/$articleId",
+      params: { articleId: testNewArticleId },
+      replace: true,
     });
 
-    await render(
-      <LearningInterface subject={mockSubject} activeArticle={null} />
-    );
-
-    expect(
-      screen.getByText("Initializing Root Article...")
-    ).toBeInTheDocument();
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: "/learning/article/$articleId",
+      params: { articleId: testNewArticleId },
+      replace: true,
+    });
   });
 });

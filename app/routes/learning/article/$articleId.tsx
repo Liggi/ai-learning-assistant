@@ -37,7 +37,13 @@ export const Route = createFileRoute("/learning/article/$articleId")({
       learningMapId: learningMap.id,
     });
 
-    return <LearningInterface subject={subject} activeArticle={article} />;
+    return (
+      <LearningInterface
+        subject={subject}
+        learningMap={learningMap}
+        activeArticle={article}
+      />
+    );
   },
   errorComponent: ({ error }) => {
     logger.error("Error in ArticleRoute loader/component", {
