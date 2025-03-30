@@ -57,7 +57,6 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
     content: articleContent,
     isStreaming,
     streamComplete,
-    hasExistingContent,
     contentFinallyReady,
   } = useArticleContent(activeArticle, subject);
 

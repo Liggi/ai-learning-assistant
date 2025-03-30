@@ -134,9 +134,8 @@ describe("<LearningInterface />", () => {
       content: "This is sample article content",
       isStreaming: false,
       streamComplete: true,
-      hasExistingContent: true,
-      isSummaryLoading: false,
       contentFinallyReady: true,
+      isSummaryLoading: false,
     });
 
     vi.spyOn(contextualTooltipsHook, "useContextualTooltips").mockReturnValue({
@@ -248,30 +247,6 @@ describe("<LearningInterface />", () => {
     );
   });
 
-  it("shows streaming indicator when content is streaming", async () => {
-    vi.spyOn(articleContentHook, "useArticleContent").mockReturnValue({
-      content: "This is streaming content",
-      isStreaming: true,
-      streamComplete: false,
-      hasExistingContent: false,
-      isSummaryLoading: false,
-      contentFinallyReady: false,
-    });
-
-    const { container } = await render(
-      <LearningInterface
-        subject={mockSubject}
-        activeArticle={mockRootArticle}
-        learningMap={mockLearningMap}
-      />
-    );
-
-    const dotsContainer = container.querySelector(
-      ".flex.items-center.space-x-1"
-    );
-    expect(dotsContainer).toBeInTheDocument();
-  });
-
   it("passes tooltip loading state to TooltipLoadingIndicator", async () => {
     vi.spyOn(contextualTooltipsHook, "useContextualTooltips").mockReturnValue({
       tooltips: {},
@@ -303,9 +278,8 @@ describe("<LearningInterface />", () => {
       content: mockContent,
       isStreaming: false,
       streamComplete: true,
-      hasExistingContent: true,
-      isSummaryLoading: false,
       contentFinallyReady: true,
+      isSummaryLoading: false,
     });
 
     vi.spyOn(contextualTooltipsHook, "useContextualTooltips").mockReturnValue({
