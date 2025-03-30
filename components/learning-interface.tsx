@@ -13,6 +13,7 @@ import { Logger } from "@/lib/logger";
 import { useContextualTooltips } from "@/hooks/use-contextual-tooltips";
 import { useSuggestedQuestions } from "@/hooks/use-suggested-questions";
 import { TooltipLoadingIndicator } from "./ui/tooltip-loading-indicator";
+import StreamingArticleDisplay from "./streaming-article-display/streaming-article-display";
 import { useNavigate } from "@tanstack/react-router";
 
 const logger = new Logger({ context: "LearningInterface", enabled: true });
@@ -160,22 +161,21 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
             <div className="flex-1 overflow-y-auto p-8">
               {activeArticle ? (
                 <>
-                  <MarkdownDisplay
-                    content={articleContent || ""}
-                    onLearnMore={() => {
-                      console.log("Learn more");
-                    }}
-                    tooltips={tooltips}
-                    tooltipsReady={tooltipsReady}
-                  />
-                  {isStreaming && (
-                    <div className="mt-4 flex items-center justify-center text-slate-400">
-                      <div className="flex items-center space-x-1">
-                        <span className="animate-bounce delay-100">.</span>
-                        <span className="animate-bounce delay-200">.</span>
-                        <span className="animate-bounce delay-300">.</span>
-                      </div>
-                    </div>
+                  {activeArticle.content ? (
+                    // If article already has content, use the regular MarkdownDisplay
+                    <MarkdownDisplay
+                      content={activeArticle.content}
+                      onLearnMore={() => {
+                        console.log("Learn more");
+                      }}
+                      tooltips={tooltips}
+                      tooltipsReady={tooltipsReady}
+                    />
+                  ) : (
+                    <StreamingArticleDisplay
+                      article={activeArticle}
+                      subject={subject}
+                    />
                   )}
                 </>
               ) : (
