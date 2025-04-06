@@ -4,6 +4,7 @@ import debounce from "lodash/debounce";
 import { useArticle } from "@/hooks/api/articles";
 import { useArticleSummary } from "@/hooks/use-article-summary";
 import MarkdownDisplay from "../markdown-display";
+import { useArticleTakeaways } from "@/hooks/use-article-takeaways";
 
 interface ConversationNodeData {
   id: string;
@@ -49,7 +50,11 @@ export default function ConversationNode({
   const { data: summary, loading: isLoadingSummary } =
     useArticleSummary(article);
 
-  const isLoading = isLoadingArticle || isLoadingSummary || !summary;
+  const { data: takeaways, loading: isLoadingTakeaways } =
+    useArticleTakeaways(article);
+
+  const isLoading =
+    isLoadingArticle || isLoadingSummary || !summary || isLoadingTakeaways;
 
   // Create a debounced update function that only triggers if height changed
   const debouncedUpdateHeight = useCallback(
@@ -80,9 +85,6 @@ export default function ConversationNode({
       debouncedUpdateHeight.cancel();
     };
   }, [data.id, debouncedUpdateHeight, setNodeHeight]);
-
-  // Ensure takeaways is always an array
-  const takeaways = data.content?.takeaways || [];
 
   return (
     <div
@@ -127,7 +129,7 @@ export default function ConversationNode({
           <div className="text-gray-100 text-sm font-medium mb-3">
             {summary}
           </div>
-          {takeaways.length > 0 && (
+          {takeaways && takeaways.length > 0 && (
             <div className="space-y-1.5 pt-2 border-t border-slate-700/50">
               {takeaways.map((takeaway, index) => (
                 <div
