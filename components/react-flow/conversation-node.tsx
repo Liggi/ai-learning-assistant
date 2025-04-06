@@ -1,6 +1,8 @@
 import { Handle, Position } from "@xyflow/react";
 import { useRef, useEffect, useCallback } from "react";
 import debounce from "lodash/debounce";
+import { useArticle } from "@/hooks/api/articles";
+import { useArticleSummary } from "@/hooks/use-article-summary";
 import MarkdownDisplay from "../markdown-display";
 
 interface ConversationNodeData {
@@ -41,6 +43,13 @@ export default function ConversationNode({
   const style = isQuestion ? nodeStyles.question : nodeStyles.answer;
   const containerRef = useRef<HTMLDivElement>(null);
   const lastHeightRef = useRef<number>(0);
+
+  const { data: article, isLoading: isLoadingArticle } = useArticle(data.id);
+
+  const { data: summary, loading: isLoadingSummary } =
+    useArticleSummary(article);
+
+  const isLoading = isLoadingArticle || isLoadingSummary || !summary;
 
   // Create a debounced update function that only triggers if height changed
   const debouncedUpdateHeight = useCallback(
@@ -96,7 +105,7 @@ export default function ConversationNode({
         {isQuestion ? "Question" : "Article"}
       </div>
 
-      {data.isLoading ? (
+      {isLoading ? (
         <div className="py-2">
           <div className="h-4 bg-slate-700/40 rounded animate-pulse mb-2 w-3/4"></div>
           <div className="h-3 bg-slate-700/40 rounded animate-pulse mb-1.5 w-full"></div>
@@ -113,10 +122,10 @@ export default function ConversationNode({
             </div>
           </div>
         </div>
-      ) : data.content ? (
+      ) : summary ? (
         <>
           <div className="text-gray-100 text-sm font-medium mb-3">
-            {data.content.summary}
+            {summary}
           </div>
           {takeaways.length > 0 && (
             <div className="space-y-1.5 pt-2 border-t border-slate-700/50">

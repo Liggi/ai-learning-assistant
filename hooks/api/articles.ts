@@ -13,14 +13,16 @@ import {
   getRootArticle,
   createArticleFromQuestion,
 } from "@/prisma/articles";
+import type { SerializedArticle } from "@/types/serialized";
 import type { Article } from "@/types/personal-learning-map";
-import type { ArticleMetadata } from "@/types/serialized";
 
 /**
  * Hook to fetch an article by ID
  */
-export function useArticle(id: string | null): UseQueryResult<Article | null> {
-  return useQuery<Article | null>({
+export function useArticle(
+  id: string | null
+): UseQueryResult<SerializedArticle | null> {
+  return useQuery<SerializedArticle | null>({
     queryKey: ["articles", id || "null"],
     queryFn: async () => {
       if (!id) return null;
