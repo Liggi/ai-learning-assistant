@@ -11,6 +11,7 @@ import { Logger } from "@/lib/logger";
 import StreamingArticleDisplay from "./streaming-article-display/streaming-article-display";
 import { useNavigate } from "@tanstack/react-router";
 import ArticleContent from "./article-content";
+import { CustomQuestionInput } from "./custom-question-input";
 
 const logger = new Logger({ context: "LearningInterface", enabled: false });
 
@@ -65,10 +66,10 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
   };
 
   const handleArticleCreated = (newArticleId: string) => {
-    logger.info(
-      "New article created from question, navigating to article view",
-      { newArticleId, currentArticleId: activeArticle?.id }
-    );
+    logger.info("New article created, navigating to article view", {
+      newArticleId,
+      currentArticleId: activeArticle?.id,
+    });
     // Update our local reference to avoid any inconsistency
     prevArticleIdRef.current = newArticleId;
 
@@ -144,7 +145,11 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
             </div>
           </div>
 
-          <div className="border-t border-slate-800 p-4">
+          <div className="border-t border-slate-800 p-4 flex flex-col gap-4">
+            <CustomQuestionInput
+              activeArticle={activeArticle}
+              onArticleCreated={handleArticleCreated}
+            />
             <SuggestedQuestions
               subject={subject}
               article={activeArticle}
