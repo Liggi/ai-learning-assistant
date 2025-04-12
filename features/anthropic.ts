@@ -21,7 +21,7 @@ type AnthropicProviderOptions = {
 export class AnthropicProvider
   implements LLMProvider<AnthropicProviderOptions>
 {
-  private client: Anthropic;
+  public client: Anthropic;
 
   constructor() {
     const apiKey = process.env["ANTHROPIC_API_KEY"];
@@ -40,7 +40,7 @@ export class AnthropicProvider
     requestId: string,
     options?: LLMCallOptions & AnthropicProviderOptions
   ): Promise<T> {
-    const model = options?.model ?? "claude-3-5-sonnet-latest";
+    const model = options?.model ?? "claude-3-7-sonnet-latest";
 
     anthropicLogger.debug(`[${requestId}] Sending request to Anthropic API`, {
       model,
@@ -123,7 +123,7 @@ export async function callAnthropic<T>(
   const reqId =
     requestId ||
     `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-  const model = options?.model ?? "claude-3-5-sonnet-latest";
+  const model = options?.model ?? "claude-3-7-sonnet-latest";
 
   if (!options?.bypassCache) {
     const cacheKey = generateCacheKey(prompt, "anthropic", model);

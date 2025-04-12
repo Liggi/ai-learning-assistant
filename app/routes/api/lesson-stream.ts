@@ -1,18 +1,19 @@
 import { createAPIFileRoute } from "@tanstack/react-start/api";
-import Anthropic from "@anthropic-ai/sdk";
+import { AnthropicProvider } from "@/features/anthropic";
 import { createPrompt } from "@/prompts/chat/lesson";
+import { Logger } from "@/lib/logger";
 
-// Remove the stream caching system as it's causing Response body locking issues
-// Each request will now get its own independent stream
+const streamLogger = new Logger({ context: "API:/api/lesson-stream" });
 
 export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
   POST: async ({ request }) => {
+    const reqId = `stream_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     try {
-      console.log("[lesson-stream] Received request");
+      streamLogger.info(`[${reqId}] Received request`);
 
       // Validate request integrity
       if (!request.body) {
-        console.error("[lesson-stream] Request body is null or undefined");
+        streamLogger.error(`[${reqId}] Request body is null`);
         return new Response(
           JSON.stringify({ error: "Request body is missing" }),
           {
@@ -26,13 +27,10 @@ export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
       let requestData;
       try {
         requestData = await request.json();
-        console.log(
-          "[lesson-stream] Request data:",
-          JSON.stringify(requestData, null, 2)
-        );
+        streamLogger.debug(`[${reqId}] Parsed request data`);
       } catch (parseError) {
-        console.error(
-          "[lesson-stream] Failed to parse request body:",
+        streamLogger.error(
+          `[${reqId}] Failed to parse request body`,
           parseError
         );
         return new Response(
@@ -61,10 +59,9 @@ export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
 
       // Validate required fields based on context type
       if (!subject || !message) {
-        console.error("[lesson-stream] Missing required fields:", {
-          subject,
-          message,
-        });
+        streamLogger.error(
+          `[${reqId}] Missing required fields: subject or message`
+        );
         return new Response(
           JSON.stringify({
             error:
@@ -82,8 +79,8 @@ export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
         contextType === "introduction" &&
         (!moduleTitle || !moduleDescription)
       ) {
-        console.error(
-          "[lesson-stream] Missing required fields for introduction context:",
+        streamLogger.error(
+          `[${reqId}] Missing required fields for introduction context:`,
           {
             moduleTitle,
             moduleDescription,
@@ -103,8 +100,8 @@ export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
         contextType === "question" &&
         (!triggeringQuestion || !parentContent)
       ) {
-        console.error(
-          "[lesson-stream] Missing required fields for question context:",
+        streamLogger.error(
+          `[${reqId}] Missing required fields for question context:`,
           {
             triggeringQuestion,
             hasParentContent: !!parentContent,
@@ -135,12 +132,9 @@ export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
           triggeringQuestion,
           parentContent,
         });
-        console.log(
-          "[lesson-stream] Generated prompt (first 200 chars):",
-          prompt.substring(0, 200) + "..."
-        );
+        streamLogger.debug(`[${reqId}] Generated prompt`);
       } catch (promptError) {
-        console.error("[lesson-stream] Error generating prompt:", promptError);
+        streamLogger.error(`[${reqId}] Error generating prompt`, promptError);
         return new Response(
           JSON.stringify({
             error: "Failed to generate prompt",
@@ -153,13 +147,18 @@ export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
         );
       }
 
-      // Check Anthropic API key
-      if (!process.env.ANTHROPIC_API_KEY) {
-        console.error(
-          "[lesson-stream] ANTHROPIC_API_KEY is missing in environment variables"
+      // Instantiate the provider (handles API key check)
+      let provider: AnthropicProvider;
+      try {
+        provider = new AnthropicProvider();
+        streamLogger.info(`[${reqId}] AnthropicProvider initialized`);
+      } catch (providerError) {
+        streamLogger.error(
+          `[${reqId}] Failed to initialize provider`,
+          providerError
         );
         return new Response(
-          JSON.stringify({ error: "API configuration error: Missing API key" }),
+          JSON.stringify({ error: "API configuration error" }),
           {
             status: 500,
             headers: { "Content-Type": "application/json" },
@@ -167,81 +166,76 @@ export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
         );
       }
 
-      console.log("[lesson-stream] Initializing Anthropic client");
-      const anthropic = new Anthropic({
-        apiKey: process.env.ANTHROPIC_API_KEY,
-      });
-
       // Create a streaming response using ReadableStream
-      console.log("[lesson-stream] Creating ReadableStream");
-      const stream = new ReadableStream({
+      streamLogger.info(`[${reqId}] Creating ReadableStream`);
+      const readableStream = new ReadableStream({
         async start(controller) {
           try {
-            console.log("[lesson-stream] Starting to stream from Anthropic");
+            streamLogger.info(`[${reqId}] Starting Anthropic stream`);
 
-            // Stream response events using the Anthropic SDK
-            const stream = await anthropic.messages.create({
+            // Use the client instance from the provider to create the stream
+            const messageStream = await provider.client.messages.create({
               max_tokens: 4096,
               messages: [{ role: "user", content: prompt }],
-              model: "claude-3-7-sonnet-latest",
+              model: "claude-3-5-sonnet-latest",
               stream: true,
             });
 
-            console.log(
-              "[lesson-stream] Anthropic stream created successfully"
-            );
+            streamLogger.debug(`[${reqId}] Anthropic stream initiated`);
 
             // Process the stream of events from Anthropic
             let chunkCount = 0;
             let totalBytes = 0;
 
-            for await (const messageStreamEvent of stream) {
-              if (messageStreamEvent.type === "content_block_delta") {
-                if (messageStreamEvent.delta.type === "text_delta") {
-                  // Send text fragments as they arrive
-                  const text = messageStreamEvent.delta.text;
-                  const encoded = new TextEncoder().encode(text);
-                  totalBytes += encoded.length;
-                  chunkCount++;
+            for await (const event of messageStream) {
+              if (
+                event.type === "content_block_delta" &&
+                event.delta.type === "text_delta"
+              ) {
+                const text = event.delta.text;
+                const encoded = new TextEncoder().encode(text);
+                totalBytes += encoded.length;
+                chunkCount++;
 
-                  if (chunkCount % 10 === 0) {
-                    console.log(
-                      `[lesson-stream] Streamed ${chunkCount} chunks, ${totalBytes} bytes so far`
-                    );
-                  }
-
-                  controller.enqueue(encoded);
+                if (chunkCount % 20 === 0) {
+                  streamLogger.debug(
+                    `[${reqId}] Streamed ${chunkCount} chunks`
+                  );
                 }
+
+                controller.enqueue(encoded);
+              } else if (event.type === "message_stop") {
+                streamLogger.info(
+                  `[${reqId}] Stream finished by message_stop event.`
+                );
               }
             }
 
-            console.log(
-              `[lesson-stream] Stream complete. Total: ${chunkCount} chunks, ${totalBytes} bytes`
+            streamLogger.info(
+              `[${reqId}] Stream complete. Total chunks: ${chunkCount}`
             );
             controller.close();
-          } catch (error) {
-            console.error("[lesson-stream] Stream error:", error);
-            if (error.name === "AnthropicError") {
-              console.error("[lesson-stream] Anthropic API error details:", {
-                status: error.status,
-                type: error.type,
-                message: error.message,
-              });
-            }
+          } catch (error: any) {
+            streamLogger.error(`[${reqId}] Stream error`, {
+              name: error.name,
+              message: error.message,
+              status: error.status,
+              type: error.type,
+            });
             controller.error(error);
           }
         },
       });
 
-      console.log("[lesson-stream] Returning response stream");
-      return new Response(stream, {
+      streamLogger.info(`[${reqId}] Returning response stream`);
+      return new Response(readableStream, {
         headers: {
           "Content-Type": "text/plain; charset=utf-8",
         },
       });
-    } catch (err) {
-      console.error("[lesson-stream] Fatal error in endpoint handler:", err);
-      console.error("[lesson-stream] Error stack:", err.stack);
+    } catch (err: any) {
+      streamLogger.error(`[${reqId}] Fatal error in endpoint handler`, err);
+      streamLogger.error(`[${reqId}] Error stack:`, err.stack);
       return new Response(
         JSON.stringify({
           error: "Failed to stream lesson",

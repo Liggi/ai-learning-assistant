@@ -1,88 +1,52 @@
 import { createAPIFileRoute } from "@tanstack/react-start/api";
-import Anthropic from "@anthropic-ai/sdk";
+import { z } from "zod";
+import { AnthropicProvider } from "@/features/anthropic"; // Import the Provider
+import { Logger } from "@/lib/logger"; // Import Logger if needed for route-level logging
 
-// Simple in-memory cache to deduplicate identical requests
-const responseCache = new Map<
-  string,
-  { timestamp: number; response: string }
->();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
+const apiLogger = new Logger({ context: "API:/api/generate-response" });
 
-// Cleanup old cache entries periodically
-setInterval(
-  () => {
-    const now = Date.now();
-    for (const [key, value] of responseCache.entries()) {
-      if (now - value.timestamp > CACHE_TTL) {
-        responseCache.delete(key);
-      }
-    }
-  },
-  10 * 60 * 1000
-); // Run cleanup every 10 minutes
+// Define the expected shape of the LLM's JSON response
+const ResponseSchema = z.object({
+  response: z.string(),
+});
+
+// Removed the local cache map, TTL, and interval cleanup
 
 export const APIRoute = createAPIFileRoute("/api/generate-response")({
   POST: async ({ request }) => {
+    const reqId = `api_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     try {
+      // Use the built-in request object from the route handler
       const { prompt, requestId } = await request.json();
 
-      // Use requestId or generate a simple hash for the prompt for idempotency
-      const cacheKey =
-        requestId ||
-        `prompt:${Buffer.from(prompt).toString("base64").substring(0, 40)}`;
+      // Use provided requestId or the generated reqId
+      const effectiveRequestId = requestId || reqId;
 
-      // Check if we have this response cached
-      if (responseCache.has(cacheKey)) {
-        console.log(`Using cached response for request ${cacheKey}`);
-        return new Response(
-          JSON.stringify({
-            response: responseCache.get(cacheKey)?.response,
-          }),
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      }
-
-      console.log(`Generating response for request ${cacheKey}`);
-
-      const anthropic = new Anthropic({
-        apiKey: process.env.ANTHROPIC_API_KEY,
-      });
-
-      const response = await anthropic.messages.create({
-        max_tokens: 4096,
-        messages: [{ role: "user", content: prompt }],
-        model: "claude-3-7-sonnet-latest",
-      });
-
-      const aiResponse = response.content
-        .map((c) => (c.type === "text" ? c.text : ""))
-        .join("");
-
-      // Store in cache
-      responseCache.set(cacheKey, {
-        timestamp: Date.now(),
-        response: aiResponse,
-      });
-
-      return new Response(
-        JSON.stringify({
-          response: aiResponse,
-        }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      apiLogger.info(
+        `[${effectiveRequestId}] Received request for /api/generate-response`
       );
-    } catch (error) {
-      console.error("Error in generate-response:", error);
+
+      const provider = new AnthropicProvider();
+
+      const aiResult = await provider.generateResponse(
+        prompt,
+        ResponseSchema,
+        effectiveRequestId
+      );
+
+      apiLogger.info(`[${effectiveRequestId}] Successfully generated response`);
+
+      return new Response(JSON.stringify(aiResult), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error: any) {
+      apiLogger.error(`[${reqId}] Error in generate-response:`, error);
       return new Response(
         JSON.stringify({
           error: error instanceof Error ? error.message : "Unknown error",
+          requestId: reqId, // Include request ID in error response
         }),
         {
           status: 500,
