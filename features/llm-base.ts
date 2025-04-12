@@ -128,7 +128,9 @@ export async function callLLM<T>(
         break;
       default:
         const _exhaustiveCheck: never = providerName;
-        throw new Error(`[${reqId}] Unsupported LLM provider: ${providerName}`);
+        throw new Error(
+          `[${reqId}] Unsupported LLM provider: ${providerName}g`
+        );
     }
   } catch (initError: any) {
     llmBaseLogger.error(

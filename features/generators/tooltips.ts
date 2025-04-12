@@ -1,8 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
-import { AnthropicProvider } from "../anthropic";
 import { z } from "zod";
 import { createTooltipPrompt } from "@/prompts/chat/tooltips";
 import { Logger } from "@/lib/logger";
+import { callLLM } from "../llm-base";
 
 const logger = new Logger({ context: "TooltipsGenerator" });
 
@@ -15,12 +15,14 @@ export const generate = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     try {
       const prompt = createTooltipPrompt(data);
+      const requestId = `tooltips_${data.subject}`;
 
-      const anthropicProvider = new AnthropicProvider();
-      const result = await anthropicProvider.generateResponse(
+      const result = await callLLM(
+        "openai",
         prompt,
         tooltipResponseSchema,
-        `tooltips_${data.subject}`
+        requestId,
+        { model: "gpt-4o" }
       );
 
       return result;
