@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useUpdateArticle } from "@/hooks/api/articles";
 import { Logger } from "@/lib/logger";
 import { useQuestionByChildArticleId } from "@/hooks/api/questions";
-import { SerializedArticle } from "@/types/serialized";
+import { useQueryClient } from "@tanstack/react-query";
 
 const logger = new Logger({
   context: "useStreamArticleContent",
-  enabled: true,
+  enabled: false,
 });
 
 const streamContentFromAPI = async (
@@ -97,6 +97,8 @@ export function useStreamArticleContent(
   article: { id: string; content: string; isRoot?: boolean } | null | undefined,
   subjectTitle: string
 ) {
+  const queryClient = useQueryClient();
+
   const [content, setContent] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamComplete, setStreamComplete] = useState(false);
@@ -181,6 +183,10 @@ export function useStreamArticleContent(
       await updateArticleMutation.mutateAsync({
         id: currentArticleId, // Use captured ID
         content: fullContent,
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["article", currentArticleId],
       });
 
       setStreamComplete(true);

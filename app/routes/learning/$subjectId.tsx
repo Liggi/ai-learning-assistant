@@ -3,8 +3,9 @@ import { ErrorDisplay } from "@/components/error-display";
 import LearningInterface from "@/components/learning-interface";
 import { getSubject } from "@/prisma/subjects";
 import { getOrCreateLearningMap } from "@/prisma/learning-maps";
-import { createArticle } from "@/prisma/articles";
+import { createArticle, getArticle } from "@/prisma/articles";
 import { Logger } from "@/lib/logger";
+import { useQuery } from "@tanstack/react-query";
 
 const logger = new Logger({ context: "LearningRouteLoader" });
 
@@ -71,12 +72,15 @@ export const Route = createFileRoute("/learning/$subjectId")({
   component: function LearningRoute() {
     const { subject, learningMap } = Route.useLoaderData();
 
-    const rootArticle =
+    const initialRootArticle =
       learningMap.articles?.find((article) => article.isRoot) || null;
 
-    logger.info("Found root article", {
-      rootArticleId: rootArticle?.id,
-      isRoot: rootArticle?.isRoot,
+    // Add this React Query hook
+    const { data: rootArticle } = useQuery({
+      queryKey: ["article", initialRootArticle?.id],
+      queryFn: () => getArticle({ data: { id: initialRootArticle?.id ?? "" } }),
+      initialData: initialRootArticle,
+      enabled: !!initialRootArticle?.id,
     });
 
     return (
