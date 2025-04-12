@@ -2,6 +2,7 @@ import React from "react";
 import { SerializedArticle, SerializedSubject } from "@/types/serialized";
 import MarkdownDisplay from "./markdown-display";
 import { useContextualTooltips } from "@/hooks/use-contextual-tooltips";
+import { TooltipLoadingIndicator } from "./ui/tooltip-loading-indicator";
 
 interface ArticleContentProps {
   article: SerializedArticle | null | undefined;
@@ -21,6 +22,10 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
 
   return (
     <div className="relative">
+      <div className="absolute top-0 right-0 z-10">
+        <TooltipLoadingIndicator isLoading={isGeneratingTooltips} />
+      </div>
+
       <MarkdownDisplay
         content={article.content}
         onLearnMore={() => {
