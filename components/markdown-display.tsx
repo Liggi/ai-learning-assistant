@@ -14,6 +14,7 @@ interface MarkdownDisplayProps {
   tooltips?: Record<string, string>;
   tooltipsReady?: boolean;
   onLearnMore?: (concept: string) => void;
+  isCreatingArticle?: boolean;
 }
 
 const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
@@ -21,6 +22,7 @@ const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
   tooltips = {},
   tooltipsReady = false,
   onLearnMore,
+  isCreatingArticle = false,
 }) => {
   // Track all StrongText components with tooltips for staggered animation
   const [tooltipElements, setTooltipElements] = useState<string[]>([]);
@@ -79,6 +81,7 @@ const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
               registerTooltipElement={registerTooltipElement}
               index={tooltipElements.length}
               onLearnMore={onLearnMore}
+              isCreatingArticle={isCreatingArticle}
             />
           ),
           blockquote: Blockquote,
@@ -160,6 +163,7 @@ interface StrongTextProps {
   registerTooltipElement: (concept: string) => void;
   index: number;
   onLearnMore?: (concept: string) => void;
+  isCreatingArticle: boolean;
 }
 
 const StrongText: React.FC<StrongTextProps> = ({
@@ -170,6 +174,7 @@ const StrongText: React.FC<StrongTextProps> = ({
   registerTooltipElement,
   index,
   onLearnMore,
+  isCreatingArticle,
 }) => {
   const concept = String(children).trim();
   const tooltipText = tooltips[concept];
@@ -229,11 +234,16 @@ const StrongText: React.FC<StrongTextProps> = ({
             </ReactMarkdown>
             <div className="mt-3 pt-3 border-t border-slate-700/50">
               <button
-                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-full text-xs transition-colors flex items-center gap-1.5"
+                className={`px-3 py-1.5 rounded-full text-xs transition-colors flex items-center gap-1.5 ${
+                  isCreatingArticle
+                    ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+                    : "bg-slate-800 hover:bg-slate-700 text-slate-200"
+                }`}
                 onClick={() => {
                   console.log(`Tell me more about: ${concept}`);
                   onLearnMore?.(concept);
                 }}
+                disabled={isCreatingArticle}
               >
                 <span className="text-cyan-400">
                   <svg
@@ -252,7 +262,7 @@ const StrongText: React.FC<StrongTextProps> = ({
                     <path d="M12 8h.01"></path>
                   </svg>
                 </span>
-                Tell me more about this
+                {isCreatingArticle ? "Creating..." : "Tell me more about this"}
               </button>
             </div>
           </TooltipContent>
