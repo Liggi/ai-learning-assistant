@@ -44,11 +44,10 @@ ${parentContent}
   // Common guidelines and rules
   prompt += `
 Guidelines:
-- Focus on one concept or entity per response.
-- Resist adding tangential information.
-- Prioritize clarity over completeness.
-- Address only the immediate question/concept.
-- Save related concepts for future messages.
+- Focus on one concept / entity / subject matter per response
+- Resist adding tangential information
+- Prioritize clarity over completeness
+- Make the response information dense and insightful
 
 Rules:
 - The "title" of the chat will already be visible on the screen, you don't need to include one or repeat it
@@ -57,10 +56,10 @@ Rules:
 
 Instructions:
 1. First, generate between 1 and 5 key takeaways that capture the most crucial points a learner should remember from this lesson. Keep them as brief as possible.
-2. Then, craft a detailed yet digestible explanation that expands on these takeaways. Call out unique details, entities, concepts, or anything else relevant by using bold.
+2. Then, craft a detailed yet digestible deep-dive standalone article that expands on these takeaways. Call out unique details, entities, concepts, or anything else relevant by using bold. These will also serve as entry points to subsequent lessons.
 3. The response should have a structure like this:
-   - Provide a concise, step-by-step explanation with appropriate headings, paragraphs, or bullet points.
-   - Then, at the end of the response, ensure the key takeaways are visibly separated from the explanation. For instance, use a markdown blockquote formatted like:
+   - Provide a deep dive exploration of the 
+   - Then, at the end of the response, ensure the key takeaways are visibly separated from the explanation. For instance, use a markdown blockquote formatted like (ensure the > prefix is on all lines):
      
      > - First key takeaway
      > - Second key takeaway
