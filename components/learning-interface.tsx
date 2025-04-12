@@ -127,7 +127,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
         >
           <div className="flex-1 overflow-hidden flex flex-col">
             <div className="flex-1 overflow-y-auto p-8">
-              {activeArticle ? (
+              {activeArticle && subject ? (
                 <>
                   {activeArticle.content ? (
                     <ArticleContent article={activeArticle} subject={subject} />
@@ -145,20 +145,11 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
           </div>
 
           <div className="border-t border-slate-800 p-4">
-            {activeArticle ? (
-              <SuggestedQuestions
-                subject={subject}
-                article={activeArticle}
-                onQuestionClick={(question) => {
-                  logger.info("Question clicked (noop)", { question });
-                }}
-                onArticleCreated={handleArticleCreated}
-              />
-            ) : (
-              <div className="text-slate-500">
-                Select an article to see suggested questions.
-              </div>
-            )}
+            <SuggestedQuestions
+              subject={subject}
+              article={activeArticle}
+              onArticleCreated={handleArticleCreated}
+            />
           </div>
         </div>
       </div>
