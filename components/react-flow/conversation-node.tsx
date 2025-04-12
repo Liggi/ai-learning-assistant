@@ -5,6 +5,7 @@ import { useArticle } from "@/hooks/api/articles";
 import { useArticleSummary } from "@/hooks/use-article-summary";
 import MarkdownDisplay from "../markdown-display";
 import { useArticleTakeaways } from "@/hooks/use-article-takeaways";
+import { useParams } from "@tanstack/react-router";
 
 interface ConversationNodeData {
   id: string;
@@ -13,6 +14,7 @@ interface ConversationNodeData {
     takeaways: string[];
   };
   isUser: boolean;
+  isRoot?: boolean;
   isLoading?: boolean;
   onClick?: (data: ConversationNodeData) => void;
 }
@@ -37,11 +39,21 @@ const nodeStyles = {
 
 export default function ConversationNode({
   data,
-  selected,
   setNodeHeight,
 }: ConversationNodeProps) {
-  const isQuestion = data.isUser;
-  const style = isQuestion ? nodeStyles.question : nodeStyles.answer;
+  const params = useParams({ strict: false }) as {
+    articleId?: string;
+    subjectId?: string;
+  };
+  const urlArticleId = params.articleId;
+
+  const isUrlSelected =
+    (!!urlArticleId && urlArticleId === data.id) ||
+    (!urlArticleId && data.isRoot === true);
+
+  const isQuestionType = data.isUser;
+  const style = isQuestionType ? nodeStyles.question : nodeStyles.answer;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const lastHeightRef = useRef<number>(0);
 
@@ -56,7 +68,6 @@ export default function ConversationNode({
   const isLoading =
     isLoadingArticle || isLoadingSummary || !summary || isLoadingTakeaways;
 
-  // Create a debounced update function that only triggers if height changed
   const debouncedUpdateHeight = useCallback(
     debounce((height: number) => {
       if (height !== lastHeightRef.current && setNodeHeight) {
@@ -93,18 +104,22 @@ export default function ConversationNode({
       style={style}
       className={`
         p-4 transition-all duration-200
-        ${isQuestion ? "hover:bg-blue-900/20" : "hover:bg-green-900/20"}
-        ${selected ? "scale-105 shadow-lg" : "hover:scale-[1.02]"}
+        ${isQuestionType ? "hover:bg-blue-900/20" : "hover:bg-green-900/20"}
+        ${
+          isUrlSelected
+            ? "scale-105 shadow-lg bg-red-500/80 ring-2 ring-red-400"
+            : "hover:scale-[1.02]"
+        }
         rounded-xl backdrop-blur-sm min-w-[350px] max-w-[350px]
       `}
     >
       <div
         className={`
         text-xs font-medium mb-2
-        ${isQuestion ? "text-blue-400" : "text-green-400"}
+        ${isQuestionType ? "text-blue-400" : "text-green-400"}
       `}
       >
-        {isQuestion ? "Question" : "Article"}
+        {isQuestionType ? "Question" : "Article"}
       </div>
 
       {isLoading ? (
