@@ -4,7 +4,7 @@ import { generateSummary } from "@/features/generators/article-summary";
 import { useQueryClient } from "@tanstack/react-query";
 import { Logger } from "@/lib/logger";
 
-const logger = new Logger({ context: "useArticleSummary", enabled: true });
+const logger = new Logger({ context: "useArticleSummary", enabled: false });
 
 type ArticleSummaryStatus =
   | "no_article"

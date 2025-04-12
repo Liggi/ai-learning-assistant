@@ -1,7 +1,7 @@
 import { Logger } from "@/lib/logger";
 
 // Create a logger instance for the takeaway parser
-const logger = new Logger({ context: "ArticleTakeawayParser", enabled: true });
+const logger = new Logger({ context: "ArticleTakeawayParser", enabled: false });
 
 /**
  * Extracts takeaways from article content based on the expected format

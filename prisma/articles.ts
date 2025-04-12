@@ -11,7 +11,7 @@ import {
 import { fromPrismaJson } from "@/lib/prisma-utils";
 import { generateSummary } from "@/features/generators/article-summary";
 
-const logger = new Logger({ context: "ArticleService", enabled: true });
+const logger = new Logger({ context: "ArticleService", enabled: false });
 
 /**
  * Server function to create a new article in a learning map

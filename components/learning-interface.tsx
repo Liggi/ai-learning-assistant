@@ -12,7 +12,7 @@ import StreamingArticleDisplay from "./streaming-article-display/streaming-artic
 import { useNavigate } from "@tanstack/react-router";
 import ArticleContent from "./article-content";
 
-const logger = new Logger({ context: "LearningInterface", enabled: true });
+const logger = new Logger({ context: "LearningInterface", enabled: false });
 
 interface LearningInterfaceProps {
   subject: SerializedSubject;

@@ -7,7 +7,7 @@ import prisma from "@/prisma/client";
 import { serializeArticle } from "@/types/serializers";
 import { fromPrismaJson } from "@/lib/prisma-utils";
 
-const logger = new Logger({ context: "ArticleSummary", enabled: true });
+const logger = new Logger({ context: "ArticleSummary", enabled: false });
 
 const summarySchema = z.object({
   summary: z.string(),

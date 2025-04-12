@@ -6,7 +6,7 @@ import { generate } from "@/features/generators/tooltips";
 import { useUpdateArticle } from "./api/articles";
 import { useQueryClient } from "@tanstack/react-query";
 
-const logger = new Logger({ context: "useContextualTooltips", enabled: true });
+const logger = new Logger({ context: "useContextualTooltips", enabled: false });
 
 export function useContextualTooltips(
   article: SerializedArticle | null | undefined,
