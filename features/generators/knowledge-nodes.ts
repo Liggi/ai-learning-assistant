@@ -1,8 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { generateKnowledgeNodesPrompt } from "@/prompts/roadmap/generate-knowledge-nodes";
-import { callAnthropic } from "../llm";
 import { z } from "zod";
 import { Logger } from "@/lib/logger";
+import { AnthropicProvider } from "../anthropic";
 
 const logger = new Logger({ context: "KnowledgeNodes" });
 
@@ -32,7 +32,12 @@ export const generate = createServerFn({ method: "POST" })
 
     try {
       logger.info(`Generating knowledge nodes for subject: ${data.subject}`);
-      const response = await callAnthropic(prompt, knowledgeNodesSchema);
+      const anthropicProvider = new AnthropicProvider();
+      const response = await anthropicProvider.generateResponse(
+        prompt,
+        knowledgeNodesSchema,
+        `knowledge_nodes_${data.subject}`
+      );
 
       logger.info(
         `Successfully generated ${response.nodes.length} knowledge nodes`

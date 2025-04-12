@@ -1,7 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { callAnthropic } from "@/features/llm";
+import { AnthropicProvider } from "@/features/anthropic";
 import { createPrompt } from "@/prompts/chat/lesson";
+import { Logger } from "@/lib/logger";
+
+const logger = new Logger({ context: "LessonGenerator" });
 
 const stripResponsePlanning = (text: string): string => {
   return text
@@ -31,12 +34,17 @@ export const generate = createServerFn({ method: "POST" })
         message: data.message,
       });
 
-      const result = await callAnthropic(prompt, lessonResponseSchema);
+      const anthropicProvider = new AnthropicProvider();
+      const result = await anthropicProvider.generateResponse(
+        prompt,
+        lessonResponseSchema,
+        `lesson_${data.subject}_${data.moduleTitle}`
+      );
 
       const cleanedResponse = stripResponsePlanning(result.response);
       return { response: cleanedResponse };
     } catch (err) {
-      console.error("Error in chat:", err);
+      logger.error("Error in chat:", err);
       throw err;
     }
   });

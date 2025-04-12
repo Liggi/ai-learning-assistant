@@ -1,11 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { generateSummaryPrompt } from "@/prompts/chat/summary";
-import { callAnthropic } from "../llm";
+import { AnthropicProvider } from "../anthropic";
 import { z } from "zod";
 import { Logger } from "@/lib/logger";
 import prisma from "@/prisma/client";
 import { serializeArticle } from "@/types/serializers";
-import { fromPrismaJson } from "@/lib/prisma-utils";
 
 const logger = new Logger({ context: "ArticleSummary", enabled: false });
 
@@ -30,12 +29,13 @@ export const generateSummary = createServerFn({ method: "POST" })
 
       logger.info(`Generating summary for article: ${data.articleId}`);
 
-      // Generate the summary
       const prompt = generateSummaryPrompt({
         content: article.content,
       });
 
-      const response = await callAnthropic(
+      const anthropicProvider = new AnthropicProvider();
+
+      const response = await anthropicProvider.generateResponse(
         prompt,
         summarySchema,
         `summary_${data.articleId}`
@@ -43,7 +43,6 @@ export const generateSummary = createServerFn({ method: "POST" })
 
       logger.info(`Successfully generated summary: "${response.summary}"`);
 
-      // Update the article with the new summary
       const updatedArticle = await prisma.article.update({
         where: { id: data.articleId },
         data: {
