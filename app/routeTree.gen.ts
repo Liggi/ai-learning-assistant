@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as LoadingImport } from './routes/loading'
+import { Route as DebugXyflowImport } from './routes/debug-xyflow'
 import { Route as IndexImport } from './routes/index'
 import { Route as LearningSubjectIdImport } from './routes/learning/$subjectId'
 import { Route as CalibrationSubjectIdImport } from './routes/calibration/$subjectId'
@@ -22,6 +23,12 @@ import { Route as LearningArticleArticleIdImport } from './routes/learning/artic
 const LoadingRoute = LoadingImport.update({
   id: '/loading',
   path: '/loading',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DebugXyflowRoute = DebugXyflowImport.update({
+  id: '/debug-xyflow',
+  path: '/debug-xyflow',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -60,6 +67,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/debug-xyflow': {
+      id: '/debug-xyflow'
+      path: '/debug-xyflow'
+      fullPath: '/debug-xyflow'
+      preLoaderRoute: typeof DebugXyflowImport
+      parentRoute: typeof rootRoute
+    }
     '/loading': {
       id: '/loading'
       path: '/loading'
@@ -95,6 +109,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/debug-xyflow': typeof DebugXyflowRoute
   '/loading': typeof LoadingRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning/$subjectId': typeof LearningSubjectIdRoute
@@ -103,6 +118,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/debug-xyflow': typeof DebugXyflowRoute
   '/loading': typeof LoadingRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning/$subjectId': typeof LearningSubjectIdRoute
@@ -112,6 +128,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/debug-xyflow': typeof DebugXyflowRoute
   '/loading': typeof LoadingRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning/$subjectId': typeof LearningSubjectIdRoute
@@ -122,6 +139,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/debug-xyflow'
     | '/loading'
     | '/calibration/$subjectId'
     | '/learning/$subjectId'
@@ -129,6 +147,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/debug-xyflow'
     | '/loading'
     | '/calibration/$subjectId'
     | '/learning/$subjectId'
@@ -136,6 +155,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/debug-xyflow'
     | '/loading'
     | '/calibration/$subjectId'
     | '/learning/$subjectId'
@@ -145,6 +165,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DebugXyflowRoute: typeof DebugXyflowRoute
   LoadingRoute: typeof LoadingRoute
   CalibrationSubjectIdRoute: typeof CalibrationSubjectIdRoute
   LearningSubjectIdRoute: typeof LearningSubjectIdRoute
@@ -153,6 +174,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DebugXyflowRoute: DebugXyflowRoute,
   LoadingRoute: LoadingRoute,
   CalibrationSubjectIdRoute: CalibrationSubjectIdRoute,
   LearningSubjectIdRoute: LearningSubjectIdRoute,
@@ -170,6 +192,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/debug-xyflow",
         "/loading",
         "/calibration/$subjectId",
         "/learning/$subjectId",
@@ -178,6 +201,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/debug-xyflow": {
+      "filePath": "debug-xyflow.tsx"
     },
     "/loading": {
       "filePath": "loading.tsx"

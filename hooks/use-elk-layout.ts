@@ -117,8 +117,8 @@ export function useElkLayout<
 
           return {
             id: node.id,
-            width: nodeWidth,
-            height: nodeHeight,
+            // width: nodeWidth,
+            // height: nodeHeight,
           };
         });
 
@@ -154,9 +154,10 @@ export function useElkLayout<
           if (elkNode && elkNode.x !== undefined && elkNode.y !== undefined) {
             return {
               ...node,
-              position: { x: elkNode.x, y: elkNode.y },
-              width: elkNode.width,
-              height: elkNode.height,
+              // position: { x: elkNode.x, y: elkNode.y },
+              position: { x: 0, y: 0 },
+              // width: elkNode.width,
+              // height: elkNode.height,
             };
           } else {
             log.warn(`No layout position found for node ${node.id}`);

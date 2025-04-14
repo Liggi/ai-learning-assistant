@@ -1,4 +1,4 @@
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position, useUpdateNodeInternals } from "@xyflow/react";
 import { useRef, useEffect, useCallback } from "react";
 import debounce from "lodash/debounce";
 import { useArticle } from "@/hooks/api/articles";
@@ -78,6 +78,8 @@ export default function ConversationNode({
     [data.id, setNodeHeight]
   );
 
+  const updateNodeInternals = useUpdateNodeInternals();
+
   useEffect(() => {
     if (!containerRef.current || !setNodeHeight) return;
 
@@ -96,6 +98,12 @@ export default function ConversationNode({
       debouncedUpdateHeight.cancel();
     };
   }, [data.id, debouncedUpdateHeight, setNodeHeight]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      updateNodeInternals(data.id);
+    }
+  }, [isLoading, data.id, updateNodeInternals]);
 
   return (
     <div
