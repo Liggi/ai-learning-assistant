@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SuggestedQuestions } from "./suggested-questions";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";
@@ -57,35 +57,37 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
     setIsMapExpanded((prev) => !prev);
   };
 
-  const handleNodeClick = (nodeId: string) => {
-    logger.info("Node clicked, navigating to article view", { nodeId });
-    navigate({
-      to: "/learning/article/$articleId",
-      params: { articleId: nodeId },
-    });
-  };
+  const handleNodeClick = useCallback(
+    (nodeId: string) => {
+      logger.info("Node clicked, navigating to article view", { nodeId });
+      navigate({
+        to: "/learning/article/$articleId",
+        params: { articleId: nodeId },
+      });
+    },
+    [navigate]
+  );
 
-  const handleArticleCreated = (newArticleId: string) => {
-    logger.info("New article created, navigating to article view", {
-      newArticleId,
-      currentArticleId: activeArticle?.id,
-    });
-    // Update our local reference to avoid any inconsistency
-    prevArticleIdRef.current = newArticleId;
+  const handleArticleCreated = useCallback(
+    (newArticleId: string) => {
+      logger.info("New article created, navigating to article view", {
+        newArticleId,
+        currentArticleId: activeArticle?.id,
+      });
+      // Update our local reference to avoid any inconsistency
+      // prevArticleIdRef.current = newArticleId; // Modifying ref directly in callback might be okay, but be mindful
 
-    // Use replace to avoid back button issues
-    navigate({
-      to: "/learning/article/$articleId",
-      params: { articleId: newArticleId },
-      replace: true,
-    });
-  };
+      navigate({
+        to: "/learning/article/$articleId",
+        params: { articleId: newArticleId },
+        replace: true,
+      });
+    },
+    [navigate, activeArticle]
+  );
 
-  if (!learningMap || !activeArticle) {
-    logger.warn(
-      "Missing learning map or root article despite no loading/error state",
-      { learningMapId: learningMap?.id, rootArticleId: activeArticle?.id }
-    );
+  if (!learningMap) {
+    logger.warn("Missing learning map despite no loading/error state.");
     return <div>Error initializing the learning interface.</div>;
   }
 
@@ -96,11 +98,10 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
           className={`${isMapExpanded ? "w-2/3" : "w-1/3"} bg-slate-900 border-r border-slate-800 hidden md:block transition-all duration-300`}
         >
           <div className="h-full">
-            {/* @TODO: Passing activeArticle as rootArticle is temporary */}
             <PersonalLearningMapFlow
-              rootArticle={activeArticle}
               onNodeClick={handleNodeClick}
               learningMap={learningMap}
+              activeNodeId={activeArticle?.id}
             />
           </div>
         </div>
@@ -146,15 +147,19 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
           </div>
 
           <div className="border-t border-slate-800 p-4 flex flex-col gap-4">
-            <CustomQuestionInput
-              activeArticle={activeArticle}
-              onArticleCreated={handleArticleCreated}
-            />
-            <SuggestedQuestions
-              subject={subject}
-              article={activeArticle}
-              onArticleCreated={handleArticleCreated}
-            />
+            {activeArticle && (
+              <>
+                <CustomQuestionInput
+                  activeArticle={activeArticle}
+                  onArticleCreated={handleArticleCreated}
+                />
+                <SuggestedQuestions
+                  subject={subject}
+                  article={activeArticle}
+                  onArticleCreated={handleArticleCreated}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

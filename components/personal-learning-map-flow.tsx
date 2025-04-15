@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from "react";
 import {
   ReactFlow,
   Background,
@@ -15,9 +21,9 @@ import {
 import ConversationNode from "./react-flow/conversation-node";
 import QuestionNode from "./react-flow/question-node";
 import {
-  SerializedArticle,
   SerializedLearningMap,
   SerializedQuestion,
+  SerializedArticle,
 } from "@/types/serialized";
 import { Logger } from "@/lib/logger";
 import { calculateElkLayout } from "@/lib/elk-layouts";
@@ -26,10 +32,10 @@ import type { ElkNode } from "elkjs";
 const log = new Logger({ context: "PersonalLearningMapFlow" });
 
 interface PersonalLearningMapFlowProps {
-  rootArticle?: SerializedArticle | null;
   onNodeClick?: (nodeId: string) => void;
   learningMap?: SerializedLearningMap | null;
   layoutDirection?: "UP" | "DOWN" | "LEFT" | "RIGHT";
+  activeNodeId?: string | null;
 }
 
 const nodeTypes = {
@@ -54,11 +60,22 @@ type QuestionNodeData = {
   onClick?: () => void;
 };
 
+// Define the type for the ref's value explicitly
+interface PrevDeps {
+  initialNodes: Node<ConversationNodeData | QuestionNodeData>[];
+  initialEdges: Edge[];
+  nodesLength: number;
+  layoutDirection: "UP" | "DOWN" | "LEFT" | "RIGHT";
+  nodesInitialized: boolean;
+  isLayouting: boolean;
+  layoutAttempted: boolean;
+}
+
 const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
-  rootArticle,
   onNodeClick,
   learningMap,
   layoutDirection = "DOWN",
+  activeNodeId = null,
 }) => {
   const flow = useReactFlow();
   const nodesInitialized = useNodesInitialized();
@@ -67,8 +84,19 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
   const [layoutError, setLayoutError] = useState<string | null>(null);
   const [layoutAttempted, setLayoutAttempted] = useState(false);
 
+  // Initialize the ref with the correct type and default values
+  const prevDeps = useRef<PrevDeps>({
+    initialNodes: [], // Now correctly typed
+    initialEdges: [], // Now correctly typed
+    nodesLength: 0,
+    layoutDirection,
+    nodesInitialized: false, // Use appropriate default
+    isLayouting: false,
+    layoutAttempted: false,
+  });
+
   const { initialNodes, initialEdges } = useMemo(() => {
-    log.debug("Recalculating initial nodes and edges based on props.");
+    log.debug("Running useMemo to generate initial nodes/edges.");
     setLayoutAttempted(false);
     const nodes: Node<ConversationNodeData | QuestionNodeData>[] = [];
     const edges: Edge[] = [];
@@ -141,34 +169,24 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
           animated: true,
         });
       });
-    } else if (rootArticle) {
-      const hasValidMetadata = !!(
-        rootArticle.summary && rootArticle.takeaways?.length > 0
-      );
-      nodes.push({
-        id: rootArticle.id,
-        type: "conversationNode",
-        position: { x: 0, y: 0 },
-        data: {
-          id: rootArticle.id,
-          content: {
-            summary: rootArticle.summary,
-            takeaways: rootArticle.takeaways,
-          },
-          isUser: false,
-          isLoading: !hasValidMetadata,
-          onClick: () => onNodeClick?.(rootArticle.id),
-        },
-      });
-      nodeIds.add(rootArticle.id);
     }
 
     const finalEdges = edges.filter(
       (edge) => nodeIds.has(edge.source) && nodeIds.has(edge.target)
     );
 
-    return { initialNodes: nodes, initialEdges: finalEdges };
-  }, [learningMap, rootArticle, onNodeClick]);
+    if (nodes.length > 0) {
+      return { initialNodes: nodes, initialEdges: finalEdges };
+    } else {
+      log.debug("No valid learningMap data, returning empty nodes/edges.");
+      return { initialNodes: [], initialEdges: [] };
+    }
+  }, [
+    learningMap?.id,
+    learningMap?.articles?.length,
+    learningMap?.questions?.length,
+    onNodeClick,
+  ]);
 
   const [nodes, setNodes, onNodesChange] =
     useNodesState<Node<ConversationNodeData | QuestionNodeData>>(initialNodes);
@@ -176,17 +194,52 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
 
   useEffect(() => {
     log.debug(
-      "Initial nodes/edges changed, updating React Flow state.",
-      initialNodes,
-      initialEdges
+      "Initial nodes/edges changed (from useMemo), updating React Flow state.",
+      initialNodes.length,
+      initialEdges.length
     );
     setNodes(initialNodes as Node<ConversationNodeData | QuestionNodeData>[]);
     setEdges(initialEdges);
   }, [initialNodes, initialEdges, setNodes, setEdges]);
 
   useEffect(() => {
+    const changedDeps: string[] = [];
+    if (prevDeps.current.initialNodes !== initialNodes)
+      changedDeps.push("initialNodes");
+    if (prevDeps.current.initialEdges !== initialEdges)
+      changedDeps.push("initialEdges");
+    if (prevDeps.current.nodesLength !== nodes.length)
+      changedDeps.push(
+        `nodes.length (${prevDeps.current.nodesLength} -> ${nodes.length})`
+      );
+    if (prevDeps.current.layoutDirection !== layoutDirection)
+      changedDeps.push("layoutDirection");
+    if (prevDeps.current.nodesInitialized !== nodesInitialized)
+      changedDeps.push(
+        `nodesInitialized (${prevDeps.current.nodesInitialized} -> ${nodesInitialized})`
+      );
+    if (prevDeps.current.isLayouting !== isLayouting)
+      changedDeps.push(
+        `isLayouting (${prevDeps.current.isLayouting} -> ${isLayouting})`
+      );
+    if (prevDeps.current.layoutAttempted !== layoutAttempted)
+      changedDeps.push(
+        `layoutAttempted (${prevDeps.current.layoutAttempted} -> ${layoutAttempted})`
+      );
+
+    if (changedDeps.length > 0) {
+      log.debug(
+        `Layout effect triggered. Changed dependencies: ${changedDeps.join(", ")}`
+      );
+    } else {
+      log.debug(
+        "Layout effect triggered. No dependency changes detected (could be initial run or ref issue)."
+      );
+    }
+
     if (
       nodesInitialized &&
+      initialNodes.length > 0 &&
       nodes.length > 0 &&
       !isLayouting &&
       !layoutAttempted
@@ -264,28 +317,58 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
           log.debug("Layout calculation process finished.");
           setIsLayouting(false);
         });
-    } else if (!layoutAttempted) {
+    } else if (!layoutAttempted && initialNodes.length > 0) {
       log.debug("Layout conditions not yet met.", {
         nodesInitialized,
-        nodeCount: nodes.length,
+        initialNodeCount: initialNodes.length,
+        currentNodeCount: nodes.length,
         isLayouting,
         layoutAttempted,
       });
     }
+
+    // This assignment should now be type-correct
+    prevDeps.current = {
+      initialNodes,
+      initialEdges,
+      nodesLength: nodes.length,
+      layoutDirection,
+      nodesInitialized,
+      isLayouting,
+      layoutAttempted,
+    };
   }, [
     nodesInitialized,
-    nodes,
-    flow,
+    initialNodes,
     initialEdges,
+    nodes.length,
+    flow,
     isLayouting,
     layoutAttempted,
     layoutDirection,
     setNodes,
   ]);
 
+  useEffect(() => {
+    log.debug(
+      `Active node ID changed to: ${activeNodeId}. Updating selection.`
+    );
+    setNodes((currentNodes) =>
+      currentNodes.map((node) => ({
+        ...node,
+        selected: node.id === activeNodeId,
+      }))
+    );
+  }, [activeNodeId, setNodes, flow]);
+
   const handleNodeClick = useCallback(
-    (_event: React.MouseEvent, node: Node) => {},
-    []
+    (_event: React.MouseEvent, node: Node) => {
+      if (onNodeClick) {
+        log.debug(`Node ${node.id} clicked, calling onNodeClick prop.`);
+        onNodeClick(node.id);
+      }
+    },
+    [onNodeClick]
   );
 
   return (
@@ -313,7 +396,8 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
         maxZoom={2}
         nodesDraggable={!isLayouting}
         nodesConnectable={!isLayouting}
-        elementsSelectable={!isLayouting}
+        elementsSelectable={true}
+        selectNodesOnDrag={false}
       >
         <Background color="#f0f0f0" gap={24} size={1} />
         <Controls />
