@@ -11,6 +11,7 @@ import {
   useNodesInitialized,
   NodeChange,
   applyNodeChanges,
+  useStore,
 } from "@xyflow/react";
 import ConversationNode from "./react-flow/conversation-node";
 import QuestionNode from "./react-flow/question-node";
@@ -26,7 +27,7 @@ import type { ElkNode } from "elkjs";
 const log = new Logger({ context: "PersonalLearningMapFlow" });
 
 interface PersonalLearningMapFlowProps {
-  rootArticle?: SerializedArticle | null;
+  activeArticleId?: string | null;
   onNodeClick?: (nodeId: string) => void;
   learningMap?: SerializedLearningMap | null;
   layoutDirection?: "UP" | "DOWN" | "LEFT" | "RIGHT";
@@ -55,21 +56,35 @@ type QuestionNodeData = {
 };
 
 const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
-  rootArticle,
+  activeArticleId,
   onNodeClick,
   learningMap,
   layoutDirection = "DOWN",
 }) => {
   const flow = useReactFlow();
   const nodesInitialized = useNodesInitialized();
+  const allNodesMeasured = useStore((s) =>
+    s.nodes.every((n) => n.measured?.width && n.measured?.height)
+  );
 
   const [isLayouting, setIsLayouting] = useState(false);
   const [layoutError, setLayoutError] = useState<string | null>(null);
-  const [layoutAttempted, setLayoutAttempted] = useState(false);
+
+  const nodeSizeKey = useStore(
+    useCallback(
+      (s) =>
+        s.nodes
+          .map(
+            (n) =>
+              `${n.id}:${n.measured?.width ?? 0}x${n.measured?.height ?? 0}`
+          )
+          .join("|"),
+      []
+    )
+  );
 
   const { initialNodes, initialEdges } = useMemo(() => {
     log.debug("Recalculating initial nodes and edges based on props.");
-    setLayoutAttempted(false);
     const nodes: Node<ConversationNodeData | QuestionNodeData>[] = [];
     const edges: Edge[] = [];
     const nodeIds = new Set<string>();
@@ -141,26 +156,32 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
           animated: true,
         });
       });
-    } else if (rootArticle) {
-      const hasValidMetadata = !!(
-        rootArticle.summary && rootArticle.takeaways?.length > 0
+    } else if (activeArticleId && learningMap?.articles) {
+      // Fallback: if only activeArticleId and articles are present, add just that node
+      const article = learningMap.articles.find(
+        (a) => a.id === activeArticleId
       );
-      nodes.push({
-        id: rootArticle.id,
-        type: "conversationNode",
-        position: { x: 0, y: 0 },
-        data: {
-          id: rootArticle.id,
-          content: {
-            summary: rootArticle.summary,
-            takeaways: rootArticle.takeaways,
+      if (article) {
+        const hasValidMetadata = !!(
+          article.summary && article.takeaways?.length > 0
+        );
+        nodes.push({
+          id: article.id,
+          type: "conversationNode",
+          position: { x: 0, y: 0 },
+          data: {
+            id: article.id,
+            content: {
+              summary: article.summary,
+              takeaways: article.takeaways,
+            },
+            isUser: false,
+            isLoading: !hasValidMetadata,
+            onClick: () => onNodeClick?.(article.id),
           },
-          isUser: false,
-          isLoading: !hasValidMetadata,
-          onClick: () => onNodeClick?.(rootArticle.id),
-        },
-      });
-      nodeIds.add(rootArticle.id);
+        });
+        nodeIds.add(article.id);
+      }
     }
 
     const finalEdges = edges.filter(
@@ -168,11 +189,20 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
     );
 
     return { initialNodes: nodes, initialEdges: finalEdges };
-  }, [learningMap, rootArticle, onNodeClick]);
+  }, [learningMap, onNodeClick]);
 
   const [nodes, setNodes, onNodesChange] =
     useNodesState<Node<ConversationNodeData | QuestionNodeData>>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  const nodesWithActive = useMemo(() => {
+    if (!activeArticleId) return nodes;
+    return nodes.map((node) =>
+      node.id === activeArticleId
+        ? { ...node, data: { ...node.data, isActive: true } }
+        : { ...node, data: { ...node.data, isActive: false } }
+    );
+  }, [nodes, activeArticleId]);
 
   useEffect(() => {
     log.debug(
@@ -187,35 +217,14 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
   useEffect(() => {
     if (
       nodesInitialized &&
+      allNodesMeasured &&
       nodes.length > 0 &&
-      !isLayouting &&
-      !layoutAttempted
+      !isLayouting
     ) {
-      log.info("Conditions met. Attempting layout calculation...");
       setIsLayouting(true);
-      setLayoutAttempted(true);
       setLayoutError(null);
 
       const measuredNodes = flow.getNodes();
-
-      if (measuredNodes.length === 0) {
-        log.warn("Attempted layout with zero measured nodes. Aborting.");
-        setIsLayouting(false);
-        return;
-      }
-      const nodesWithDimensions = measuredNodes.filter(
-        (n) => n.measured?.width && n.measured?.height
-      );
-      if (nodesWithDimensions.length !== measuredNodes.length) {
-        log.warn(
-          `Measured dimensions missing for ${measuredNodes.length - nodesWithDimensions.length} nodes. Proceeding with available data.`
-        );
-      }
-
-      log.debug(
-        `Calling calculateElkLayout with ${measuredNodes.length} nodes and ${initialEdges.length} edges.`
-      );
-
       calculateElkLayout(measuredNodes, initialEdges, {
         direction: layoutDirection,
       })
@@ -248,11 +257,6 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
 
           log.debug(`Applying ${newNodes.length} new node positions.`);
           setNodes(newNodes);
-
-          setTimeout(() => {
-            log.debug("Calling fitView after applying layout.");
-            flow.fitView({ padding: 0.2, duration: 300 });
-          }, 0);
         })
         .catch((e) => {
           const errorMessage =
@@ -260,26 +264,16 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
           log.error("Layout calculation failed:", e);
           setLayoutError(`Layout failed: ${errorMessage}`);
         })
-        .finally(() => {
-          log.debug("Layout calculation process finished.");
-          setIsLayouting(false);
-        });
-    } else if (!layoutAttempted) {
-      log.debug("Layout conditions not yet met.", {
-        nodesInitialized,
-        nodeCount: nodes.length,
-        isLayouting,
-        layoutAttempted,
-      });
+        .finally(() => setIsLayouting(false));
     }
   }, [
     nodesInitialized,
-    nodes,
+    allNodesMeasured,
+    nodeSizeKey,
+    layoutDirection,
     flow,
     initialEdges,
-    isLayouting,
-    layoutAttempted,
-    layoutDirection,
+    nodes.length,
     setNodes,
   ]);
 
@@ -302,7 +296,7 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
       )}
 
       <ReactFlow
-        nodes={nodes}
+        nodes={nodesWithActive}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}

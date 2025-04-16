@@ -17,6 +17,7 @@ interface ConversationNodeData {
   isRoot?: boolean;
   isLoading?: boolean;
   onClick?: (data: ConversationNodeData) => void;
+  isActive?: boolean;
 }
 
 interface ConversationNodeProps {
@@ -51,6 +52,7 @@ export default function ConversationNode({
     (!!urlArticleId && urlArticleId === data.id) ||
     (!urlArticleId && data.isRoot === true);
 
+  const isActive = !!data.isActive;
   const isQuestionType = data.isUser;
   const style = isQuestionType ? nodeStyles.question : nodeStyles.answer;
 
@@ -106,7 +108,7 @@ export default function ConversationNode({
         p-4 transition-all duration-200
         ${isQuestionType ? "hover:bg-blue-900/20" : "hover:bg-green-900/20"}
         ${
-          isUrlSelected
+          isActive
             ? "scale-105 shadow-lg bg-red-500/80 ring-2 ring-red-400"
             : "hover:scale-[1.02]"
         }

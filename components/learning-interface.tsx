@@ -12,6 +12,7 @@ import StreamingArticleDisplay from "./streaming-article-display/streaming-artic
 import { useNavigate } from "@tanstack/react-router";
 import ArticleContent from "./article-content";
 import { CustomQuestionInput } from "./custom-question-input";
+import { useStableLearningMap } from "@/hooks/use-stable-learning-map";
 
 const logger = new Logger({ context: "LearningInterface", enabled: false });
 
@@ -50,6 +51,8 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
   const [isMapExpanded, setIsMapExpanded] = React.useState(false);
   const navigate = useNavigate();
 
+  const stableLearningMap = useStableLearningMap(learningMap);
+
   // @TODO: We've removed `useArticleContent` - but it was handling takeaway
   // extraction and summary generation. We need to move this functionality elsewhere.
 
@@ -57,29 +60,34 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
     setIsMapExpanded((prev) => !prev);
   };
 
-  const handleNodeClick = (nodeId: string) => {
-    logger.info("Node clicked, navigating to article view", { nodeId });
-    navigate({
-      to: "/learning/article/$articleId",
-      params: { articleId: nodeId },
-    });
-  };
+  const handleNodeClick = React.useCallback(
+    (nodeId: string) => {
+      logger.info("Node clicked, navigating to article view", { nodeId });
+      navigate({
+        to: "/learning/article/$articleId",
+        params: { articleId: nodeId },
+      });
+    },
+    [navigate]
+  );
 
-  const handleArticleCreated = (newArticleId: string) => {
-    logger.info("New article created, navigating to article view", {
-      newArticleId,
-      currentArticleId: activeArticle?.id,
-    });
-    // Update our local reference to avoid any inconsistency
-    prevArticleIdRef.current = newArticleId;
-
-    // Use replace to avoid back button issues
-    navigate({
-      to: "/learning/article/$articleId",
-      params: { articleId: newArticleId },
-      replace: true,
-    });
-  };
+  const handleArticleCreated = React.useCallback(
+    (newArticleId: string) => {
+      logger.info("New article created, navigating to article view", {
+        newArticleId,
+        currentArticleId: activeArticle?.id,
+      });
+      // Update our local reference to avoid any inconsistency
+      prevArticleIdRef.current = newArticleId;
+      // Use replace to avoid back button issues
+      navigate({
+        to: "/learning/article/$articleId",
+        params: { articleId: newArticleId },
+        replace: true,
+      });
+    },
+    [navigate, activeArticle?.id]
+  );
 
   if (!learningMap || !activeArticle) {
     logger.warn(
@@ -98,9 +106,9 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
           <div className="h-full">
             {/* @TODO: Passing activeArticle as rootArticle is temporary */}
             <PersonalLearningMapFlow
-              rootArticle={activeArticle}
+              activeArticleId={activeArticle?.id}
               onNodeClick={handleNodeClick}
-              learningMap={learningMap}
+              learningMap={stableLearningMap}
             />
           </div>
         </div>
