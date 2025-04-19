@@ -65,8 +65,7 @@ export function useReactFlowLayout(
       }
       visited.add(articleNode.id);
 
-      // Create Article Node
-      const articleFlowNodeId = `${articleNode.id}`;
+      const articleFlowNodeId = `article-${articleNode.id}`;
       nodes.push({
         id: articleFlowNodeId,
         type: "conversationNode",
@@ -84,7 +83,7 @@ export function useReactFlowLayout(
 
       // Process outgoing questions and child articles
       articleNode.outgoingQuestions.forEach((questionNode) => {
-        const questionFlowNodeId = `${questionNode.id}`;
+        const questionFlowNodeId = `question-${questionNode.id}`;
         nodes.push({
           id: questionFlowNodeId,
           type: "questionNode",
@@ -106,7 +105,8 @@ export function useReactFlowLayout(
         });
 
         if (questionNode.childArticle) {
-          const childArticleFlowNodeId = `${questionNode.childArticle.id}`;
+          // Child Article Node (prefix id)
+          const childArticleFlowNodeId = `article-${questionNode.childArticle.id}`;
 
           // Question -> Child Article edge
           edges.push({

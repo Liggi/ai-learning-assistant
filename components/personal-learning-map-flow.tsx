@@ -124,4 +124,4 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
   );
 };
 
-export default PersonalLearningMapFlow;
+export default React.memo(PersonalLearningMapFlow);
