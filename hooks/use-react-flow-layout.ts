@@ -33,9 +33,11 @@ interface QuestionNodeData {
   [key: string]: unknown;
 }
 
-type LearningMapFlowNode = ReactFlowNode<
+export type LearningMapFlowNode = ReactFlowNode<
   ArticleNodeData | QuestionNodeData | ConversationNodeData
 >;
+
+export type LearningMapFlowEdge = Edge;
 
 interface ReactFlowLayout {
   nodes: LearningMapFlowNode[];
@@ -142,12 +144,12 @@ export function useLearningMapFlowLayout(
  * Returns the layouted nodes/edges plus loading state for UI feedback.
  */
 export function useLearningMapElkLayout(
-  learningMap: SerializedLearningMap | null | undefined,
-  options?: { direction?: "UP" | "DOWN" | "LEFT" | "RIGHT" }
+  learningMap: SerializedLearningMap | null | undefined
 ): {
   nodes: LearningMapFlowNode[];
   edges: Edge[];
   isLayouting: boolean;
+  hasLayouted: boolean;
   error: string | null;
 } {
   // First, get the basic node structure without proper layout
@@ -158,5 +160,5 @@ export function useLearningMapElkLayout(
   return useElkLayout<
     ArticleNodeData | QuestionNodeData | ConversationNodeData,
     Record<string, unknown>
-  >(initialNodes, initialEdges, options);
+  >(initialNodes, initialEdges);
 }
