@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import type { Node as ReactFlowNode, Edge } from "@xyflow/react";
+import {
+  type Node as ReactFlowNode,
+  type Edge,
+  useReactFlow,
+  useNodesInitialized,
+} from "@xyflow/react";
 import { calculateElkLayout } from "@/services/layouts/elk";
 import { Logger } from "@/lib/logger";
 
@@ -12,6 +17,7 @@ interface ElkLayoutResult<
   nodes: ReactFlowNode<NodeData>[];
   edges: Edge<EdgeData>[];
   isLayouting: boolean;
+  hasLayouted: boolean;
   error: string | null;
 }
 
@@ -23,8 +29,7 @@ export function useElkLayout<
   EdgeData extends Record<string, unknown>,
 >(
   initialNodes: ReactFlowNode<NodeData>[],
-  initialEdges: Edge<EdgeData>[],
-  options?: { direction?: "UP" | "DOWN" | "LEFT" | "RIGHT" }
+  initialEdges: Edge<EdgeData>[]
 ): ElkLayoutResult<NodeData, EdgeData> {
   const [layoutedNodes, setLayoutedNodes] = useState<ReactFlowNode<NodeData>[]>(
     []
@@ -32,7 +37,7 @@ export function useElkLayout<
   const [layoutedEdges, setLayoutedEdges] = useState<Edge<EdgeData>[]>([]);
   const [isLayouting, setIsLayouting] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [hasLayouted, setHasLayouted] = useState(false);
   useEffect(() => {
     if (!initialNodes || initialNodes.length === 0) {
       log.debug("No initial nodes provided, skipping layout.");
@@ -54,15 +59,9 @@ export function useElkLayout<
 
       try {
         // Delegate to the pure ELK service
-        const result = await calculateElkLayout(
-          initialNodes,
-          initialEdges,
-          options
-        );
+        const result = await calculateElkLayout(initialNodes, initialEdges);
         if (!isCancelled) {
           if (result === null) {
-            // Abort layout if measurements missing
-            setError("Layout aborted: missing measurements");
             setLayoutedNodes([]);
             setLayoutedEdges([]);
           } else {
@@ -91,7 +90,23 @@ export function useElkLayout<
     return () => {
       isCancelled = true;
     };
-  }, [initialNodes, initialEdges, options]);
+  }, [initialNodes, initialEdges]);
 
-  return { nodes: layoutedNodes, edges: layoutedEdges, isLayouting, error };
+  useEffect(() => {
+    if (layoutedNodes.length > 0) {
+      setHasLayouted(true);
+    }
+  }, [layoutedNodes]);
+
+  // If we haven't attempted layouting yet, just return the initial nodes/edges
+  const nodesToReturn = hasLayouted ? layoutedNodes : initialNodes;
+  const edgesToReturn = hasLayouted ? layoutedEdges : initialEdges;
+
+  return {
+    nodes: nodesToReturn,
+    edges: edgesToReturn,
+    isLayouting,
+    hasLayouted,
+    error,
+  };
 }
