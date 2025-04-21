@@ -71,6 +71,8 @@ export default function ConversationNode({ id, data }: ConversationNodeProps) {
   const isLoading =
     isLoadingArticle || isLoadingSummary || !summary || isLoadingTakeaways;
 
+  // Once the node's content is loaded, we need to update the node's size in React Flow and mark it as "ready"
+  // This enables us to wait until the size is correctly measured before calculating the layout of the flow graph
   useLayoutEffect(() => {
     if (!summary || !takeaways) return;
 
@@ -99,12 +101,12 @@ export default function ConversationNode({ id, data }: ConversationNodeProps) {
       onClick={() => data.onClick?.(data)}
       style={style}
       className={`
-        p-4 transition-all duration-200
+        p-4 transition-all duration-200 cursor-pointer
         ${isQuestionType ? "hover:bg-blue-900/20" : "hover:bg-green-900/20"}
         ${
           isUrlSelected
-            ? "scale-105 shadow-lg bg-red-500/80 ring-2 ring-red-400"
-            : "hover:scale-[1.02]"
+            ? "scale-[1.10] ring-3 ring-green-500/30 shadow-[0_0_10px_4px_rgba(16,185,129,0.45)]"
+            : "hover:scale-[1.05]"
         }
         rounded-xl backdrop-blur-sm min-w-[350px] max-w-[350px]
       `}
