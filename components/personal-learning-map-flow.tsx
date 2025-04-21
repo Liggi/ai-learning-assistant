@@ -1,20 +1,33 @@
-import React, { useCallback } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
-  ReactFlowProvider,
   ReactFlow,
   Background,
-  Controls,
+  useNodesInitialized,
+  useNodesState,
+  useEdgesState,
+  Edge,
+  useReactFlow,
 } from "@xyflow/react";
 import ConversationNode from "./react-flow/conversation-node";
 import QuestionNode from "./react-flow/question-node";
-import { SerializedArticle, SerializedLearningMap } from "@/types/serialized";
-import { useLearningMapElkLayout } from "@/hooks/use-react-flow-layout";
+import { SerializedLearningMap } from "@/types/serialized";
+import {
+  LearningMapFlowNode,
+  useLearningMapElkLayout,
+  useLearningMapFlowLayout,
+} from "@/hooks/use-react-flow-layout";
+import { calculateElkLayout } from "@/services/layouts/elk";
+import { Logger } from "@/lib/logger";
 
 interface PersonalLearningMapFlowProps {
-  rootArticle?: SerializedArticle | null;
   onNodeClick?: (nodeId: string) => void;
   learningMap?: SerializedLearningMap | null;
-  layoutDirection?: "UP" | "DOWN" | "LEFT" | "RIGHT";
 }
 
 const nodeTypes = {
@@ -22,61 +35,89 @@ const nodeTypes = {
   questionNode: QuestionNode,
 };
 
+const emptyFlowState: ReturnType<typeof useLearningMapElkLayout> = {
+  nodes: [],
+  edges: [],
+  isLayouting: false,
+  hasLayouted: false,
+  error: null,
+};
+
+const logger = new Logger({
+  context: "PersonalLearningMapFlow",
+  enabled: true,
+});
+
 const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
-  rootArticle,
   onNodeClick,
   learningMap,
-  layoutDirection = "DOWN",
 }) => {
-  // Use ELK layout if we have a learning map
-  const {
-    nodes: elkNodes,
-    edges: elkEdges,
-    isLayouting,
-    error,
-  } = learningMap
-    ? useLearningMapElkLayout(learningMap, { direction: layoutDirection })
-    : { nodes: [], edges: [], isLayouting: false, error: null };
+  const flow = useReactFlow();
 
-  // For single article visualization (fallback to original behavior)
-  const summary = rootArticle?.summary || "";
-  const takeaways = rootArticle?.takeaways || [];
-  const hasValidMetadata = !!(summary && takeaways.length > 0);
+  const { nodes, edges } = learningMap
+    ? useLearningMapFlowLayout(learningMap)
+    : emptyFlowState;
 
-  // Only create a single node for rootArticle if we don't have a learning map
-  const singleNodes =
-    !learningMap && rootArticle
-      ? [
-          {
-            id: rootArticle.id,
-            type: "conversationNode",
-            position: { x: 150, y: 100 },
-            data: {
-              id: rootArticle.id,
-              content: {
-                summary: rootArticle.summary,
-                takeaways: rootArticle.takeaways,
-              },
-              isUser: false,
-              isLoading: !hasValidMetadata,
-              onClick: () => onNodeClick?.(rootArticle.id),
-            },
-          },
-        ]
-      : [];
+  const [flowNodes, setFlowNodes, onFlowNodesChange] =
+    useNodesState<LearningMapFlowNode>(nodes);
+  const [flowEdges, setFlowEdges, onFlowEdgesChange] =
+    useEdgesState<Edge>(edges);
+  const nodesInitialized = useNodesInitialized();
+  const [isFlowVisible, setIsFlowVisible] = useState(false);
 
-  // Use either the ELK-layouted nodes or fallback to single node
-  const nodes = learningMap ? elkNodes : singleNodes;
-  const edges = learningMap ? elkEdges : [];
+  const isLayouting = useRef(false);
+  const hasLayouted = useRef(false);
+  const allNodesReady = useMemo(
+    () =>
+      flowNodes.length > 0 &&
+      flowNodes
+        .filter((n) => n.type === "conversationNode")
+        .every((node) => node.data.ready === true),
+    [flowNodes]
+  );
 
-  // Default edge options
+  useEffect(() => {
+    const runLayout = async () => {
+      if (!nodesInitialized || hasLayouted.current || !allNodesReady) {
+        return;
+      }
+
+      if (isLayouting.current) {
+        return;
+      }
+
+      logger.info("Calculating ELK layout for nodes", { flowNodes });
+
+      isLayouting.current = true;
+      const result = await calculateElkLayout(flowNodes, flowEdges);
+      isLayouting.current = false;
+
+      if (!result) {
+        return;
+      }
+
+      setFlowNodes(result.nodes);
+      setFlowEdges(result.edges);
+
+      hasLayouted.current = true;
+      isLayouting.current = false;
+
+      setTimeout(() => {
+        setIsFlowVisible(true);
+        flow.fitView();
+      }, 0);
+    };
+
+    runLayout();
+  }, [flowNodes, flowEdges, nodesInitialized, allNodesReady]);
+
   const defaultEdgeOptions = {
     type: "smoothstep" as const,
     animated: true,
   };
 
   const handleNodeClick = useCallback(
-    (event: any, node: any) => {
+    (_: any, node: any) => {
       if (onNodeClick) {
         onNodeClick(node.id);
       }
@@ -84,44 +125,38 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
     [onNodeClick]
   );
 
-  // Show loading state while layouting
-  if (isLayouting) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-lg">Calculating optimal layout...</p>
-      </div>
-    );
-  }
-
-  // Show error state if ELK layout failed
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-full text-red-500">
-        <p>Error loading learning map: {error}</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full h-full">
-      <ReactFlowProvider>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          onNodeClick={handleNodeClick}
-          fitView
-          fitViewOptions={{ padding: 0.2 }}
-          minZoom={0.1}
-          maxZoom={2}
-          defaultEdgeOptions={defaultEdgeOptions}
-        >
-          <Background color="#f0f0f0" gap={24} size={1} />
-          <Controls />
-        </ReactFlow>
-      </ReactFlowProvider>
+    <div
+      className={`w-full h-full transition-opacity duration-300 ease-in-out ${
+        isFlowVisible ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      <ReactFlow
+        nodes={flowNodes}
+        edges={flowEdges}
+        onNodesChange={(changes) => {
+          const isStructuralChange = changes.some(
+            (change) => change.type === "add" || change.type === "remove"
+          );
+          if (isStructuralChange) {
+            hasLayouted.current = false;
+            setIsFlowVisible(false);
+          }
+          onFlowNodesChange(changes);
+        }}
+        onEdgesChange={onFlowEdgesChange}
+        nodeTypes={nodeTypes}
+        onNodeClick={handleNodeClick}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.1}
+        maxZoom={2}
+        defaultEdgeOptions={defaultEdgeOptions}
+      >
+        <Background color="#f0f0f0" gap={24} size={1} />
+      </ReactFlow>
     </div>
   );
 };
 
-export default PersonalLearningMapFlow;
+export default React.memo(PersonalLearningMapFlow);

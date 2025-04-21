@@ -1,5 +1,12 @@
-import { Handle, Position } from "@xyflow/react";
-import { useRef, useEffect, useCallback } from "react";
+import {
+  Handle,
+  Position,
+  useReactFlow,
+  useUpdateNodeInternals,
+  type NodeProps,
+  type Node as ReactFlowNode,
+} from "@xyflow/react";
+import { useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import debounce from "lodash/debounce";
 import { useArticle } from "@/hooks/api/articles";
 import { useArticleSummary } from "@/hooks/use-article-summary";
@@ -7,7 +14,8 @@ import MarkdownDisplay from "../markdown-display";
 import { useArticleTakeaways } from "@/hooks/use-article-takeaways";
 import { useParams } from "@tanstack/react-router";
 
-interface ConversationNodeData {
+// Data shape for each conversation node, must extend Record<string, unknown> for NodeProps
+interface ConversationNodeData extends Record<string, unknown> {
   id: string;
   content?: {
     summary: string;
@@ -19,12 +27,8 @@ interface ConversationNodeData {
   onClick?: (data: ConversationNodeData) => void;
 }
 
-interface ConversationNodeProps {
-  data: ConversationNodeData;
-  isConnectable?: boolean;
-  selected?: boolean;
-  setNodeHeight?: (nodeId: string, height: number) => void;
-}
+// Use React Flow's NodeProps with the generic Node type and our ConversationNodeData
+type ConversationNodeProps = NodeProps<ReactFlowNode<ConversationNodeData>>;
 
 const nodeStyles = {
   question: {
@@ -37,10 +41,10 @@ const nodeStyles = {
   },
 };
 
-export default function ConversationNode({
-  data,
-  setNodeHeight,
-}: ConversationNodeProps) {
+export default function ConversationNode({ id, data }: ConversationNodeProps) {
+  const updateNodeInternals = useUpdateNodeInternals();
+  const flow = useReactFlow();
+
   const params = useParams({ strict: false }) as {
     articleId?: string;
     subjectId?: string;
@@ -55,7 +59,6 @@ export default function ConversationNode({
   const style = isQuestionType ? nodeStyles.question : nodeStyles.answer;
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const lastHeightRef = useRef<number>(0);
 
   const { data: article, isLoading: isLoadingArticle } = useArticle(data.id);
 
@@ -68,34 +71,27 @@ export default function ConversationNode({
   const isLoading =
     isLoadingArticle || isLoadingSummary || !summary || isLoadingTakeaways;
 
-  const debouncedUpdateHeight = useCallback(
-    debounce((height: number) => {
-      if (height !== lastHeightRef.current && setNodeHeight) {
-        lastHeightRef.current = height;
-        setNodeHeight(data.id, height);
-      }
-    }, 100),
-    [data.id, setNodeHeight]
-  );
+  useLayoutEffect(() => {
+    if (!summary || !takeaways) return;
 
-  useEffect(() => {
-    if (!containerRef.current || !setNodeHeight) return;
-
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const height = entry.borderBoxSize[0]?.blockSize;
-        if (height && height > 0) {
-          debouncedUpdateHeight(height);
-        }
-      }
-    });
-
-    observer.observe(containerRef.current);
-    return () => {
-      observer.disconnect();
-      debouncedUpdateHeight.cancel();
-    };
-  }, [data.id, debouncedUpdateHeight, setNodeHeight]);
+    if (containerRef.current) {
+      const width = containerRef.current.offsetWidth;
+      const height = containerRef.current.offsetHeight;
+      flow.setNodes((nodes) =>
+        nodes.map((n) =>
+          n.id === id
+            ? {
+                ...n,
+                data: { ...n.data, ready: true },
+                measured: { width, height },
+                width,
+                height,
+              }
+            : n
+        )
+      );
+    }
+  }, [id, summary, takeaways, updateNodeInternals, flow]);
 
   return (
     <div

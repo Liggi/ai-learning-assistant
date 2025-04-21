@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ReactFlowProvider } from "@xyflow/react";
 
 const queryClient = new QueryClient();
 
@@ -34,11 +35,13 @@ function RootComponent() {
     <RootDocument>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider delayDuration={0}>
-          <div className="relative w-full h-full">
-            <Toaster />
-            <Outlet />
-          </div>
-          <Scripts />
+          <ReactFlowProvider>
+            <div className="relative w-full h-full">
+              <Toaster />
+              <Outlet />
+            </div>
+            <Scripts />
+          </ReactFlowProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </RootDocument>

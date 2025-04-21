@@ -33,9 +33,11 @@ interface QuestionNodeData {
   [key: string]: unknown;
 }
 
-type LearningMapFlowNode = ReactFlowNode<
+export type LearningMapFlowNode = ReactFlowNode<
   ArticleNodeData | QuestionNodeData | ConversationNodeData
 >;
+
+export type LearningMapFlowEdge = Edge;
 
 interface ReactFlowLayout {
   nodes: LearningMapFlowNode[];
@@ -65,8 +67,7 @@ export function useReactFlowLayout(
       }
       visited.add(articleNode.id);
 
-      // Create Article Node
-      const articleFlowNodeId = `${articleNode.id}`;
+      const articleFlowNodeId = `article-${articleNode.id}`;
       nodes.push({
         id: articleFlowNodeId,
         type: "conversationNode",
@@ -84,7 +85,7 @@ export function useReactFlowLayout(
 
       // Process outgoing questions and child articles
       articleNode.outgoingQuestions.forEach((questionNode) => {
-        const questionFlowNodeId = `${questionNode.id}`;
+        const questionFlowNodeId = `question-${questionNode.id}`;
         nodes.push({
           id: questionFlowNodeId,
           type: "questionNode",
@@ -106,7 +107,8 @@ export function useReactFlowLayout(
         });
 
         if (questionNode.childArticle) {
-          const childArticleFlowNodeId = `${questionNode.childArticle.id}`;
+          // Child Article Node (prefix id)
+          const childArticleFlowNodeId = `article-${questionNode.childArticle.id}`;
 
           // Question -> Child Article edge
           edges.push({
@@ -142,12 +144,12 @@ export function useLearningMapFlowLayout(
  * Returns the layouted nodes/edges plus loading state for UI feedback.
  */
 export function useLearningMapElkLayout(
-  learningMap: SerializedLearningMap | null | undefined,
-  options?: { direction?: "UP" | "DOWN" | "LEFT" | "RIGHT" }
+  learningMap: SerializedLearningMap | null | undefined
 ): {
   nodes: LearningMapFlowNode[];
   edges: Edge[];
   isLayouting: boolean;
+  hasLayouted: boolean;
   error: string | null;
 } {
   // First, get the basic node structure without proper layout
@@ -158,5 +160,5 @@ export function useLearningMapElkLayout(
   return useElkLayout<
     ArticleNodeData | QuestionNodeData | ConversationNodeData,
     Record<string, unknown>
-  >(initialNodes, initialEdges, options);
+  >(initialNodes, initialEdges);
 }
