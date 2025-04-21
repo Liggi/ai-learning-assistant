@@ -67,9 +67,8 @@ export function useReactFlowLayout(
       }
       visited.add(articleNode.id);
 
-      const articleFlowNodeId = `article-${articleNode.id}`;
       nodes.push({
-        id: articleFlowNodeId,
+        id: articleNode.id,
         type: "conversationNode",
         position: initialPosition,
         data: {
@@ -83,11 +82,9 @@ export function useReactFlowLayout(
         },
       });
 
-      // Process outgoing questions and child articles
       articleNode.outgoingQuestions.forEach((questionNode) => {
-        const questionFlowNodeId = `question-${questionNode.id}`;
         nodes.push({
-          id: questionFlowNodeId,
+          id: questionNode.id,
           type: "questionNode",
           position: initialPosition,
           data: {
@@ -100,20 +97,20 @@ export function useReactFlowLayout(
 
         // Article -> Question edge
         edges.push({
-          id: `e-${articleFlowNodeId}-${questionFlowNodeId}`,
-          source: articleFlowNodeId,
-          target: questionFlowNodeId,
+          id: `${articleNode.id}-${questionNode.id}`,
+          source: articleNode.id,
+          target: questionNode.id,
           animated: true,
         });
 
         if (questionNode.childArticle) {
           // Child Article Node (prefix id)
-          const childArticleFlowNodeId = `article-${questionNode.childArticle.id}`;
+          const childArticleFlowNodeId = questionNode.childArticle.id;
 
           // Question -> Child Article edge
           edges.push({
-            id: `e-${questionFlowNodeId}-${childArticleFlowNodeId}`,
-            source: questionFlowNodeId,
+            id: `${questionNode.id}-${childArticleFlowNodeId}`,
+            source: questionNode.id,
             target: childArticleFlowNodeId,
             animated: true,
           });
