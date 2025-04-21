@@ -48,14 +48,11 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
     }
   }, [activeArticle?.id]);
 
-  const [isMapExpanded, setIsMapExpanded] = React.useState(false);
+  const [isMapExpanded, setIsMapExpanded] = React.useState(true);
   const navigate = useNavigate();
 
-  // Reference-stable version of the map; only changes when id/updatedAt change
+  // Only changes when the ID / updatedAt changes
   const stableLearningMap = useStableLearningMap(learningMap);
-
-  // @TODO: We've removed `useArticleContent` - but it was handling takeaway
-  // extraction and summary generation. We need to move this functionality elsewhere.
 
   const toggleLayout = () => {
     setIsMapExpanded((prev) => !prev);
@@ -106,9 +103,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
           className={`${isMapExpanded ? "w-2/3" : "w-1/3"} bg-slate-900 border-r border-slate-800 hidden md:block transition-all duration-300`}
         >
           <div className="h-full">
-            {/* @TODO: Passing activeArticle as rootArticle is temporary */}
             <PersonalLearningMapFlow
-              rootArticle={activeArticle}
               onNodeClick={handleNodeClick}
               learningMap={stableLearningMap}
             />
