@@ -33,13 +33,12 @@ export async function calculateElkLayout<
   EdgeData extends Record<string, unknown>,
 >(
   initialNodes: MeasuredNode<NodeData>[],
-  initialEdges: Edge<EdgeData>[],
-  options?: { direction?: "UP" | "DOWN" | "LEFT" | "RIGHT" }
+  initialEdges: Edge<EdgeData>[]
 ): Promise<{
   nodes: FlowNode<NodeData>[];
   edges: Edge<EdgeData>[];
 } | null> {
-  const direction = options?.direction ?? "DOWN";
+  const direction = "DOWN";
   const layoutOptions = { ...elkLayoutOptions, "elk.direction": direction };
 
   // Bail if any node is missing measured dimensions
@@ -56,14 +55,8 @@ export async function calculateElkLayout<
 
   // Build ELK graph using only measured nodes
   const elkNodes: ElkNode[] = measuredNodes.map((node) => {
-    const width =
-      node.measured?.width ??
-      (node.type === "questionNode" ? QUESTION_NODE_WIDTH : ARTICLE_NODE_WIDTH);
-    const height =
-      node.measured?.height ??
-      (node.type === "questionNode"
-        ? QUESTION_NODE_HEIGHT
-        : ARTICLE_NODE_HEIGHT);
+    const width = node.measured?.width;
+    const height = node.measured?.height;
 
     return { id: node.id, width, height };
   });
@@ -85,17 +78,20 @@ export async function calculateElkLayout<
 
   // Remap ELK output back into React Flow nodes & edges, for measured nodes only
   const newNodes: FlowNode<NodeData>[] = measuredNodes.map((node) => {
-    // Exclude measured when spreading to match FlowNode
-    const { measured, ...nodeRest } = node;
-    const elkNode = layoutedGraph.children?.find((n) => n.id === nodeRest.id);
+    const elkNode = layoutedGraph.children?.find((n) => n.id === node.id);
+
+    // Determine the new absolute position returned by ELK (fallback to existing)
     const position =
       elkNode?.x != null && elkNode?.y != null
         ? { x: elkNode.x, y: elkNode.y }
-        : nodeRest.position;
-    const width = elkNode?.width ?? nodeRest.width;
-    const height = elkNode?.height ?? nodeRest.height;
+        : node.position;
+
+    // ELK also returns width/height but we rely on the existing measured values for consistency
+    const width = elkNode?.width ?? node.width;
+    const height = elkNode?.height ?? node.height;
+
     return {
-      ...nodeRest,
+      ...node,
       position,
       width,
       height,
