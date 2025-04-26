@@ -149,7 +149,7 @@ export default function ConversationNode({ id, data }: ConversationNodeProps) {
                   key={index}
                   className="flex items-start gap-2 text-xs text-slate-300"
                 >
-                  <div className="mt-1 w-1.5 h-1.5 rounded-full bg-green-500/40 flex-shrink-0" />
+                  <div className="mt-2 w-1.5 h-1.5 rounded-full bg-green-500/40 flex-shrink-0" />
                   <div>
                     <MarkdownDisplay content={takeaway} />
                   </div>

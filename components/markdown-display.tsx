@@ -150,7 +150,7 @@ const OrderedList: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 const ListItem: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="flex items-start gap-2 text-sm text-slate-300 mb-1">
-    <div className="mt-1 w-1.5 h-1.5 rounded-full bg-green-500/40 flex-shrink-0" />
+    <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-green-500/40 flex-shrink-0" />
     <div>{children}</div>
   </div>
 );
