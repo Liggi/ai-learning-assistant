@@ -177,7 +177,7 @@ const StrongText: React.FC<StrongTextProps> = ({
   isCreatingArticle,
 }) => {
   const concept = String(children).trim();
-  const tooltipText = tooltips[concept];
+  const tooltipText = tooltips[concept.toLowerCase()];
   const hasTooltip = tooltipText != null;
   const isRegistered = useRef(false);
   const [isOpen, setIsOpen] = useState(false);

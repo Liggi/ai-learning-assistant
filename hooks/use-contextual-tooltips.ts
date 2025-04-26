@@ -30,7 +30,10 @@ export function useContextualTooltips(
     }
 
     if (isGeneratingTooltips || tooltipGenerationAttempted.current) {
-      logger.debug("Tooltip generation already in progress or attempted");
+      logger.debug("Tooltip generation already in progress or attempted", {
+        isGeneratingTooltips,
+        tooltipGenerationAttempted: tooltipGenerationAttempted.current,
+      });
       return;
     }
 
