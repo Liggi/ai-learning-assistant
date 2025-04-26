@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SuggestedQuestions } from "./suggested-questions";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";
@@ -13,6 +13,7 @@ import { useNavigate } from "@tanstack/react-router";
 import ArticleContent from "./article-content";
 import { CustomQuestionInput } from "./custom-question-input";
 import { useStableLearningMap } from "@/hooks/use-stable-learning-map";
+import { useGenerateImage } from "@/hooks/use-generate-image";
 
 const logger = new Logger({ context: "LearningInterface", enabled: false });
 
@@ -53,6 +54,17 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
 
   // Only changes when the ID / updatedAt changes
   const stableLearningMap = useStableLearningMap(learningMap);
+
+  const {
+    data: generatedImage,
+    loading: isGeneratingImage,
+    error: generateImageError,
+    generate: generateImage,
+  } = useGenerateImage();
+  const [imagePrompt, setImagePrompt] = useState<string>("");
+  useEffect(() => {
+    setImagePrompt("");
+  }, [activeArticle?.id]);
 
   const toggleLayout = () => {
     setIsMapExpanded((prev) => !prev);
@@ -151,6 +163,43 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
           </div>
 
           <div className="border-t border-slate-800 p-4 flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <label htmlFor="image-prompt" className="text-slate-300">
+                Generate image:
+              </label>
+              <input
+                id="image-prompt"
+                type="text"
+                value={imagePrompt}
+                onChange={(e) => setImagePrompt(e.target.value)}
+                placeholder="Describe an image…"
+                className="w-full bg-slate-800 text-slate-100 placeholder-slate-500 rounded p-2"
+              />
+              <button
+                onClick={() =>
+                  generateImage({
+                    prompt: imagePrompt,
+                    size: "landscape",
+                  })
+                }
+                disabled={isGeneratingImage || !imagePrompt}
+                className="mt-2 bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
+              >
+                {isGeneratingImage ? "Generating…" : "Generate Image"}
+              </button>
+              {generateImageError && (
+                <p className="text-red-500 mt-1">
+                  {generateImageError.message}
+                </p>
+              )}
+            </div>
+            {generatedImage && (
+              <img
+                src={`data:image/png;base64,${generatedImage}`}
+                alt="Generated"
+                className="mt-4 max-w-full rounded"
+              />
+            )}
             <CustomQuestionInput
               activeArticle={activeArticle}
               onArticleCreated={handleArticleCreated}

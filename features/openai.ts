@@ -99,10 +99,7 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
 
   async generateImages(options: {
     prompt: string;
-    n?: number;
     size?: "square" | "landscape" | "portrait" | "auto";
-    response_format?: "url" | "b64_json";
-    user?: string;
     model?: string;
   }): Promise<Array<{ url?: string; b64_json?: string }>> {
     const model = options.model ?? "gpt-image-1";
@@ -110,13 +107,12 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
     openaiLogger.debug(`[image] Sending image generation request`, {
       model,
       promptLength: options.prompt.length,
-      n: options.n,
     });
 
     const sizeMap = {
       square: "1024x1024",
-      landscape: "1792x1024",
-      portrait: "1024x1792",
+      landscape: "1536x1024",
+      portrait: "1024x1536",
     } as const;
 
     const sizeParam =
@@ -128,17 +124,19 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
       const response = await this.client.images.generate({
         model,
         prompt: options.prompt,
-        n: options.n,
         size: sizeParam,
-        response_format: options.response_format,
-        user: options.user,
       });
 
       openaiLogger.debug(`[image] Received image generation response`, {
-        imageCount: response.data.length,
+        imageCount: response.data?.length,
       });
 
-      return response.data;
+      return (
+        response.data?.map((image) => ({
+          url: image.url,
+          b64_json: image.b64_json,
+        })) ?? []
+      );
     } catch (err: any) {
       openaiLogger.error(`[image] OpenAI image generation failed`, {
         error: err,
