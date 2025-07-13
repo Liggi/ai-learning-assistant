@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { TextBlock } from "@anthropic-ai/sdk/resources/messages/messages.js";
 import { z } from "zod";
 import { Logger } from "@/lib/logger";
+import { robustLLMCall } from "@/lib/robust-llm-call";
 import {
   LLMProvider,
   LLMCallOptions,
@@ -56,11 +57,6 @@ export class AnthropicProvider
   ): Promise<T> {
     const model = options?.model ?? "claude-3-7-sonnet-latest";
 
-    anthropicLogger.debug(`[${requestId}] Sending request to Anthropic API`, {
-      model,
-      promptLength: prompt.length,
-    });
-
     const heliconeHeaders: Record<string, string> = {};
     if (options?.heliconeMetadata) {
       const metadata = options.heliconeMetadata;
@@ -75,34 +71,27 @@ export class AnthropicProvider
       if (metadata.parentRequestId) heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
     }
 
-    let message;
-    try {
-      message = await this.client.messages.create({
+    const response = await robustLLMCall(
+      () => this.client.messages.create({
         max_tokens: 4096,
         messages: [{ role: "user", content: prompt }],
         model: model,
       }, {
         headers: heliconeHeaders,
-      });
-      anthropicLogger.debug(
-        `[${requestId}] Received response from Anthropic API`
-      );
-    } catch (apiError: any) {
-      anthropicLogger.error(`[${requestId}] Anthropic API call failed`, {
-        error: {
-          message: apiError.message,
-          status: apiError.status,
-          type: apiError.type,
-          name: apiError.name,
-        },
-      });
-      throw apiError;
-    }
+      }),
+      {
+        provider: 'anthropic',
+        requestType: options?.heliconeMetadata?.type || 'generate',
+        retries: options?.maxRetries ?? 3,
+        metadata: {
+          requestId,
+          model,
+          promptLength: prompt.length,
+        }
+      }
+    );
 
-    const stringResponse = message.content
-      .filter((block): block is TextBlock => block.type === "text")
-      .map((block) => block.text)
-      .join("");
+    const stringResponse = response.content;
 
     anthropicLogger.debug(`[${requestId}] Extracted text response`, {
       length: stringResponse.length,

@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { z } from "zod";
 import { Logger } from "@/lib/logger";
+import { robustLLMCall } from "@/lib/robust-llm-call";
 import {
   LLMProvider,
   LLMCallOptions,
@@ -51,11 +52,6 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
   ): Promise<T> {
     const model = options?.model ?? "gpt-4o";
 
-    openaiLogger.debug(`[${requestId}] Sending request to OpenAI API`, {
-      model,
-      promptLength: prompt.length,
-    });
-
     const heliconeHeaders: Record<string, string> = {};
     if (options?.heliconeMetadata) {
       const metadata = options.heliconeMetadata;
@@ -70,37 +66,31 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
       if (metadata.parentRequestId) heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
     }
 
-    let completion;
-    try {
-      completion = await this.client.chat.completions.create({
+    const response = await robustLLMCall(
+      () => this.client.chat.completions.create({
         messages: [{ role: "user", content: prompt }],
         model: model,
       }, {
         headers: heliconeHeaders,
-      });
-      openaiLogger.debug(`[${requestId}] Received response from OpenAI API`);
-    } catch (apiError: any) {
-      openaiLogger.error(`[${requestId}] OpenAI API call failed`, {
-        error: {
-          message: apiError.message,
-          status: apiError.status,
-          type: apiError.type,
-          name: apiError.name,
-        },
-      });
-      throw apiError;
-    }
+      }),
+      {
+        provider: 'openai',
+        requestType: options?.heliconeMetadata?.type || 'generate',
+        retries: options?.maxRetries ?? 3,
+        metadata: {
+          requestId,
+          model,
+          promptLength: prompt.length,
+        }
+      }
+    );
 
-    const stringResponse = completion.choices[0]?.message?.content;
+    const stringResponse = response.content;
 
     if (!stringResponse) {
       openaiLogger.error(`[${requestId}] No content received from OpenAI API`);
       throw new Error("Received empty response from OpenAI API");
     }
-
-    openaiLogger.debug(`[${requestId}] Extracted text response`, {
-      length: stringResponse.length,
-    });
 
     let parsedResponse;
     try {
@@ -179,8 +169,8 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
       if (metadata.parentRequestId) heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
     }
 
-    try {
-      const response = await this.client.images.generate({
+    const response = await robustLLMCall(
+      () => this.client.images.generate({
         model,
         prompt: options.prompt,
         n: options.n,
@@ -189,20 +179,24 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
         user: options.user,
       }, {
         headers: heliconeHeaders,
-      });
+      }),
+      {
+        provider: 'openai',
+        requestType: 'image-generation',
+        retries: 3,
+        metadata: {
+          model,
+          promptLength: options.prompt.length,
+          size: sizeParam,
+        }
+      }
+    );
 
-      openaiLogger.debug(`[image] Received image generation response`, {
-        imageCount: response.data.length,
-      });
+    openaiLogger.debug(`[image] Received image generation response`, {
+      imageCount: response.data?.length || 0,
+    });
 
-      return response.data;
-    } catch (err: any) {
-      openaiLogger.error(`[image] OpenAI image generation failed`, {
-        error: err,
-      });
-
-      throw err;
-    }
+    return response.data || response;
   }
 }
 
