@@ -38,7 +38,13 @@ export const generate = createServerFn({ method: "POST" })
       const result = await anthropicProvider.generateResponse(
         prompt,
         lessonResponseSchema,
-        `lesson_${data.subject}_${data.moduleTitle}`
+        `lesson_${data.subject}_${data.moduleTitle}`,
+        {
+          heliconeMetadata: {
+            type: "lesson",
+            subject: data.subject,
+          },
+        }
       );
 
       const cleanedResponse = stripResponsePlanning(result.response);

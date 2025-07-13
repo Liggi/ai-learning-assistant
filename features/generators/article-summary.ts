@@ -38,7 +38,13 @@ export const generateSummary = createServerFn({ method: "POST" })
       const response = await anthropicProvider.generateResponse(
         prompt,
         summarySchema,
-        `summary_${data.articleId}`
+        `summary_${data.articleId}`,
+        {
+          heliconeMetadata: {
+            type: "summary",
+            articleId: data.articleId,
+          },
+        }
       );
 
       logger.info(`Successfully generated summary: "${response.summary}"`);

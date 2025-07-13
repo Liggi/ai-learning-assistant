@@ -35,7 +35,13 @@ export const generate = createServerFn({ method: "POST" })
       const response = await anthropicProvider.generateResponse(
         prompt,
         suggestionsSchema,
-        requestId
+        requestId,
+        {
+          heliconeMetadata: {
+            type: "questions",
+            subject: data.subject,
+          },
+        }
       );
       logger.info(
         `[${requestId}] Anthropic API response received, questions count:`,

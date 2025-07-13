@@ -7,6 +7,17 @@ const llmBaseLogger = new Logger({ context: "LLMBase" });
 
 export type LLMCallOptions = {
   maxRetries?: number;
+  heliconeMetadata?: {
+    type?: string;
+    subject?: string;
+    articleId?: string;
+    userId?: string;
+    sessionId?: string;
+    pipelineId?: string;
+    pipelineStage?: string;
+    sequence?: number;
+    parentRequestId?: string;
+  };
 };
 
 export interface LLMProvider<ProviderOptions = unknown> {
@@ -64,6 +75,17 @@ type CallLLMOptions = {
   cacheTTL?: number;
   maxRetries?: number;
   model?: string;
+  heliconeMetadata?: {
+    type?: string;
+    subject?: string;
+    articleId?: string;
+    userId?: string;
+    sessionId?: string;
+    pipelineId?: string;
+    pipelineStage?: string;
+    sequence?: number;
+    parentRequestId?: string;
+  };
 };
 
 export async function callLLM<T>(
@@ -152,6 +174,7 @@ export async function callLLM<T>(
       const providerOptions = {
         maxRetries: 1,
         model: finalModel,
+        heliconeMetadata: options?.heliconeMetadata,
       };
 
       const result = await provider.generateResponse(

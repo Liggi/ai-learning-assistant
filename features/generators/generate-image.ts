@@ -23,6 +23,9 @@ export const generateImage = createServerFn({ method: "POST" })
       n: 1,
       size,
       response_format,
+      heliconeMetadata: {
+        type: "image",
+      },
     });
 
     const image = result[0];

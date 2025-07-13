@@ -36,7 +36,13 @@ export const generate = createServerFn({ method: "POST" })
       const response = await anthropicProvider.generateResponse(
         prompt,
         knowledgeNodesSchema,
-        `knowledge_nodes_${data.subject}`
+        `knowledge_nodes_${data.subject}`,
+        {
+          heliconeMetadata: {
+            type: "knowledge-nodes",
+            subject: data.subject,
+          },
+        }
       );
 
       logger.info(

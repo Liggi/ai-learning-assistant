@@ -49,18 +49,34 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
     requestId: string,
     options?: LLMCallOptions & OpenAIProviderOptions
   ): Promise<T> {
-    const model = options?.model ?? "gpt-4o"; // Defaulting to gpt-4o
+    const model = options?.model ?? "gpt-4o";
 
     openaiLogger.debug(`[${requestId}] Sending request to OpenAI API`, {
       model,
       promptLength: prompt.length,
     });
 
+    const heliconeHeaders: Record<string, string> = {};
+    if (options?.heliconeMetadata) {
+      const metadata = options.heliconeMetadata;
+      if (metadata.type) heliconeHeaders["Helicone-Property-Type"] = metadata.type;
+      if (metadata.subject) heliconeHeaders["Helicone-Property-Subject"] = metadata.subject;
+      if (metadata.articleId) heliconeHeaders["Helicone-Property-Article-Id"] = metadata.articleId;
+      if (metadata.userId) heliconeHeaders["Helicone-User-Id"] = metadata.userId;
+      if (metadata.sessionId) heliconeHeaders["Helicone-Session-Id"] = metadata.sessionId;
+      if (metadata.pipelineId) heliconeHeaders["Helicone-Property-Pipeline-Id"] = metadata.pipelineId;
+      if (metadata.pipelineStage) heliconeHeaders["Helicone-Property-Pipeline-Stage"] = metadata.pipelineStage;
+      if (metadata.sequence !== undefined) heliconeHeaders["Helicone-Property-Sequence"] = metadata.sequence.toString();
+      if (metadata.parentRequestId) heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
+    }
+
     let completion;
     try {
       completion = await this.client.chat.completions.create({
         messages: [{ role: "user", content: prompt }],
         model: model,
+      }, {
+        headers: heliconeHeaders,
       });
       openaiLogger.debug(`[${requestId}] Received response from OpenAI API`);
     } catch (apiError: any) {
@@ -118,6 +134,17 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
     response_format?: "url" | "b64_json";
     user?: string;
     model?: string;
+    heliconeMetadata?: {
+      type?: string;
+      subject?: string;
+      articleId?: string;
+      userId?: string;
+      sessionId?: string;
+      pipelineId?: string;
+      pipelineStage?: string;
+      sequence?: number;
+      parentRequestId?: string;
+    };
   }): Promise<Array<{ url?: string; b64_json?: string }>> {
     const model = options.model ?? "gpt-image-1";
 
@@ -138,6 +165,20 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
         ? sizeMap[options.size as keyof typeof sizeMap]
         : undefined;
 
+    const heliconeHeaders: Record<string, string> = {};
+    if (options.heliconeMetadata) {
+      const metadata = options.heliconeMetadata;
+      if (metadata.type) heliconeHeaders["Helicone-Property-Type"] = metadata.type;
+      if (metadata.subject) heliconeHeaders["Helicone-Property-Subject"] = metadata.subject;
+      if (metadata.articleId) heliconeHeaders["Helicone-Property-Article-Id"] = metadata.articleId;
+      if (metadata.userId) heliconeHeaders["Helicone-User-Id"] = metadata.userId;
+      if (metadata.sessionId) heliconeHeaders["Helicone-Session-Id"] = metadata.sessionId;
+      if (metadata.pipelineId) heliconeHeaders["Helicone-Property-Pipeline-Id"] = metadata.pipelineId;
+      if (metadata.pipelineStage) heliconeHeaders["Helicone-Property-Pipeline-Stage"] = metadata.pipelineStage;
+      if (metadata.sequence !== undefined) heliconeHeaders["Helicone-Property-Sequence"] = metadata.sequence.toString();
+      if (metadata.parentRequestId) heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
+    }
+
     try {
       const response = await this.client.images.generate({
         model,
@@ -146,6 +187,8 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
         size: sizeParam,
         response_format: options.response_format,
         user: options.user,
+      }, {
+        headers: heliconeHeaders,
       });
 
       openaiLogger.debug(`[image] Received image generation response`, {

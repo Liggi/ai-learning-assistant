@@ -61,12 +61,28 @@ export class AnthropicProvider
       promptLength: prompt.length,
     });
 
+    const heliconeHeaders: Record<string, string> = {};
+    if (options?.heliconeMetadata) {
+      const metadata = options.heliconeMetadata;
+      if (metadata.type) heliconeHeaders["Helicone-Property-Type"] = metadata.type;
+      if (metadata.subject) heliconeHeaders["Helicone-Property-Subject"] = metadata.subject;
+      if (metadata.articleId) heliconeHeaders["Helicone-Property-Article-Id"] = metadata.articleId;
+      if (metadata.userId) heliconeHeaders["Helicone-User-Id"] = metadata.userId;
+      if (metadata.sessionId) heliconeHeaders["Helicone-Session-Id"] = metadata.sessionId;
+      if (metadata.pipelineId) heliconeHeaders["Helicone-Property-Pipeline-Id"] = metadata.pipelineId;
+      if (metadata.pipelineStage) heliconeHeaders["Helicone-Property-Pipeline-Stage"] = metadata.pipelineStage;
+      if (metadata.sequence !== undefined) heliconeHeaders["Helicone-Property-Sequence"] = metadata.sequence.toString();
+      if (metadata.parentRequestId) heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
+    }
+
     let message;
     try {
       message = await this.client.messages.create({
         max_tokens: 4096,
         messages: [{ role: "user", content: prompt }],
         model: model,
+      }, {
+        headers: heliconeHeaders,
       });
       anthropicLogger.debug(
         `[${requestId}] Received response from Anthropic API`

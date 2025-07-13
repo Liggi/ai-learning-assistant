@@ -22,7 +22,13 @@ export const generate = createServerFn({ method: "POST" })
         prompt,
         tooltipResponseSchema,
         requestId,
-        { model: "gpt-4o" }
+        { 
+          model: "gpt-4o",
+          heliconeMetadata: {
+            type: "tooltip",
+            subject: data.subject,
+          },
+        }
       );
 
       return result;
