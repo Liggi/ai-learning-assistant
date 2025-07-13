@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { generateSummaryPrompt } from "@/prompts/chat/summary";
-import { AnthropicProvider } from "../anthropic";
+import { robustLLMCall } from "@/lib/robust-llm-call";
+import { extractJSON } from "@/features/llm-base";
+import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { Logger } from "@/lib/logger";
 import prisma from "@/prisma/client";
@@ -33,26 +35,42 @@ export const generateSummary = createServerFn({ method: "POST" })
         content: article.content,
       });
 
-      const anthropicProvider = new AnthropicProvider();
+      const anthropic = new Anthropic({
+        apiKey: process.env.ANTHROPIC_API_KEY!,
+        baseURL: "https://anthropic.helicone.ai/",
+        defaultHeaders: {
+          "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
+          "Helicone-Property-Type": "summary",
+          "Helicone-Property-Article-Id": data.articleId,
+        }
+      });
 
-      const response = await anthropicProvider.generateResponse(
-        prompt,
-        summarySchema,
-        `summary_${data.articleId}`,
+      const response = await robustLLMCall(
+        () => anthropic.messages.create({
+          model: "claude-3-7-sonnet-latest",
+          max_tokens: 4096,
+          messages: [{ role: "user", content: prompt }],
+        }),
         {
-          heliconeMetadata: {
-            type: "summary",
+          provider: 'anthropic',
+          requestType: 'summary',
+          metadata: {
             articleId: data.articleId,
-          },
+            contentLength: article.content.length,
+          }
         }
       );
 
-      logger.info(`Successfully generated summary: "${response.summary}"`);
+      const jsonString = extractJSON(response.content);
+      const parsedResponse = JSON.parse(jsonString);
+      const validatedResponse = summarySchema.parse(parsedResponse);
+
+      logger.info(`Successfully generated summary: "${validatedResponse.summary}"`);
 
       const updatedArticle = await prisma.article.update({
         where: { id: data.articleId },
         data: {
-          summary: response.summary,
+          summary: validatedResponse.summary,
         },
       });
 

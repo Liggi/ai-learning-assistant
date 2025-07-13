@@ -52,6 +52,12 @@ const streamContentFromAPI = async (
       };
     }
 
+    logger.info("🌐 Making fetch request to /api/lesson-stream", {
+      subject: subjectTitle,
+      contextType: requestData.contextType,
+      timestamp: Date.now(),
+    });
+
     const response = await fetch("/api/lesson-stream", {
       method: "POST",
       headers: {
@@ -97,6 +103,12 @@ export function useStreamArticleContent(
   article: { id: string; content: string; isRoot?: boolean } | null | undefined,
   subjectTitle: string
 ) {
+  logger.info("🏗️ useStreamArticleContent HOOK CALLED", {
+    articleId: article?.id,
+    subjectTitle,
+    hasContent: !!(article?.content && article.content.trim() !== ""),
+    timestamp: Date.now(),
+  });
   const queryClient = useQueryClient();
 
   const [content, setContent] = useState("");
@@ -120,6 +132,14 @@ export function useStreamArticleContent(
 
   // Start streaming content (memoized)
   const startStreaming = useCallback(async () => {
+    logger.info("🔄 startStreaming useCallback recreated", {
+      articleId: article?.id,
+      subjectTitle,
+      isStreaming,
+      streamComplete,
+      isLoadingQuestion,
+      hasQuestionData: !!questionData,
+    });
     const currentArticleId = article?.id; // Get ID at the time of call
     // Guard clauses inside startStreaming check current state
     if (!currentArticleId || isStreaming || streamComplete) {
@@ -144,9 +164,10 @@ export function useStreamArticleContent(
       });
     }
 
-    logger.info("Executing startStreaming", {
+    logger.info("🔥 EXECUTING startStreaming - ACTUAL API CALL", {
       articleId: currentArticleId,
       hasQuestionContext: !!questionData,
+      timestamp: Date.now(),
     });
 
     setIsStreaming(true);
@@ -244,6 +265,14 @@ export function useStreamArticleContent(
 
   // Effect 2: Handle content setting or trigger stream based on CURRENT state
   useEffect(() => {
+    logger.info("🚀 Effect 2 triggered", {
+      articleId: article?.id,
+      hasContent: !!(article?.content && article.content.trim() !== ""),
+      isStreaming,
+      streamComplete,
+      contentLength: content.length,
+      startStreamingFnChanged: "check-logs-above",
+    });
     const currentArticleId = article?.id || null;
 
     // Wait until the ID is stable (matches the ref updated by Effect 1)
@@ -286,8 +315,8 @@ export function useStreamArticleContent(
         // Article has NO content - attempt to stream if not already complete
         if (!streamComplete) {
           logger.info(
-            "Effect 2: Attempting to start stream for empty article",
-            { articleId: currentArticleId }
+            "🎯 Effect 2: TRIGGERING STREAM for empty article",
+            { articleId: currentArticleId, timestamp: Date.now() }
           );
           startStreaming();
         } else {

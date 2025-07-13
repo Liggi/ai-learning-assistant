@@ -1,8 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { generateKnowledgeNodesPrompt } from "@/prompts/roadmap/generate-knowledge-nodes";
+import { robustLLMCall } from "@/lib/robust-llm-call";
+import { extractJSON } from "@/features/llm-base";
 import { z } from "zod";
 import { Logger } from "@/lib/logger";
-import { AnthropicProvider } from "../anthropic";
+import Anthropic from "@anthropic-ai/sdk";
 
 const logger = new Logger({ context: "KnowledgeNodes" });
 
@@ -32,24 +34,41 @@ export const generate = createServerFn({ method: "POST" })
 
     try {
       logger.info(`Generating knowledge nodes for subject: ${data.subject}`);
-      const anthropicProvider = new AnthropicProvider();
-      const response = await anthropicProvider.generateResponse(
-        prompt,
-        knowledgeNodesSchema,
-        `knowledge_nodes_${data.subject}`,
+
+      const anthropic = new Anthropic({
+        apiKey: process.env.ANTHROPIC_API_KEY!,
+        baseURL: "https://anthropic.helicone.ai/",
+        defaultHeaders: {
+          "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
+          "Helicone-Property-Type": "knowledge-nodes",
+          "Helicone-Property-Subject": data.subject,
+        }
+      });
+
+      const response = await robustLLMCall(
+        () => anthropic.messages.create({
+          model: "claude-3-7-sonnet-latest",
+          max_tokens: 4096,
+          messages: [{ role: "user", content: prompt }],
+        }),
         {
-          heliconeMetadata: {
-            type: "knowledge-nodes",
+          provider: 'anthropic',
+          requestType: 'knowledge-nodes',
+          metadata: {
             subject: data.subject,
-          },
+          }
         }
       );
 
+      const jsonString = extractJSON(response.content);
+      const parsedResponse = JSON.parse(jsonString);
+      const validatedResponse = knowledgeNodesSchema.parse(parsedResponse);
+
       logger.info(
-        `Successfully generated ${response.nodes.length} knowledge nodes`
+        `Successfully generated ${validatedResponse.nodes.length} knowledge nodes`
       );
 
-      const sortedNodes = [...response.nodes].sort((a, b) => {
+      const sortedNodes = [...validatedResponse.nodes].sort((a, b) => {
         const complexityOrder = {
           basic: 1,
           intermediate: 2,

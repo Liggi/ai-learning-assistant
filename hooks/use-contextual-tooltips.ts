@@ -37,6 +37,13 @@ export function useContextualTooltips(
       return;
     }
 
+    // Skip if tooltips already exist for this article
+    if (article.tooltips && Object.keys(article.tooltips).length > 0) {
+      setTooltips(article.tooltips);
+      setTooltipsReady(true);
+      return;
+    }
+
     const boldedTerms = extractBoldFromMarkdown(article.content);
     if (boldedTerms.length === 0) {
       logger.info("No bolded terms found in content");
@@ -44,10 +51,6 @@ export function useContextualTooltips(
       return;
     }
 
-    logger.info("Starting tooltip generation", {
-      articleId: article.id,
-      termCount: boldedTerms.length,
-    });
 
     tooltipGenerationAttempted.current = true;
     setIsGeneratingTooltips(true);

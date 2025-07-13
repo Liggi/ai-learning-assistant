@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { AnthropicProvider } from "@/features/anthropic";
+import { robustLLMCall } from "@/lib/robust-llm-call";
 import { createPrompt } from "@/prompts/chat/lesson";
 import { Logger } from "@/lib/logger";
+import Anthropic from "@anthropic-ai/sdk";
 
 const logger = new Logger({ context: "LessonGenerator" });
 
@@ -34,18 +35,33 @@ export const generate = createServerFn({ method: "POST" })
         message: data.message,
       });
 
-      const anthropicProvider = new AnthropicProvider();
-      const result = await anthropicProvider.generateResponse(
-        prompt,
-        lessonResponseSchema,
-        `lesson_${data.subject}_${data.moduleTitle}`,
+      const anthropic = new Anthropic({
+        apiKey: process.env.ANTHROPIC_API_KEY!,
+        baseURL: "https://anthropic.helicone.ai/",
+        defaultHeaders: {
+          "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
+          "Helicone-Property-Type": "lesson",
+          "Helicone-Property-Subject": data.subject,
+        }
+      });
+
+      const response = await robustLLMCall(
+        () => anthropic.messages.create({
+          model: "claude-3-7-sonnet-latest",
+          max_tokens: 4096,
+          messages: [{ role: "user", content: prompt }],
+        }),
         {
-          heliconeMetadata: {
-            type: "lesson",
+          provider: 'anthropic',
+          requestType: 'lesson',
+          metadata: {
             subject: data.subject,
-          },
+            moduleTitle: data.moduleTitle,
+          }
         }
       );
+
+      const result = { response: response.content };
 
       const cleanedResponse = stripResponsePlanning(result.response);
       return { response: cleanedResponse };
