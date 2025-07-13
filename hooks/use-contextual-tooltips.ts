@@ -80,10 +80,6 @@ export function useContextualTooltips(
           id: article.id,
           tooltips: result.tooltips,
         });
-
-        queryClient.invalidateQueries({
-          queryKey: ["articles", article.id],
-        });
       } catch (error) {
         logger.error("Tooltip generation failed", {
           errorMessage: error instanceof Error ? error.message : String(error),

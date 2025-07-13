@@ -1,4 +1,9 @@
 /// <reference types="vinxi/types/server" />
+
+// Initialize server-side telemetry FIRST
+import { initializeServerTelemetry } from "@/lib/telemetry";
+initializeServerTelemetry();
+
 import {
   createStartHandler,
   defaultStreamHandler,

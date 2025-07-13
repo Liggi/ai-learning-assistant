@@ -1,0 +1,5253 @@
+{
+  "timestamp": "2025-07-13T14:16:35.583Z",
+  "spans": [
+    {
+      "traceId": "b288da9d4d47941044c9a1766afdbcc6",
+      "spanId": "0bcd3459f7e0a95c",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416190,
+        574000000
+      ],
+      "endTime": [
+        1752416190,
+        581145333
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2295e1a6e7-4f02-4d3d-a0a9-1ee82465b226%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2295e1a6e7-4f02-4d3d-a0a9-1ee82465b226%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "b3439f08ba686c650387f01536cd931e",
+      "spanId": "0cd48c453be4bcbb",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416190,
+        576000000
+      ],
+      "endTime": [
+        1752416190,
+        583540167
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2295e1a6e7-4f02-4d3d-a0a9-1ee82465b226%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2295e1a6e7-4f02-4d3d-a0a9-1ee82465b226%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "9d6ed3308a590c957b5166d8150be3c8",
+      "spanId": "589fba375da0a52a",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416192,
+        815000000
+      ],
+      "endTime": [
+        1752416192,
+        846413042
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "c5632b10d4d446100ca6403a51ba3b13",
+      "spanId": "54e7184b19983b84",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416192,
+        943000000
+      ],
+      "endTime": [
+        1752416192,
+        953712166
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/.well-known/appspecific/com.chrome.devtools.json",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/.well-known/appspecific/com.chrome.devtools.json",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 404,
+        "http.status_text": "NOT FOUND"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "291badcd0029f5a3a5cbfb19bbafac3c",
+      "spanId": "3749ce1ff8f590c8",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416192,
+        955000000
+      ],
+      "endTime": [
+        1752416192,
+        956877333
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/@react-refresh",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/@react-refresh",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "56e17d19efa7de9f8d46448ee113753f",
+      "spanId": "2cc76465f6f55ac3",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416192,
+        967000000
+      ],
+      "endTime": [
+        1752416192,
+        979531292
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/@vite/client",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/@vite/client",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "ec95f215a410ef79af387fcfa0223b56",
+      "spanId": "120e8afcf463f40e",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416192,
+        982000000
+      ],
+      "endTime": [
+        1752416192,
+        983701084
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/vite/dist/client/env.mjs",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/vite/dist/client/env.mjs",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "2c0f32c7dc64f6b1436a8f663018375e",
+      "spanId": "e77c23d0a8eab5df",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416192,
+        990000000
+      ],
+      "endTime": [
+        1752416192,
+        991391125
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/@fs/Users/jasonliggi/src/github.com/personal/learning-assistant-app/app/client.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/@fs/Users/jasonliggi/src/github.com/personal/learning-assistant-app/app/client.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "050371571031cba1ac56f972661c53b4",
+      "spanId": "6b3d1630c59f813d",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416192,
+        994000000
+      ],
+      "endTime": [
+        1752416192,
+        994644750
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/react_jsx-dev-runtime.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/react_jsx-dev-runtime.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "fc990c0b9d2a37f8736d3825e1997a1f",
+      "spanId": "648b4d5d9de0e53e",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416192,
+        994000000
+      ],
+      "endTime": [
+        1752416192,
+        994711541
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/styles/globals.css?t=1752416161562",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/styles/globals.css?t=1752416161562",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "1e6c0a3db8954b9fb6abbc20babca769",
+      "spanId": "69b6cbf6695b17c2",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416192,
+        995000000
+      ],
+      "endTime": [
+        1752416192,
+        996201542
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/lib/telemetry.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/lib/telemetry.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57281,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "524746d5d72ad0c969c8fdd958c90dcc",
+      "spanId": "d96281c4e1a95857",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416192,
+        997000000
+      ],
+      "endTime": [
+        1752416193,
+        2632666
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/@tanstack_react-start.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/@tanstack_react-start.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "233a1625dc36d8c2d9b81e4dcc229393",
+      "spanId": "afee3f3d9e3334d2",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        2000000
+      ],
+      "endTime": [
+        1752416193,
+        9188167
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-WNR2LRX7.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-WNR2LRX7.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "05286b3fc663cf22ee97d25bfb1817a7",
+      "spanId": "c8ad25ba523032ad",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        2000000
+      ],
+      "endTime": [
+        1752416193,
+        10635584
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-OL46QLBJ.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-OL46QLBJ.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "e170a99f7fd35ea7824fd439e6d58036",
+      "spanId": "e3d485eccd1d5fab",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        2000000
+      ],
+      "endTime": [
+        1752416193,
+        11338833
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/@opentelemetry_api.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/@opentelemetry_api.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57281,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "93a7a077bfc4e5d01ee994650230c146",
+      "spanId": "270850876a75ad57",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        3000000
+      ],
+      "endTime": [
+        1752416193,
+        12773875
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/router.tsx?t=1752416161562",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/router.tsx?t=1752416161562",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "f3eee81d62425b5428173b731353d8b2",
+      "spanId": "c6f62b953bfaec8f",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416192,
+        996000000
+      ],
+      "endTime": [
+        1752416193,
+        12537041
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/react-dom_client.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/react-dom_client.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57282,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "e553843c0445bf17d4df666bcff87e3e",
+      "spanId": "91b5771a6ac873f2",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        13000000
+      ],
+      "endTime": [
+        1752416193,
+        16234333
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/@opentelemetry_semantic-conventions.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/@opentelemetry_semantic-conventions.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "55aa25965d45c890920f0135ec819047",
+      "spanId": "de5f058a40d498a2",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        13000000
+      ],
+      "endTime": [
+        1752416193,
+        16733916
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/@id/__vite-browser-external:fs",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/@id/__vite-browser-external:fs",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57282,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "b7453ccdf1036a6cb0859fed439f5404",
+      "spanId": "a1ac09be7040767a",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        13000000
+      ],
+      "endTime": [
+        1752416193,
+        17761750
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-F53456FZ.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-F53456FZ.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "f88cf00f30a1cf4718b821a16d72a68a",
+      "spanId": "94b3eecf6ba12f79",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        14000000
+      ],
+      "endTime": [
+        1752416193,
+        18990542
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-6JVO2NZI.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-6JVO2NZI.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "fd0119387961e1cfaf84145758a68d1c",
+      "spanId": "02877aee639d3818",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        14000000
+      ],
+      "endTime": [
+        1752416193,
+        19587792
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-3VWRSC4O.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-3VWRSC4O.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57281,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "6885de33414c1a669b87dd6466fe1b78",
+      "spanId": "6bdb7d391a86ea53",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        14000000
+      ],
+      "endTime": [
+        1752416193,
+        20413000
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-NRCUP5L6.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-NRCUP5L6.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "0d2241c4cb4f6ae7ad47c4d63ff3f6b3",
+      "spanId": "5a8b294fb590ef13",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        20000000
+      ],
+      "endTime": [
+        1752416193,
+        21105459
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-QFOPBYK2.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-QFOPBYK2.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "6bed3a44961802e63ae7838eacbbec00",
+      "spanId": "c7318e438ea102f2",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        21000000
+      ],
+      "endTime": [
+        1752416193,
+        22153334
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-MG4XEABH.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-MG4XEABH.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "5d3f2e24d72f0a0dd63e6eb830d88863",
+      "spanId": "c399eea28cdd20e1",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        21000000
+      ],
+      "endTime": [
+        1752416193,
+        22713500
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-GJGQBLHX.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-GJGQBLHX.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57282,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "a2edbe8fbad897d339fd2443f3c4b2e1",
+      "spanId": "14b64505f1e8e693",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        21000000
+      ],
+      "endTime": [
+        1752416193,
+        23790667
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/@tanstack_react-router.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/@tanstack_react-router.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "01ea807b6b2e1d9cd175d577a7cb363b",
+      "spanId": "98a5c8aba4ca9742",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        21000000
+      ],
+      "endTime": [
+        1752416193,
+        24332042
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/routeTree.gen.ts?t=1752416161562",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/routeTree.gen.ts?t=1752416161562",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57281,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "8eae3cbd07716c35e851c4c38d0c56c4",
+      "spanId": "435eae6b934268ef",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        21000000
+      ],
+      "endTime": [
+        1752416193,
+        24991042
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-BFWXDHNL.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-BFWXDHNL.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "a17141496b3b188ff9b3fc67da9d4090",
+      "spanId": "880751da8ddb3911",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        27000000
+      ],
+      "endTime": [
+        1752416193,
+        27799791
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/routes/__root.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/routes/__root.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57281,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "3567fd6622c0f4372bc26878b9e7bf61",
+      "spanId": "8a417d520c01a4b9",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        27000000
+      ],
+      "endTime": [
+        1752416193,
+        27901542
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/routes/loading.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/routes/loading.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "96b935854b40f1c4262e3df77c0e5022",
+      "spanId": "6baa6df33ffdc9db",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        27000000
+      ],
+      "endTime": [
+        1752416193,
+        28342875
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/routes/index.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/routes/index.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "3ba4637a693b38a60c5010bd1fb1b2f5",
+      "spanId": "876d01ba01b025f5",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        27000000
+      ],
+      "endTime": [
+        1752416193,
+        28880833
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/routes/learning/$subjectId.tsx?t=1752416161562",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/routes/learning/$subjectId.tsx?t=1752416161562",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57282,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "5c7be2e97f50127917f43a693d352cab",
+      "spanId": "3763f8491fd0ec6e",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        27000000
+      ],
+      "endTime": [
+        1752416193,
+        29267333
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/routes/calibration/$subjectId.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/routes/calibration/$subjectId.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "05a9abe80a08dd5a055ae21547de4291",
+      "spanId": "5340e6f3a2c26999",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        27000000
+      ],
+      "endTime": [
+        1752416193,
+        29538208
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/routes/learning/article/$articleId.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/routes/learning/article/$articleId.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "4688b84a03a875989b8a47bdebcfa6e7",
+      "spanId": "eab3555089199648",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        31000000
+      ],
+      "endTime": [
+        1752416193,
+        32154084
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/@tanstack_react-query.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/@tanstack_react-query.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "599a25ac0ce14c650853eebadabbc7bc",
+      "spanId": "e82a0d3067c0a0c8",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        31000000
+      ],
+      "endTime": [
+        1752416193,
+        32319833
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/sonner.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/sonner.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57281,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "6c012f04c471725ce2d58990b7d78df2",
+      "spanId": "6870237586351069",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        31000000
+      ],
+      "endTime": [
+        1752416193,
+        33859000
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/@xyflow_react.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/@xyflow_react.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "76340a617ba9c0781efe922609ef4ed9",
+      "spanId": "7705144431d677e2",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        31000000
+      ],
+      "endTime": [
+        1752416193,
+        34443875
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/ui/tooltip.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/ui/tooltip.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "56eeba955125773a891bfb1d56452d1c",
+      "spanId": "869a13239ae1ea2b",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        31000000
+      ],
+      "endTime": [
+        1752416193,
+        34710625
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/@xyflow/react/dist/style.css",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/@xyflow/react/dist/style.css",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "35701b7a356bc81576a8a8ed967277ab",
+      "spanId": "82b2cabb0af515bc",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        31000000
+      ],
+      "endTime": [
+        1752416193,
+        34926542
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/prisma/subjects.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/prisma/subjects.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57282,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "71b232f4cef9a3cd9ca14c4780285da4",
+      "spanId": "52212f6559b2153b",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        36000000
+      ],
+      "endTime": [
+        1752416193,
+        37510750
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/prisma/learning-maps.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/prisma/learning-maps.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "d190aa62be3ea33565852c1473da0750",
+      "spanId": "15fbac12f520f0c1",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        37000000
+      ],
+      "endTime": [
+        1752416193,
+        38322917
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/prisma/articles.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/prisma/articles.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57281,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "66465314904f1a77fa95f2199792d1fa",
+      "spanId": "21ea0a6fcdc7e13f",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        37000000
+      ],
+      "endTime": [
+        1752416193,
+        38894709
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/lib/logger.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/lib/logger.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "59b0d1891ba141f20bcfa893d3b8ef87",
+      "spanId": "263f5296bb7c9615",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        38000000
+      ],
+      "endTime": [
+        1752416193,
+        40543333
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/@radix-ui_react-tooltip.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/@radix-ui_react-tooltip.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "b8d5e021be9167e8487ce89c659ecd26",
+      "spanId": "5a37a704f25d6ef7",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        38000000
+      ],
+      "endTime": [
+        1752416193,
+        40965667
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/react.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/react.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57282,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "2263bd620b35300d391f1a20098c2e77",
+      "spanId": "bca3eb222ff8bbed",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        38000000
+      ],
+      "endTime": [
+        1752416193,
+        41308125
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/lib/utils.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/lib/utils.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "d54f2a242108787823725faea9096f56",
+      "spanId": "0f44b07fc833119d",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        42000000
+      ],
+      "endTime": [
+        1752416193,
+        42624958
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/@tanstack_react-start_server-functions-client.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/@tanstack_react-start_server-functions-client.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "ba67a201172869a748a2cdcb8d5bbda5",
+      "spanId": "50721db49d177ec8",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        43000000
+      ],
+      "endTime": [
+        1752416193,
+        43619958
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/clsx.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/clsx.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "8c4397c2f96e14061a2f10dec6120e4a",
+      "spanId": "1b166fbd7650d1c0",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        43000000
+      ],
+      "endTime": [
+        1752416193,
+        44018667
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/tailwind-merge.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/tailwind-merge.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "dbfd15b5b467f876b2239fbbcd263396",
+      "spanId": "55ba8d1354e93b8e",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        45000000
+      ],
+      "endTime": [
+        1752416193,
+        45430167
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-GIQBSYMA.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-GIQBSYMA.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "7a33047f127af48b0f62f2ce0bfade2d",
+      "spanId": "6815e02e2d8a5711",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        45000000
+      ],
+      "endTime": [
+        1752416193,
+        45429500
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-VFVO7FH2.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-VFVO7FH2.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "2026f819e0cee11a281849d1cef6e00c",
+      "spanId": "61233ecb4db5104e",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        75000000
+      ],
+      "endTime": [
+        1752416193,
+        76518583
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/@opentelemetry_sdk-trace-web.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/@opentelemetry_sdk-trace-web.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "f4ece03ed91b84bdb3395f3d46a32c59",
+      "spanId": "98ac7cfc73310c4a",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        85000000
+      ],
+      "endTime": [
+        1752416193,
+        88323834
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/routes/index.tsx?tsr-split=component",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/routes/index.tsx?tsr-split=component",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "66b1c2699febcf15a19434b112d23059",
+      "spanId": "21b9ada873bbbc29",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        86000000
+      ],
+      "endTime": [
+        1752416193,
+        88807750
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-4VM65SMQ.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-4VM65SMQ.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "58ae614026b04755f53e3116db3ace11",
+      "spanId": "2c68d93ed4d4b1d4",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        86000000
+      ],
+      "endTime": [
+        1752416193,
+        89628750
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-CIL6VWEN.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-CIL6VWEN.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "7aff403299ed67e52c1f039e9cba9e52",
+      "spanId": "726604b811e62571",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        94000000
+      ],
+      "endTime": [
+        1752416193,
+        96717833
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/features/subject-selection/subject-entry.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/features/subject-selection/subject-entry.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "d5f94dd9978050880ee88c9946b8b9bf",
+      "spanId": "3f4e8d1f0603554b",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        94000000
+      ],
+      "endTime": [
+        1752416193,
+        96862791
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/api/subjects.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/api/subjects.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "c5a03ceef52bedbd8681c76cac0345bf",
+      "spanId": "5ca81829ee31ade8",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        94000000
+      ],
+      "endTime": [
+        1752416193,
+        98222375
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/features/subject-selection/recent-subjects.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/features/subject-selection/recent-subjects.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "5a2297c88156dd88d82432066fa1746d",
+      "spanId": "a14798df1f414c7f",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        95000000
+      ],
+      "endTime": [
+        1752416193,
+        98950250
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/@opentelemetry_resources.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/@opentelemetry_resources.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57282,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "fe00c041c8d74da8624f42a97813c7a5",
+      "spanId": "3c377d17e2caf762",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        100000000
+      ],
+      "endTime": [
+        1752416193,
+        102162208
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/framer-motion.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/framer-motion.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "9f5ec7e0ede66037781664151d316711",
+      "spanId": "0627f638697af22e",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        100000000
+      ],
+      "endTime": [
+        1752416193,
+        102354958
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/ui/input.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/ui/input.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "2e935eeeae999f79cbe48c97d06cfd6a",
+      "spanId": "6514aa003c9d1089",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        100000000
+      ],
+      "endTime": [
+        1752416193,
+        102744959
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/ui/button.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/ui/button.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "97973c235d8e115f5b4d89229cb2f934",
+      "spanId": "e3d8f1f065a444ac",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        101000000
+      ],
+      "endTime": [
+        1752416193,
+        103988791
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/ui/button-loading.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/ui/button-loading.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "bf8910b22cd3b14c1614130a0d899c6e",
+      "spanId": "d3f3dc283532f6f4",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        106000000
+      ],
+      "endTime": [
+        1752416193,
+        107555833
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/@radix-ui_react-slot.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/@radix-ui_react-slot.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "3f8fe2c1d8ec6c17176f8de0d5910434",
+      "spanId": "b3fe0350ecb4a8a5",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        106000000
+      ],
+      "endTime": [
+        1752416193,
+        107455250
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/class-variance-authority.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/class-variance-authority.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "841321e15d3e6ffb60a41173c22a89ff",
+      "spanId": "502e5d2524a51142",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        106000000
+      ],
+      "endTime": [
+        1752416193,
+        110618500
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/lucide-react.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/lucide-react.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "aeee756ac25681c273ecc23e97ab8c4c",
+      "spanId": "96403c698da165b3",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416193,
+        153000000
+      ],
+      "endTime": [
+        1752416193,
+        157705625
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_subjects_ts--getAllSubjects_createServerFn_handler?payload=%7B%22data%22%3A%7B%22%24undefined%22%3A0%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_subjects_ts--getAllSubjects_createServerFn_handler?payload=%7B%22data%22%3A%7B%22%24undefined%22%3A0%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    }
+  ]
+}
+{
+  "timestamp": "2025-07-13T14:16:41.699Z",
+  "spans": [
+    {
+      "traceId": "c570a865f1b4159ee3a2f9ae7a8390d1",
+      "spanId": "0c3504c4fbbd16a9",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        689000000
+      ],
+      "endTime": [
+        1752416196,
+        697792708
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_subjects_ts--createSubject_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_subjects_ts--createSubject_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 44,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "8a8e3bfd0b8a10eef18206e176897f19",
+      "spanId": "82659f29f6776122",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        703000000
+      ],
+      "endTime": [
+        1752416196,
+        712313000
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_subjects_ts--getAllSubjects_createServerFn_handler?payload=%7B%22data%22%3A%7B%22%24undefined%22%3A0%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_subjects_ts--getAllSubjects_createServerFn_handler?payload=%7B%22data%22%3A%7B%22%24undefined%22%3A0%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "1e9d6be096c19de2a1861453b2e3530b",
+      "spanId": "97a6cec9794f2e83",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        716000000
+      ],
+      "endTime": [
+        1752416196,
+        717138459
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/routes/calibration/$subjectId.tsx?tsr-split=component",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/routes/calibration/$subjectId.tsx?tsr-split=component",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "208e948b5cbb1a601d4b86c2278854cc",
+      "spanId": "293fb2744c4cc1af",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        721000000
+      ],
+      "endTime": [
+        1752416196,
+        722117584
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/calibration/calibration.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/calibration/calibration.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "6e4e24ed9971c362f7a2700165ca8c16",
+      "spanId": "5ef382c84643947e",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        722000000
+      ],
+      "endTime": [
+        1752416196,
+        723052125
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/ui/loading.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/ui/loading.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "a24679ac7ad0ee5b44c27f38eca3a3a5",
+      "spanId": "811ece26f55c0423",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        726000000
+      ],
+      "endTime": [
+        1752416196,
+        727800500
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/ui/calibration-pill.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/ui/calibration-pill.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57283,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "b63c08dfbfce1cdf6e948eceb0afdac3",
+      "spanId": "bfb0f02f6647fa6a",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        726000000
+      ],
+      "endTime": [
+        1752416196,
+        727805000
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/features/queries.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/features/queries.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57269,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "8037e58bbb6b407d70035c96c74c9818",
+      "spanId": "4040313c058919ea",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        726000000
+      ],
+      "endTime": [
+        1752416196,
+        727930208
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/calibration/loading.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/calibration/loading.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "d6406818adda4db7b5f3d79c886ee320",
+      "spanId": "7a6d0f9aa03fda3a",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        727000000
+      ],
+      "endTime": [
+        1752416196,
+        729180125
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/calibration/knowledge-node.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/calibration/knowledge-node.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "6c41f71f601ef74360a73cd9933f9327",
+      "spanId": "4e3398e7adb412d7",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        730000000
+      ],
+      "endTime": [
+        1752416196,
+        730679542
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/features/generators/knowledge-nodes.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/features/generators/knowledge-nodes.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "fae8d3e41876699c68094f157455e408",
+      "spanId": "242543af2cfbad37",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        742000000
+      ],
+      "endTime": [
+        1752416196,
+        747986125
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_subjects_ts--getSubject_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%228ae92146-a9eb-4b1c-aeb0-3649aaad1233%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_subjects_ts--getSubject_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%228ae92146-a9eb-4b1c-aeb0-3649aaad1233%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    }
+  ]
+}
+{
+  "timestamp": "2025-07-13T14:16:47.310Z",
+  "spans": [
+    {
+      "traceId": "a972d46572c7d185954dce9d6d294915",
+      "spanId": "8298917919295949",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416202,
+        305000000
+      ],
+      "endTime": [
+        1752416202,
+        310311750
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_subjects_ts--getSubject_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%228ae92146-a9eb-4b1c-aeb0-3649aaad1233%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_subjects_ts--getSubject_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%228ae92146-a9eb-4b1c-aeb0-3649aaad1233%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "03435668cef5d144cf12620576f948ee",
+      "spanId": "013759be3f3393a1",
+      "name": "POST",
+      "kind": 2,
+      "startTime": [
+        1752416196,
+        757000000
+      ],
+      "endTime": [
+        1752416206,
+        897477291
+      ],
+      "attributes": {
+        "http.url": "https://anthropic.helicone.ai/v1/messages",
+        "http.method": "POST",
+        "http.target": "/v1/messages",
+        "net.peer.name": "anthropic.helicone.ai",
+        "http.host": "anthropic.helicone.ai:443",
+        "http.user_agent": [
+          "Anthropic/JS 0.39.0"
+        ],
+        "net.peer.ip": "104.18.7.103",
+        "net.peer.port": 443,
+        "http.status_code": 200,
+        "http.status_text": "OK",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "03435668cef5d144cf12620576f948ee",
+      "spanId": "58feb45e6fb465ed",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416196,
+        753000000
+      ],
+      "endTime": [
+        1752416206,
+        902881458
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/features_generators_knowledge-nodes_ts--generate_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/features_generators_knowledge-nodes_ts--generate_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 46,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    }
+  ]
+}
+{
+  "timestamp": "2025-07-13T14:16:53.243Z",
+  "spans": [
+    {
+      "traceId": "c6b30a6d2f561d79e61ab21f636ddf54",
+      "spanId": "a57485ab550b7395",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        238000000
+      ],
+      "endTime": [
+        1752416208,
+        242639791
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_subjects_ts--updateSubject_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_subjects_ts--updateSubject_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 98,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "c8ed7b3fcd1b491a2bd36c5c9a9bd0f8",
+      "spanId": "dfc20c7488ac6fd5",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        249000000
+      ],
+      "endTime": [
+        1752416208,
+        257039500
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_subjects_ts--getSubject_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%228ae92146-a9eb-4b1c-aeb0-3649aaad1233%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_subjects_ts--getSubject_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%228ae92146-a9eb-4b1c-aeb0-3649aaad1233%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "cae3029bb163494dd1455d55f33ca126",
+      "spanId": "5a644dd6dd180a3b",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        250000000
+      ],
+      "endTime": [
+        1752416208,
+        259784958
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_subjects_ts--getSubject_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%228ae92146-a9eb-4b1c-aeb0-3649aaad1233%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_subjects_ts--getSubject_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%228ae92146-a9eb-4b1c-aeb0-3649aaad1233%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "5863cf199724afc0f3c318796cd19a10",
+      "spanId": "fbd3e3322f04451c",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        261000000
+      ],
+      "endTime": [
+        1752416208,
+        261738958
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/routes/learning/$subjectId.tsx?tsr-split=errorComponent",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/routes/learning/$subjectId.tsx?tsr-split=errorComponent",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57352,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "74445dc6a7761d02b37c72c073341ece",
+      "spanId": "c56240b4522547f7",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        261000000
+      ],
+      "endTime": [
+        1752416208,
+        264266709
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/app/routes/learning/$subjectId.tsx?t=1752416161562&tsr-split=component",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/app/routes/learning/$subjectId.tsx?t=1752416161562&tsr-split=component",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "3daf702854dd2bc438437ca25ae9fa6c",
+      "spanId": "a2f302ca8b2f6e60",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        260000000
+      ],
+      "endTime": [
+        1752416208,
+        264756000
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_subjects_ts--getSubject_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%228ae92146-a9eb-4b1c-aeb0-3649aaad1233%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_subjects_ts--getSubject_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%228ae92146-a9eb-4b1c-aeb0-3649aaad1233%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57351,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "8ff5dc66b1b00d8036f39e11e8d350df",
+      "spanId": "42ad4055fe5d858a",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        266000000
+      ],
+      "endTime": [
+        1752416208,
+        266676208
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/error-display.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/error-display.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57352,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "6e0ad778aa48177e170535a61729e154",
+      "spanId": "a90ca2ee7b157875",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        266000000
+      ],
+      "endTime": [
+        1752416208,
+        268174792
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/learning-interface.tsx?t=1752416161562",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/learning-interface.tsx?t=1752416161562",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57351,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "f0785522425b89b17872ff947fa0b88b",
+      "spanId": "0b98dbe36aacac50",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        270000000
+      ],
+      "endTime": [
+        1752416208,
+        270889834
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/suggested-questions.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/suggested-questions.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57351,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "166b21312a289f6e2deef823c89cdf9e",
+      "spanId": "058480048b5065e2",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        271000000
+      ],
+      "endTime": [
+        1752416208,
+        271887417
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/streaming-article-display/streaming-article-display.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/streaming-article-display/streaming-article-display.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57352,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "622015d499467f3d52eb5f53b68734fa",
+      "spanId": "edc9a01165841081",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        271000000
+      ],
+      "endTime": [
+        1752416208,
+        272125000
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/article-content.tsx?t=1752416161562",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/article-content.tsx?t=1752416161562",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "15c7e45375fb759c1a76e0f42294989a",
+      "spanId": "9232aaecae2ac115",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        271000000
+      ],
+      "endTime": [
+        1752416208,
+        273957458
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/personal-learning-map-flow.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/personal-learning-map-flow.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "1e61b3db13f50c4f155c68314cad7494",
+      "spanId": "d99509c22a7721a2",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        275000000
+      ],
+      "endTime": [
+        1752416208,
+        275688834
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/custom-question-input.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/custom-question-input.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57354,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "7426eead0a9b138d43e6147a6cbfcc4b",
+      "spanId": "9ade4f86b87cb6dc",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        275000000
+      ],
+      "endTime": [
+        1752416208,
+        276409292
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/use-stable-learning-map.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/use-stable-learning-map.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57351,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "f0ed51a3b73860362c3d02d7dee7a08b",
+      "spanId": "7d85eea55cb2429b",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        276000000
+      ],
+      "endTime": [
+        1752416208,
+        277624250
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/api/articles.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/api/articles.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "40720b39d9098aaf31f4a95167daf71e",
+      "spanId": "127b31c1cea97404",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        276000000
+      ],
+      "endTime": [
+        1752416208,
+        277868625
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/use-suggested-questions.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/use-suggested-questions.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57352,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "c66e94d049f1a3f4f2dea8fab53dd63e",
+      "spanId": "db887f1b75923593",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        276000000
+      ],
+      "endTime": [
+        1752416208,
+        278296042
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/ui/skeleton.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/ui/skeleton.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "a824161d9e4fcde456e4cec1c8031e01",
+      "spanId": "62b725c0c469da27",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        278000000
+      ],
+      "endTime": [
+        1752416208,
+        278767792
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/markdown-display.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/markdown-display.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57354,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "526b974ffc69ece5bf9d8e235441302f",
+      "spanId": "29612b6fdc80187b",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        279000000
+      ],
+      "endTime": [
+        1752416208,
+        280507208
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/use-stream-article-content.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/use-stream-article-content.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57351,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "154f1b1e105d2558b38c1d6d8b0bac51",
+      "spanId": "336201b1a928bb9c",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        279000000
+      ],
+      "endTime": [
+        1752416208,
+        281130375
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/use-contextual-tooltips.ts?t=1752416161562",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/use-contextual-tooltips.ts?t=1752416161562",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "6ad896bda25cb03e1bda71a6ae8be62e",
+      "spanId": "e393ebb6d7d3297e",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        279000000
+      ],
+      "endTime": [
+        1752416208,
+        281749000
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/ui/tooltip-loading-indicator.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/ui/tooltip-loading-indicator.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "8956c4bd9c75fde5de286d9623a624c3",
+      "spanId": "300ebb0ae79f92f2",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        279000000
+      ],
+      "endTime": [
+        1752416208,
+        281950750
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/react-flow/conversation-node.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/react-flow/conversation-node.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57352,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "4217e2684e29aac216dd8e354ef55a2c",
+      "spanId": "1b791a366d7e5ec2",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        266000000
+      ],
+      "endTime": [
+        1752416208,
+        282742209
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_learning-maps_ts--getOrCreateLearningMap_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_learning-maps_ts--getOrCreateLearningMap_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 74,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "a47f12f8f23912b0d283290935efb42a",
+      "spanId": "d615de570e4359f7",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        284000000
+      ],
+      "endTime": [
+        1752416208,
+        285304125
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/components/react-flow/question-node.tsx",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/components/react-flow/question-node.tsx",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57354,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "2a5087ef7410537bff98e143ad85744c",
+      "spanId": "3e08e3b2e3d7c5d0",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        284000000
+      ],
+      "endTime": [
+        1752416208,
+        285360291
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/use-react-flow-layout.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/use-react-flow-layout.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57351,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "a79ed7921f3b704b7605ed9d150060f8",
+      "spanId": "f3a901439d570d86",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        284000000
+      ],
+      "endTime": [
+        1752416208,
+        285553833
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/services/layouts/elk.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/services/layouts/elk.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "b38136c818e2b5d781169a545e01cb8f",
+      "spanId": "970417e8409bdb85",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        284000000
+      ],
+      "endTime": [
+        1752416208,
+        285833458
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/features/generators/suggested-questions.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/features/generators/suggested-questions.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "36226a714285c3916c8eb030641b9094",
+      "spanId": "b28d32dbbc06c2a1",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        284000000
+      ],
+      "endTime": [
+        1752416208,
+        287459334
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/react-markdown.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/react-markdown.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57352,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "e22c8bbf5d56ec826a50da24847fe166",
+      "spanId": "5a877ca46727aab3",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        285000000
+      ],
+      "endTime": [
+        1752416208,
+        288449042
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/api/questions.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/api/questions.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "90710026eaf85b76a481d5bc0cb44685",
+      "spanId": "42a18159c1f9e20e",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        289000000
+      ],
+      "endTime": [
+        1752416208,
+        291401209
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/lib/extract-bolded-from-markdown.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/lib/extract-bolded-from-markdown.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57354,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "1873cff7a804e8de68fe4db16b524157",
+      "spanId": "3cd15b29df0db9de",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        289000000
+      ],
+      "endTime": [
+        1752416208,
+        291383708
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/features/generators/tooltips.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/features/generators/tooltips.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57351,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "1d1908db0dadc5b5a537df6b04f62158",
+      "spanId": "bacab972ca094637",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        289000000
+      ],
+      "endTime": [
+        1752416208,
+        291973000
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/use-article-summary.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/use-article-summary.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "ac954c7de9ffe32759c17839175ea74e",
+      "spanId": "44d06bcad6d5a92d",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        289000000
+      ],
+      "endTime": [
+        1752416208,
+        292328459
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/use-article-takeaways.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/use-article-takeaways.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "b3153005b3453a6d04607e0893612048",
+      "spanId": "876f6878368fb100",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        289000000
+      ],
+      "endTime": [
+        1752416208,
+        293121334
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/use-learning-map-tree.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/use-learning-map-tree.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57352,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "17549a2ba32e9dfa451cb5e2ca0efc58",
+      "spanId": "4bf539304956b538",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        294000000
+      ],
+      "endTime": [
+        1752416208,
+        294706750
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/hooks/use-elk-layout.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/hooks/use-elk-layout.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57354,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "0556d0efedeff2bbbc3440a90af6f0b6",
+      "spanId": "c7a8f7f2b5263abd",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        294000000
+      ],
+      "endTime": [
+        1752416208,
+        299908250
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/chunk-JRFAYEYE.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/chunk-JRFAYEYE.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57268,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "1b914addf06372e458fb4366c48f64d8",
+      "spanId": "ec8156b49983a8ff",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        294000000
+      ],
+      "endTime": [
+        1752416208,
+        300324584
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/features/generators/article-summary.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/features/generators/article-summary.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57284,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "3174fc57390c9eb68ab4d10531911504",
+      "spanId": "49dbf20e532f6e1b",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        289000000
+      ],
+      "endTime": [
+        1752416208,
+        301833667
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--createArticle_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--createArticle_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 105,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "1d55413c0bf461ed3a9ffe580cd1f67b",
+      "spanId": "631d27fee006468f",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        294000000
+      ],
+      "endTime": [
+        1752416208,
+        302466875
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/lib/article-takeaway-parser.ts",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/lib/article-takeaway-parser.ts",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57352,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "6666a3ef1c52066112c5fad12c399c45",
+      "spanId": "db05dea84a93f6b7",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        294000000
+      ],
+      "endTime": [
+        1752416208,
+        306828166
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_build/node_modules/.vinxi/cache/client/deps/elkjs.js?v=30f4d947",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_build/node_modules/.vinxi/cache/client/deps/elkjs.js?v=30f4d947",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57351,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "b0290f1edca3ce601c6262e11cd851b8",
+      "spanId": "638788ab5cec8a67",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        304000000
+      ],
+      "endTime": [
+        1752416208,
+        309302167
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_learning-maps_ts--getOrCreateLearningMap_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_learning-maps_ts--getOrCreateLearningMap_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 74,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "62c95c0b76e762c700fc7987eb10747f",
+      "spanId": "10cdb64277e6cfb3",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        393000000
+      ],
+      "endTime": [
+        1752416208,
+        398096417
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57351,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "0d965ffc69c756e5a964119ad3db4826",
+      "spanId": "e571e81d16cbc231",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        393000000
+      ],
+      "endTime": [
+        1752416208,
+        398994750
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57352,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    }
+  ]
+}
+{
+  "timestamp": "2025-07-13T14:17:01.072Z",
+  "spans": [
+    {
+      "traceId": "f033c9702a670643b4493cdce1e802ff",
+      "spanId": "8f47519ebef2a52b",
+      "name": "POST",
+      "kind": 2,
+      "startTime": [
+        1752416208,
+        391000000
+      ],
+      "endTime": [
+        1752416216,
+        71368666
+      ],
+      "attributes": {
+        "http.url": "https://anthropic.helicone.ai/v1/messages",
+        "http.method": "POST",
+        "http.target": "/v1/messages",
+        "net.peer.name": "anthropic.helicone.ai",
+        "http.host": "anthropic.helicone.ai:443",
+        "http.user_agent": [
+          "Anthropic/JS 0.39.0"
+        ],
+        "net.peer.ip": "104.18.7.103",
+        "net.peer.port": 443,
+        "http.status_code": 200,
+        "http.status_text": "OK",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "f033c9702a670643b4493cdce1e802ff",
+      "spanId": "b3dedd5efbb46db6",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416208,
+        389000000
+      ],
+      "endTime": [
+        1752416216,
+        73020666
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/api/lesson-stream",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/api/lesson-stream",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 349,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "9acae6501173c8fbd30e7eb184143a8c",
+      "spanId": "44e157dbf615bf3d",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        76000000
+      ],
+      "endTime": [
+        1752416216,
+        86036208
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--updateArticle_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--updateArticle_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 1955,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "d449a3b372dac37401936d4e59094654",
+      "spanId": "111f03f61cca818b",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        89000000
+      ],
+      "endTime": [
+        1752416216,
+        98378958
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "e1ff4df3cded1c34280150083d3e07b1",
+      "spanId": "2e3370ed3664ce82",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        90000000
+      ],
+      "endTime": [
+        1752416216,
+        99785750
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57384,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "6b88c83ff9250ae4bd304a5f60813c49",
+      "spanId": "94a4b903e0ab7692",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        90000000
+      ],
+      "endTime": [
+        1752416216,
+        106482375
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57385,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "7ab9a0a4bdde16e7608a1d4fcd764620",
+      "spanId": "9c75180cb4c7bfc3",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        109000000
+      ],
+      "endTime": [
+        1752416216,
+        117887625
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--updateArticle_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--updateArticle_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 433,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "0ff67ce36add168538a904bb93cd4d83",
+      "spanId": "599cf95e27c7f68b",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        123000000
+      ],
+      "endTime": [
+        1752416216,
+        127459959
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "788bc3a8baacc3eca6f420c96c3cece0",
+      "spanId": "98fef46734552a7e",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        124000000
+      ],
+      "endTime": [
+        1752416216,
+        128871208
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57392,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "ae09461fb86c4dcdd105298edf48136c",
+      "spanId": "5150e137f0cddb9b",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        124000000
+      ],
+      "endTime": [
+        1752416216,
+        132143709
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57393,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "b9b7318eaf9f5dba25cefc679b958823",
+      "spanId": "b58e299ccb23c279",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        130000000
+      ],
+      "endTime": [
+        1752416216,
+        133056333
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "a4a73e6176df1ccc22c28fe13b0b3cde",
+      "spanId": "530c1272c92a1540",
+      "name": "POST",
+      "kind": 2,
+      "startTime": [
+        1752416216,
+        109000000
+      ],
+      "endTime": [
+        1752416217,
+        751446625
+      ],
+      "attributes": {
+        "http.url": "https://anthropic.helicone.ai/v1/messages",
+        "http.method": "POST",
+        "http.target": "/v1/messages",
+        "net.peer.name": "anthropic.helicone.ai",
+        "http.host": "anthropic.helicone.ai:443",
+        "http.user_agent": [
+          "Anthropic/JS 0.39.0"
+        ],
+        "net.peer.ip": "104.18.7.103",
+        "net.peer.port": 443,
+        "http.status_code": 200,
+        "http.status_text": "OK",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "a4a73e6176df1ccc22c28fe13b0b3cde",
+      "spanId": "20701a64b478b049",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        102000000
+      ],
+      "endTime": [
+        1752416217,
+        757556791
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/features_generators_article-summary_ts--generateSummary_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/features_generators_article-summary_ts--generateSummary_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 74,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57384,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "c87e6d03d18bba36dea8018e7cc370e7",
+      "spanId": "4b0e686e02b2634c",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416217,
+        762000000
+      ],
+      "endTime": [
+        1752416217,
+        769517291
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57384,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "5fc37713324cde167d279621d114293c",
+      "spanId": "b0ff48256697af55",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416217,
+        762000000
+      ],
+      "endTime": [
+        1752416217,
+        770231041
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57353,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "ea2e77d5272f5606343ca5f25f433498",
+      "spanId": "cd2532673bfc2942",
+      "name": "POST",
+      "kind": 2,
+      "startTime": [
+        1752416216,
+        121000000
+      ],
+      "endTime": [
+        1752416218,
+        185177041
+      ],
+      "attributes": {
+        "http.url": "https://anthropic.helicone.ai/v1/messages",
+        "http.method": "POST",
+        "http.target": "/v1/messages",
+        "net.peer.name": "anthropic.helicone.ai",
+        "http.host": "anthropic.helicone.ai:443",
+        "http.user_agent": [
+          "Anthropic/JS 0.39.0"
+        ],
+        "net.peer.ip": "104.18.7.103",
+        "net.peer.port": 443,
+        "http.status_code": 200,
+        "http.status_text": "OK",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "ea2e77d5272f5606343ca5f25f433498",
+      "spanId": "cebd9abdce051722",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        119000000
+      ],
+      "endTime": [
+        1752416218,
+        187920334
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/features_generators_suggested-questions_ts--generate_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/features_generators_suggested-questions_ts--generate_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 1941,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57390,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    }
+  ]
+}
+{
+  "timestamp": "2025-07-13T14:17:24.254Z",
+  "spans": [
+    {
+      "traceId": "1c795639c16bc372edc15061d89cb5e8",
+      "spanId": "01ac545991ac0428",
+      "name": "POST",
+      "kind": 2,
+      "startTime": [
+        1752416216,
+        115000000
+      ],
+      "endTime": [
+        1752416239,
+        253688750
+      ],
+      "attributes": {
+        "http.url": "https://oai.helicone.ai/v1/chat/completions",
+        "http.method": "POST",
+        "http.target": "/v1/chat/completions",
+        "net.peer.name": "oai.helicone.ai",
+        "http.host": "oai.helicone.ai:443",
+        "http.user_agent": [
+          "OpenAI/JS 4.93.0"
+        ],
+        "net.peer.ip": "104.18.7.103",
+        "net.peer.port": 443,
+        "http.status_code": 200,
+        "http.status_text": "OK",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "1c795639c16bc372edc15061d89cb5e8",
+      "spanId": "6fd4206064134716",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416216,
+        113000000
+      ],
+      "endTime": [
+        1752416239,
+        255803417
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/features_generators_tooltips_ts--generate_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/features_generators_tooltips_ts--generate_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 245,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57385,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "c1721242ba16674386c87ffb021d3a7d",
+      "spanId": "3aab4651daa0c152",
+      "name": "POST",
+      "kind": 1,
+      "startTime": [
+        1752416239,
+        262000000
+      ],
+      "endTime": [
+        1752416239,
+        268433500
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--updateArticle_createServerFn_handler?createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "POST",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--updateArticle_createServerFn_handler?createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.request_content_length_uncompressed": 5462,
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57385,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "16d6ac0b9f0642dca643065fb9a66f01",
+      "spanId": "f498d1f1e7a4afd2",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416239,
+        298000000
+      ],
+      "endTime": [
+        1752416239,
+        301669750
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57385,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "9fb1c12df2024e54f5669d6a1f65c181",
+      "spanId": "4ec490a2478fd761",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416239,
+        298000000
+      ],
+      "endTime": [
+        1752416239,
+        307868917
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57488,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "d9ac38bc6743309b3c0db905ed222b6c",
+      "spanId": "74f63c27f34e06e3",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416242,
+        641000000
+      ],
+      "endTime": [
+        1752416242,
+        653257500
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57488,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    },
+    {
+      "traceId": "3b3c57a939140badd1cbffa7aaec7c84",
+      "spanId": "3b7e6fd4d4819e05",
+      "name": "GET",
+      "kind": 1,
+      "startTime": [
+        1752416242,
+        642000000
+      ],
+      "endTime": [
+        1752416242,
+        655197000
+      ],
+      "attributes": {
+        "http.url": "http://localhost:3000/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.host": "localhost:3000",
+        "net.host.name": "localhost",
+        "http.method": "GET",
+        "http.scheme": "http",
+        "http.target": "/_server/prisma_articles_ts--getArticle_createServerFn_handler?payload=%7B%22data%22%3A%7B%22id%22%3A%2263852b57-92f9-4241-a05f-675ba5fd424d%22%7D%2C%22context%22%3A%7B%7D%7D&createServerFn",
+        "http.user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+        "http.flavor": "1.1",
+        "net.transport": "ip_tcp",
+        "net.host.ip": "::1",
+        "net.host.port": 3000,
+        "net.peer.ip": "::1",
+        "net.peer.port": 57502,
+        "http.status_code": 200,
+        "http.status_text": "OK"
+      },
+      "events": [],
+      "status": {
+        "code": 0
+      }
+    }
+  ]
+}

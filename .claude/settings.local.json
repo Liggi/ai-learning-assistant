@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:docs.helicone.ai)"
+      "WebFetch(domain:docs.helicone.ai)",
+      "Bash(rg:*)"
     ],
     "deny": []
   }
