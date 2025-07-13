@@ -25,13 +25,27 @@ export class AnthropicProvider
 
   constructor() {
     const apiKey = process.env["ANTHROPIC_API_KEY"];
+    const heliconeApiKey = process.env["HELICONE_API_KEY"];
+    
     if (!apiKey) {
       anthropicLogger.error(
         "ANTHROPIC_API_KEY is not set in environment variables"
       );
       throw new Error("Anthropic API key is not configured");
     }
-    this.client = new Anthropic({ apiKey });
+    
+    if (!heliconeApiKey) {
+      anthropicLogger.error("HELICONE_API_KEY is not set in environment variables");
+      throw new Error("Helicone API key is not configured");
+    }
+    
+    this.client = new Anthropic({ 
+      apiKey,
+      baseURL: "https://anthropic.helicone.ai/",
+      defaultHeaders: {
+        "Helicone-Auth": `Bearer ${heliconeApiKey}`
+      }
+    });
   }
 
   async generateResponse<T>(

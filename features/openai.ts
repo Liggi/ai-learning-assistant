@@ -22,11 +22,25 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
 
   constructor() {
     const apiKey = process.env["OPENAI_API_KEY"];
+    const heliconeApiKey = process.env["HELICONE_API_KEY"];
+    
     if (!apiKey) {
       openaiLogger.error("OPENAI_API_KEY is not set in environment variables");
       throw new Error("OpenAI API key is not configured");
     }
-    this.client = new OpenAI({ apiKey });
+    
+    if (!heliconeApiKey) {
+      openaiLogger.error("HELICONE_API_KEY is not set in environment variables");
+      throw new Error("Helicone API key is not configured");
+    }
+    
+    this.client = new OpenAI({ 
+      apiKey,
+      baseURL: "https://oai.helicone.ai/v1",
+      defaultHeaders: {
+        "Helicone-Auth": `Bearer ${heliconeApiKey}`
+      }
+    });
   }
 
   async generateResponse<T>(
