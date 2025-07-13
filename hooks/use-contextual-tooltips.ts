@@ -61,6 +61,7 @@ export function useContextualTooltips(
           data: {
             concepts: boldedTerms,
             subject: subject.title,
+            articleContent: article.content,
           },
         });
 
@@ -75,17 +76,21 @@ export function useContextualTooltips(
 
         setTooltips(result.tooltips);
         setTooltipsReady(true);
+        setIsGeneratingTooltips(false);
 
-        await updateArticleMutation.mutateAsync({
+        updateArticleMutation.mutateAsync({
           id: article.id,
           tooltips: result.tooltips,
+        }).catch((dbError) => {
+          logger.error("Failed to save tooltips to database", {
+            errorMessage: dbError instanceof Error ? dbError.message : String(dbError),
+          });
         });
       } catch (error) {
         logger.error("Tooltip generation failed", {
           errorMessage: error instanceof Error ? error.message : String(error),
         });
         setTooltipsReady(true);
-      } finally {
         setIsGeneratingTooltips(false);
       }
     };
