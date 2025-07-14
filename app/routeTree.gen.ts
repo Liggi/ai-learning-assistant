@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as MapPlaygroundImport } from './routes/map-playground'
 import { Route as LoadingImport } from './routes/loading'
 import { Route as IndexImport } from './routes/index'
 import { Route as LearningSubjectIdImport } from './routes/learning/$subjectId'
@@ -18,6 +19,12 @@ import { Route as CalibrationSubjectIdImport } from './routes/calibration/$subje
 import { Route as LearningArticleArticleIdImport } from './routes/learning/article/$articleId'
 
 // Create/Update Routes
+
+const MapPlaygroundRoute = MapPlaygroundImport.update({
+  id: '/map-playground',
+  path: '/map-playground',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const LoadingRoute = LoadingImport.update({
   id: '/loading',
@@ -67,6 +74,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoadingImport
       parentRoute: typeof rootRoute
     }
+    '/map-playground': {
+      id: '/map-playground'
+      path: '/map-playground'
+      fullPath: '/map-playground'
+      preLoaderRoute: typeof MapPlaygroundImport
+      parentRoute: typeof rootRoute
+    }
     '/calibration/$subjectId': {
       id: '/calibration/$subjectId'
       path: '/calibration/$subjectId'
@@ -96,6 +110,7 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/loading': typeof LoadingRoute
+  '/map-playground': typeof MapPlaygroundRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning/$subjectId': typeof LearningSubjectIdRoute
   '/learning/article/$articleId': typeof LearningArticleArticleIdRoute
@@ -104,6 +119,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/loading': typeof LoadingRoute
+  '/map-playground': typeof MapPlaygroundRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning/$subjectId': typeof LearningSubjectIdRoute
   '/learning/article/$articleId': typeof LearningArticleArticleIdRoute
@@ -113,6 +129,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/loading': typeof LoadingRoute
+  '/map-playground': typeof MapPlaygroundRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
   '/learning/$subjectId': typeof LearningSubjectIdRoute
   '/learning/article/$articleId': typeof LearningArticleArticleIdRoute
@@ -123,6 +140,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/loading'
+    | '/map-playground'
     | '/calibration/$subjectId'
     | '/learning/$subjectId'
     | '/learning/article/$articleId'
@@ -130,6 +148,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/loading'
+    | '/map-playground'
     | '/calibration/$subjectId'
     | '/learning/$subjectId'
     | '/learning/article/$articleId'
@@ -137,6 +156,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/loading'
+    | '/map-playground'
     | '/calibration/$subjectId'
     | '/learning/$subjectId'
     | '/learning/article/$articleId'
@@ -146,6 +166,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoadingRoute: typeof LoadingRoute
+  MapPlaygroundRoute: typeof MapPlaygroundRoute
   CalibrationSubjectIdRoute: typeof CalibrationSubjectIdRoute
   LearningSubjectIdRoute: typeof LearningSubjectIdRoute
   LearningArticleArticleIdRoute: typeof LearningArticleArticleIdRoute
@@ -154,6 +175,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoadingRoute: LoadingRoute,
+  MapPlaygroundRoute: MapPlaygroundRoute,
   CalibrationSubjectIdRoute: CalibrationSubjectIdRoute,
   LearningSubjectIdRoute: LearningSubjectIdRoute,
   LearningArticleArticleIdRoute: LearningArticleArticleIdRoute,
@@ -171,6 +193,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/loading",
+        "/map-playground",
         "/calibration/$subjectId",
         "/learning/$subjectId",
         "/learning/article/$articleId"
@@ -181,6 +204,9 @@ export const routeTree = rootRoute
     },
     "/loading": {
       "filePath": "loading.tsx"
+    },
+    "/map-playground": {
+      "filePath": "map-playground.tsx"
     },
     "/calibration/$subjectId": {
       "filePath": "calibration/$subjectId.tsx"
