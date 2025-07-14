@@ -36,6 +36,15 @@ const initialEdges = [];
 function MapPlaygroundPage() {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
+  const [shouldLayout, setShouldLayout] = useState(false);
+
+  const runLayout = () => {
+    setShouldLayout(true);
+  };
+
+  const handleLayoutComplete = () => {
+    setShouldLayout(false);
+  };
 
   const addQuestionNode = () => {
     const questionId = `question-${Date.now()}`;
@@ -73,12 +82,20 @@ function MapPlaygroundPage() {
       {/* Toolbar */}
       <div className="h-16 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-4">
         <h1 className="text-white font-semibold">Map Playground</h1>
-        <button
-          onClick={addQuestionNode}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-        >
-          Add Question
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={addQuestionNode}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+          >
+            Add Question
+          </button>
+          <button
+            onClick={runLayout}
+            className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
+          >
+            Run Layout
+          </button>
+        </div>
       </div>
       
       {/* Map area */}
@@ -86,6 +103,8 @@ function MapPlaygroundPage() {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        triggerLayout={shouldLayout}
+        onLayoutComplete={handleLayoutComplete}
         className="h-[calc(100vh-4rem)]"
       />
     </div>
