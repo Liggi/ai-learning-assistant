@@ -1,4 +1,4 @@
-import type { Node, Edge } from "@xyflow/react";
+import type { Node, Edge, XYPosition } from "@xyflow/react";
 
 export interface ArticleNodeData extends Record<string, unknown> {
   id: string;
@@ -17,5 +17,7 @@ export interface QuestionNodeData extends Record<string, unknown> {
 }
 
 export type MapNodeData = ArticleNodeData | QuestionNodeData;
-export type MapNode = Node<MapNodeData>;
+export type MapNode = Node<MapNodeData> & {
+  finalPosition?: XYPosition;
+};
 export type MapEdge = Edge;

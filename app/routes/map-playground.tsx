@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef } from "react";
 import LearningMap from "@/components/learning-map";
 import ArticleNode from "@/components/learning-map/article-node";
 import QuestionNode from "@/components/learning-map/question-node";
+import type { QuestionNodeData } from "@/components/learning-map/types";
 
 const nodeTypes = {
   articleNode: ArticleNode,
@@ -34,48 +35,35 @@ const initialNodes = [
 const initialEdges = [];
 
 function MapPlaygroundPage() {
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
-  const [shouldLayout, setShouldLayout] = useState(false);
+  const mapRef = useRef<{ 
+    runLayout: () => void; 
+    addQuestionNode: (questionData: QuestionNodeData, sourceNodeId?: string) => void;
+    showHiddenNodes: () => void;
+  }>(null);
 
   const runLayout = () => {
-    setShouldLayout(true);
+    mapRef.current?.runLayout();
   };
 
   const handleLayoutComplete = () => {
-    setShouldLayout(false);
+    console.log('Layout completed!');
   };
 
   const addQuestionNode = () => {
-    const questionId = `question-${Date.now()}`;
-    const articleNode = nodes.find(n => n.id === "sample-article");
+    const questionData: QuestionNodeData = {
+      id: '', // Will be set by addQuestionNode
+      text: "What preservation methods were used for ancient sausages?",
+    };
     
-    if (!articleNode) return;
-
-    const newQuestionNode = {
-      id: questionId,
-      type: "questionNode",
-      position: { 
-        x: articleNode.position.x + 200, 
-        y: articleNode.position.y + 100 
-      },
-      data: {
-        id: questionId,
-        text: "What preservation methods were used for ancient sausages?",
-      },
-    };
-
-    const newEdge = {
-      id: `${articleNode.id}-${questionId}`,
-      source: articleNode.id,
-      target: questionId,
-      type: "smoothstep",
-      animated: true,
-    };
-
-    setNodes(prev => [...prev, newQuestionNode]);
-    setEdges(prev => [...prev, newEdge]);
+    mapRef.current?.addQuestionNode(questionData, "sample-article");
   };
+
+  const showHiddenNodes = () => {
+    mapRef.current?.showHiddenNodes();
+  };
+
+  // Count hidden nodes by checking the ref (this is a bit hacky but works for demo)
+  const hiddenNodeCount = 1; // We'll simplify this for now since we don't have direct access to the internal state
 
   return (
     <div className="w-screen h-screen bg-slate-900">
@@ -85,26 +73,32 @@ function MapPlaygroundPage() {
         <div className="flex gap-2">
           <button
             onClick={addQuestionNode}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
           >
-            Add Question
+            Add Question (Hidden)
           </button>
           <button
             onClick={runLayout}
-            className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
           >
             Run Layout
+          </button>
+          <button
+            onClick={showHiddenNodes}
+            className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
+          >
+            Show Hidden
           </button>
         </div>
       </div>
       
       {/* Map area */}
       <LearningMap
-        nodes={nodes}
-        edges={edges}
+        defaultNodes={initialNodes}
+        defaultEdges={initialEdges}
         nodeTypes={nodeTypes}
-        triggerLayout={shouldLayout}
         onLayoutComplete={handleLayoutComplete}
+        ref={mapRef}
         className="h-[calc(100vh-4rem)]"
       />
     </div>
