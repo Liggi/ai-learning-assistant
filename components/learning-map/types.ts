@@ -21,3 +21,9 @@ export type MapNode = Node<MapNodeData> & {
   finalPosition?: XYPosition;
 };
 export type MapEdge = Edge;
+
+export interface NodeCreationOptions {
+  type: "question" | "article";
+  data: QuestionNodeData | ArticleNodeData;
+  sourceNodeId?: string;
+}

@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef } from "react";
-import LearningMap from "@/components/learning-map";
+import LearningMap, { type LearningMapHandle } from "@/components/learning-map";
 import ArticleNode from "@/components/learning-map/article-node";
 import QuestionNode from "@/components/learning-map/question-node";
-import type { QuestionNodeData } from "@/components/learning-map/types";
+import type { QuestionNodeData, ArticleNodeData } from "@/components/learning-map/types";
 
 const nodeTypes = {
   articleNode: ArticleNode,
@@ -35,11 +35,7 @@ const initialNodes = [
 const initialEdges = [];
 
 function MapPlaygroundPage() {
-  const mapRef = useRef<{ 
-    runLayout: () => void; 
-    addQuestionNode: (questionData: QuestionNodeData, sourceNodeId?: string) => void;
-    showHiddenNodes: () => void;
-  }>(null);
+  const mapRef = useRef<LearningMapHandle>(null);
 
   const runLayout = () => {
     mapRef.current?.runLayout();
@@ -51,11 +47,37 @@ function MapPlaygroundPage() {
 
   const addQuestionNode = () => {
     const questionData: QuestionNodeData = {
-      id: '', // Will be set by addQuestionNode
+      id: '', // Will be set by addNode
       text: "What preservation methods were used for ancient sausages?",
     };
     
-    mapRef.current?.addQuestionNode(questionData, "sample-article");
+    mapRef.current?.addNode({
+      type: "question",
+      data: questionData,
+      sourceNodeId: "sample-article"
+    });
+  };
+
+  const addArticleNode = () => {
+    const articleData: ArticleNodeData = {
+      id: '', // Will be set by addNode
+      content: {
+        summary: "Modern sausage production techniques and quality control measures.",
+        takeaways: [
+          "Industrial sausage production uses automated machinery",
+          "Quality control includes temperature monitoring and pH testing",
+          "Packaging innovations extend shelf life significantly",
+          "Regulatory standards ensure food safety compliance"
+        ],
+      },
+      isUser: false,
+    };
+    
+    mapRef.current?.addNode({
+      type: "article",
+      data: articleData,
+      sourceNodeId: "sample-article"
+    });
   };
 
   const showHiddenNodes = () => {
@@ -75,7 +97,13 @@ function MapPlaygroundPage() {
             onClick={addQuestionNode}
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
           >
-            Add Question (Hidden)
+            Add Question
+          </button>
+          <button
+            onClick={addArticleNode}
+            className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+          >
+            Add Article
           </button>
           <button
             onClick={runLayout}

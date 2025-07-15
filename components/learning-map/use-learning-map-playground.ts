@@ -1,29 +1,35 @@
 import { useCallback } from "react";
 import type { ReactFlowInstance } from "@xyflow/react";
-import type { MapEdge, MapNode, QuestionNodeData } from "./types";
+import type { MapEdge, MapNode, QuestionNodeData, ArticleNodeData, NodeCreationOptions } from "./types";
 
 export function useLearningMapPlayground(flow: ReactFlowInstance) {
-  const addQuestionNode = useCallback(
-    (questionData: QuestionNodeData, sourceNodeId?: string) => {
-      const id = `question-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  const addNode = useCallback(
+    (options: NodeCreationOptions) => {
+      const { type, data, sourceNodeId } = options;
+      const id = `${type}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      
+      const nodes = flow.getNodes();
       const src = sourceNodeId
         ? flow.getNode(sourceNodeId)
-        : flow.getNodes()[0];
+        : nodes[nodes.length - 1] || nodes[0];
+      
       if (!src) {
-        console.warn("No source node available for question positioning");
+        console.warn("No source node available for node positioning");
         return;
       }
+      
       const newNode: MapNode = {
         id,
-        type: "questionNode",
+        type: type === "question" ? "questionNode" : "articleNode",
         position: { x: -9999, y: -9999 },
-        data: { ...questionData, id },
+        data: { ...data, id },
         style: { opacity: 0, pointerEvents: "none" as const },
         finalPosition: {
           x: src.position.x + 200,
           y: src.position.y + 100,
         },
       } as MapNode;
+      
       const newEdge: MapEdge = {
         id: `${src.id}-${id}`,
         source: src.id,
@@ -32,11 +38,13 @@ export function useLearningMapPlayground(flow: ReactFlowInstance) {
         animated: false,
         style: { opacity: 0 },
       } as MapEdge;
+      
       flow.addNodes([newNode]);
       flow.addEdges([newEdge]);
     },
     [flow]
   );
+
 
   const showHiddenNodes = useCallback(() => {
     const nodes = flow
@@ -58,5 +66,5 @@ export function useLearningMapPlayground(flow: ReactFlowInstance) {
     flow.setEdges(edges);
   }, [flow]);
 
-  return { addQuestionNode, showHiddenNodes };
+  return { addNode, showHiddenNodes };
 }

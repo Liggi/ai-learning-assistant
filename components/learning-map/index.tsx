@@ -6,17 +6,21 @@ import {
   type NodeProps,
 } from "@xyflow/react";
 import { forwardRef, useImperativeHandle } from "react";
-import type { MapNode, MapEdge, MapNodeData, QuestionNodeData } from "./types";
+import type {
+  MapNode,
+  MapEdge,
+  MapNodeData,
+  QuestionNodeData,
+  ArticleNodeData,
+  NodeCreationOptions,
+} from "./types";
 import { useElkLayout } from "./use-elk-layout";
 import { useLearningMapPlayground } from "./use-learning-map-playground";
 import "@xyflow/react/dist/style.css";
 
 export interface LearningMapHandle {
   runLayout: () => void;
-  addQuestionNode: (
-    questionData: QuestionNodeData,
-    sourceNodeId?: string
-  ) => void;
+  addNode: (options: NodeCreationOptions) => void;
   showHiddenNodes: () => void;
 }
 
@@ -46,13 +50,13 @@ const LearningMapCore = forwardRef<
   const flow = useReactFlow();
 
   const runLayout = useElkLayout(flow, onLayoutComplete);
-  const { addQuestionNode, showHiddenNodes } = useLearningMapPlayground(flow);
+  const { addNode, showHiddenNodes } = useLearningMapPlayground(flow);
 
-  useImperativeHandle(
-    ref,
-    () => ({ runLayout, addQuestionNode, showHiddenNodes }),
-    [runLayout, addQuestionNode, showHiddenNodes]
-  );
+  useImperativeHandle(ref, () => ({ runLayout, addNode, showHiddenNodes }), [
+    runLayout,
+    addNode,
+    showHiddenNodes,
+  ]);
 
   const handleNodeClick = (_: React.MouseEvent, node: MapNode) => {
     if (onNodeClick) {
