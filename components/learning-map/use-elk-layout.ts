@@ -28,11 +28,13 @@ export function useElkLayout(
     const currentNodes = flow.getNodes();
     const currentEdges = flow.getEdges();
 
-    const layoutNodes = currentNodes.map((node) =>
-      hasFinalPosition(node) && node.finalPosition
-        ? { ...node, position: node.finalPosition }
-        : node
-    );
+    const layoutNodes = currentNodes.map((node) => {
+      // Only use finalPosition for hidden nodes or nodes that haven't been positioned
+      if (hasFinalPosition(node) && node.finalPosition && node.style?.opacity === 0) {
+        return { ...node, position: node.finalPosition };
+      }
+      return node; // Use current position for visible nodes
+    });
 
     const oldPos = new Map(layoutNodes.map((n) => [n.id, { ...n.position }]));
 
