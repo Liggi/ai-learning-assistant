@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import type { ReactFlowInstance } from "@xyflow/react";
 import { useElkLayout } from "./use-elk-layout";
 import type { MapEdge, MapNode, NodeCreationOptions } from "./types";
@@ -7,7 +7,49 @@ export function useMapCore(
   flow: ReactFlowInstance,
   onLayoutComplete?: (nodes: MapNode[], edges: MapEdge[]) => void
 ) {
-  const runLayout = useElkLayout(flow, onLayoutComplete);
+  const newlyAddedNodeId = useRef<string | null>(null);
+  
+  const handleLayoutComplete = useCallback((nodes: MapNode[], edges: MapEdge[]) => {
+    // Show the newly added node after layout completes
+    if (newlyAddedNodeId.current) {
+      const updatedNodes = flow.getNodes().map(node => 
+        node.id === newlyAddedNodeId.current
+          ? { 
+              ...node, 
+              style: { 
+                ...node.style, 
+                opacity: 1, 
+                pointerEvents: "auto" as const,
+                transition: "opacity 0.5s ease-in-out"
+              } 
+            }
+          : node
+      );
+      const updatedEdges = flow.getEdges().map(edge => 
+        edge.target === newlyAddedNodeId.current
+          ? { 
+              ...edge, 
+              style: { 
+                ...edge.style, 
+                opacity: 1,
+                transition: "opacity 0.5s ease-in-out"
+              } 
+            }
+          : edge
+      );
+      flow.setNodes(updatedNodes);
+      flow.setEdges(updatedEdges);
+      
+      newlyAddedNodeId.current = null;
+    }
+    
+    // Call the original callback if provided
+    if (onLayoutComplete) {
+      onLayoutComplete(nodes, edges);
+    }
+  }, [flow, onLayoutComplete]);
+
+  const runLayout = useElkLayout(flow, handleLayoutComplete);
 
   const addNode = useCallback(
     (options: NodeCreationOptions) => {
@@ -29,7 +71,11 @@ export function useMapCore(
         type: type === "question" ? "questionNode" : "articleNode",
         position: { x: -9999, y: -9999 },
         data: { ...data, id },
-        style: { opacity: 0, pointerEvents: "none" as const },
+        style: { 
+          opacity: 0, 
+          pointerEvents: "none" as const,
+          transition: "opacity 0.5s ease-in-out"
+        },
         finalPosition: {
           x: src.position.x + 200,
           y: src.position.y + 100,
@@ -42,11 +88,17 @@ export function useMapCore(
         target: id,
         type: "smoothstep",
         animated: false,
-        style: { opacity: 0 },
+        style: { 
+          opacity: 0,
+          transition: "opacity 0.5s ease-in-out"
+        },
       } as MapEdge;
       
       flow.addNodes([newNode]);
       flow.addEdges([newEdge]);
+      
+      // Track the newly added node for auto-show after layout
+      newlyAddedNodeId.current = id;
     },
     [flow, runLayout]
   );
