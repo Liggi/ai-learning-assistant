@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import LearningMap from "./learning-map";
+import LearningMap, { LearningMapHandle } from "./learning-map";
 import ArticleNode from "./learning-map/article-node";
 import QuestionNode from "./learning-map/question-node";
 import { SerializedLearningMap } from "@/types/serialized";
@@ -9,6 +9,7 @@ import type { SerializedArticle, SerializedQuestion } from "@/types/serialized";
 interface PersonalLearningMapFlowProps {
   onNodeClick?: (nodeId: string) => void;
   learningMap?: SerializedLearningMap | null;
+  ref?: React.Ref<LearningMapHandle>;
 }
 
 const nodeTypes = {
@@ -83,6 +84,7 @@ function convertLearningMapToNodes(learningMap: SerializedLearningMap): {
 const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
   onNodeClick,
   learningMap,
+  ref,
 }) => {
   const { nodes, edges } = useMemo(() => {
     if (!learningMap) {
@@ -103,6 +105,7 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
   return (
     <div className="w-full h-full">
       <LearningMap
+        ref={ref}
         defaultNodes={nodes}
         defaultEdges={edges}
         nodeTypes={nodeTypes}

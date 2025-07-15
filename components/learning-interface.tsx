@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SuggestedQuestions } from "./suggested-questions";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";
@@ -13,6 +13,7 @@ import { useNavigate } from "@tanstack/react-router";
 import ArticleContent from "./article-content";
 import { CustomQuestionInput } from "./custom-question-input";
 import { useStableLearningMap } from "@/hooks/use-stable-learning-map";
+import { LearningMapHandle } from "./learning-map";
 
 const logger = new Logger({ context: "LearningInterface", enabled: false });
 
@@ -50,6 +51,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
 
   const [isMapExpanded, setIsMapExpanded] = React.useState(true);
   const navigate = useNavigate();
+  const mapRef = useRef<LearningMapHandle>(null);
 
   // Only changes when the ID / updatedAt changes
   const stableLearningMap = useStableLearningMap(learningMap);
@@ -88,6 +90,26 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
     [navigate]
   );
 
+  const handleQuestionCreated = useCallback(
+    (questionText: string, parentArticleId: string) => {
+      logger.info("Question created, adding to map", {
+        questionText,
+        parentArticleId,
+      });
+      
+      // Add the question node to the map immediately
+      mapRef.current?.addNode({
+        type: "question",
+        data: {
+          id: `temp-${Date.now()}`, // Temporary ID until we get the real one
+          text: questionText,
+        },
+        sourceNodeId: parentArticleId,
+      });
+    },
+    []
+  );
+
   if (!learningMap || !activeArticle) {
     logger.warn(
       "Missing learning map or root article despite no loading/error state",
@@ -104,6 +126,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
         >
           <div className="h-full">
             <PersonalLearningMapFlow
+              ref={mapRef}
               onNodeClick={handleNodeClick}
               learningMap={stableLearningMap}
             />
@@ -159,6 +182,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
               subject={subject}
               article={activeArticle}
               onArticleCreated={handleArticleCreated}
+              onQuestionCreated={handleQuestionCreated}
             />
           </div>
         </div>

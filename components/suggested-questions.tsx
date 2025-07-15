@@ -15,12 +15,14 @@ interface SuggestedQuestionsContentProps {
   subject: SerializedSubject;
   article: SerializedArticle;
   onArticleCreated?: (articleId: string) => void;
+  onQuestionCreated?: (questionText: string, parentArticleId: string) => void;
 }
 
 const SuggestedQuestionsContent: React.FC<SuggestedQuestionsContentProps> = ({
   subject,
   article,
   onArticleCreated,
+  onQuestionCreated,
 }) => {
   const { questions, isGeneratingQuestions } = useSuggestedQuestions(
     subject,
@@ -36,6 +38,12 @@ const SuggestedQuestionsContent: React.FC<SuggestedQuestionsContentProps> = ({
       learningMapId: article.learningMapId,
       parentArticleId: article.id,
     });
+    
+    // Call the onQuestionCreated callback immediately to add the question node to the map
+    if (onQuestionCreated) {
+      onQuestionCreated(question, article.id);
+    }
+    
     createArticleMutation.mutate(
       {
         learningMapId: article.learningMapId,
@@ -118,12 +126,14 @@ interface SuggestedQuestionsProps {
   subject: SerializedSubject | null | undefined; // Can be null
   article: SerializedArticle | null | undefined; // Can be null
   onArticleCreated?: (articleId: string) => void;
+  onQuestionCreated?: (questionText: string, parentArticleId: string) => void;
 }
 
 export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
   subject,
   article,
   onArticleCreated,
+  onQuestionCreated,
 }) => {
   if (!article || !subject || !article.content) {
     return <SuggestedQuestionsSkeleton />;
@@ -134,6 +144,7 @@ export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
       subject={subject}
       article={article as SerializedArticle & { content: string }}
       onArticleCreated={onArticleCreated}
+      onQuestionCreated={onQuestionCreated}
     />
   );
 };
