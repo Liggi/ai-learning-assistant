@@ -4,6 +4,7 @@ import {
   type NodeProps,
   type Node as ReactFlowNode,
 } from "@xyflow/react";
+import { useParams } from "@tanstack/react-router";
 import MarkdownDisplay from "../markdown-display";
 
 interface ArticleNodeData extends Record<string, unknown> {
@@ -30,6 +31,16 @@ const nodeStyles = {
 };
 
 export default function ArticleNode({ data }: ArticleNodeProps) {
+  const params = useParams({ strict: false }) as {
+    articleId?: string;
+    subjectId?: string;
+  };
+  const urlArticleId = params.articleId;
+
+  const isUrlSelected =
+    (!!urlArticleId && urlArticleId === data.id) ||
+    (!urlArticleId && data.isRoot === true);
+
   const isQuestionType = data.isUser;
   const style = isQuestionType ? nodeStyles.question : nodeStyles.answer;
 
@@ -40,7 +51,11 @@ export default function ArticleNode({ data }: ArticleNodeProps) {
       className={`
         p-4 transition-all duration-200 cursor-pointer
         ${isQuestionType ? "hover:bg-blue-900/20" : "hover:bg-green-900/20"}
-        hover:scale-[1.05]
+        ${
+          isUrlSelected
+            ? "scale-[1.10] ring-3 ring-green-500/30 shadow-[0_0_10px_4px_rgba(16,185,129,0.45)]"
+            : "hover:scale-[1.05]"
+        }
         rounded-xl backdrop-blur-sm min-w-[350px] max-w-[350px]
       `}
     >
