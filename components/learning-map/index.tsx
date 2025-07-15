@@ -4,15 +4,15 @@ import {
   Background,
   useReactFlow,
   type NodeProps,
+  type Node,
 } from "@xyflow/react";
 import { forwardRef, useImperativeHandle } from "react";
 import type {
   MapNode,
   MapEdge,
   MapNodeData,
-  QuestionNodeData,
-  ArticleNodeData,
   NodeCreationOptions,
+  NodeReplacementOptions,
 } from "./types";
 import { useMapCore } from "./use-map-core";
 import "@xyflow/react/dist/style.css";
@@ -20,8 +20,9 @@ import "@xyflow/react/dist/style.css";
 export interface LearningMapHandle {
   runLayout: () => void;
   addNode: (options: NodeCreationOptions) => void;
+  replaceNode: (options: NodeReplacementOptions) => void;
   showHiddenNodes: () => void;
-  getNodes: () => MapNode[];
+  getNodes: () => Node[];
 }
 
 interface LearningMapProps {
@@ -49,16 +50,18 @@ const LearningMapCore = forwardRef<
 ) {
   const flow = useReactFlow();
 
-  const { addNode, showHiddenNodes, runLayout } = useMapCore(flow, onLayoutComplete);
+  const { addNode, replaceNode, showHiddenNodes, runLayout } = useMapCore(
+    flow,
+    onLayoutComplete
+  );
 
   const getNodes = () => flow.getNodes();
 
-  useImperativeHandle(ref, () => ({ runLayout, addNode, showHiddenNodes, getNodes }), [
-    runLayout,
-    addNode,
-    showHiddenNodes,
-    getNodes,
-  ]);
+  useImperativeHandle(
+    ref,
+    () => ({ runLayout, addNode, replaceNode, showHiddenNodes, getNodes }),
+    [runLayout, addNode, replaceNode, showHiddenNodes, getNodes]
+  );
 
   const handleNodeClick = (_: React.MouseEvent, node: MapNode) => {
     if (onNodeClick) {

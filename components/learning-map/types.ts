@@ -27,3 +27,8 @@ export interface NodeCreationOptions {
   data: QuestionNodeData | ArticleNodeData;
   sourceNodeId?: string;
 }
+
+export interface NodeReplacementOptions {
+  id: string;
+  newNode: MapNode;
+}

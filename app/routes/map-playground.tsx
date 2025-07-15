@@ -3,7 +3,10 @@ import { useRef } from "react";
 import LearningMap, { type LearningMapHandle } from "@/components/learning-map";
 import ArticleNode from "@/components/learning-map/article-node";
 import QuestionNode from "@/components/learning-map/question-node";
-import type { QuestionNodeData, ArticleNodeData } from "@/components/learning-map/types";
+import type {
+  QuestionNodeData,
+  ArticleNodeData,
+} from "@/components/learning-map/types";
 
 const nodeTypes = {
   articleNode: ArticleNode,
@@ -18,13 +21,14 @@ const initialNodes = [
     data: {
       id: "sample-article",
       content: {
-        summary: "Evolution of sausage from ancient preservation technique to diverse culinary tradition.",
+        summary:
+          "Evolution of sausage from ancient preservation technique to diverse culinary tradition.",
         takeaways: [
           "Sausage evolution mirrors human cultural development",
           "Original focus was preservation, now emphasis is on flavor",
           "Basic technique remained constant while ingredients diversified",
           "Modern versions include synthetic casings and meat alternatives",
-          "Regional variations reflect local cultural preferences"
+          "Regional variations reflect local cultural preferences",
         ],
       },
       isUser: false,
@@ -42,50 +46,79 @@ function MapPlaygroundPage() {
   };
 
   const handleLayoutComplete = () => {
-    console.log('Layout completed!');
+    console.log("Layout completed!");
   };
 
   const addQuestionNode = () => {
     const questionData: QuestionNodeData = {
-      id: '', // Will be set by addNode
+      id: "", // Will be set by addNode
       text: "What preservation methods were used for ancient sausages?",
     };
-    
+
     mapRef.current?.addNode({
       type: "question",
       data: questionData,
-      sourceNodeId: "sample-article"
+      sourceNodeId: "sample-article",
     });
   };
 
   const addArticleNode = () => {
     const articleData: ArticleNodeData = {
-      id: '', // Will be set by addNode
+      id: "", // Will be set by addNode
       content: {
-        summary: "Modern sausage production techniques and quality control measures.",
+        summary:
+          "Modern sausage production techniques and quality control measures.",
         takeaways: [
           "Industrial sausage production uses automated machinery",
           "Quality control includes temperature monitoring and pH testing",
           "Packaging innovations extend shelf life significantly",
-          "Regulatory standards ensure food safety compliance"
+          "Regulatory standards ensure food safety compliance",
         ],
       },
       isUser: false,
     };
-    
+
     mapRef.current?.addNode({
       type: "article",
       data: articleData,
-      sourceNodeId: "sample-article"
+      sourceNodeId: "sample-article",
+    });
+  };
+
+  const replaceArticleNode = () => {
+    const articleData: ArticleNodeData = {
+      id: "sample-article",
+      content: {
+        summary:
+          "Historical evolution of sausage recipes and preservation techniques.",
+        takeaways: [
+          "Ancient sausages were often smoked or dried for preservation",
+          "Regional spices influenced flavor and shelf life",
+          "Fermentation was a common method before refrigeration",
+          "Traditional methods are still used in artisanal sausage making",
+        ],
+      },
+      isUser: false,
+    };
+
+    mapRef.current?.replaceNode({
+      id: "sample-article",
+      newNode: {
+        id: "sample-article",
+        type: "articleNode",
+        position: { x: 0, y: 0 },
+        data: articleData,
+        style: {
+          opacity: 1,
+          pointerEvents: "auto" as const,
+        },
+      },
     });
   };
 
   const showHiddenNodes = () => {
     mapRef.current?.showHiddenNodes();
   };
-
-  // Count hidden nodes by checking the ref (this is a bit hacky but works for demo)
-  const hiddenNodeCount = 1; // We'll simplify this for now since we don't have direct access to the internal state
 
   return (
     <div className="w-screen h-screen bg-slate-900">
@@ -117,9 +150,15 @@ function MapPlaygroundPage() {
           >
             Show Hidden
           </button>
+          <button
+            onClick={replaceArticleNode}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+          >
+            Replace Article
+          </button>
         </div>
       </div>
-      
+
       {/* Map area */}
       <LearningMap
         defaultNodes={initialNodes}
