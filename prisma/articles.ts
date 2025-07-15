@@ -20,7 +20,7 @@ async function ensureLearningMapContent(learningMapId: string) {
     where: { learningMapId },
     select: { id: true },
   });
-  
+
   // Process articles in parallel
   const promises = articles.map(async (article) => {
     await Promise.all([
@@ -28,7 +28,7 @@ async function ensureLearningMapContent(learningMapId: string) {
       ensureArticleTakeaways(article.id),
     ]);
   });
-  
+
   await Promise.all(promises);
 }
 
@@ -37,18 +37,21 @@ async function ensureArticleSummary(articleId: string) {
   const article = await prisma.article.findUnique({
     where: { id: articleId },
   });
-  
+
   if (!article || !article.content) {
     return;
   }
-  
+
   if (!article.summary || article.summary.trim() === "") {
     logger.info("Generating missing summary for article", { articleId });
     try {
       await generateSummary({ data: { articleId } });
       logger.info("Successfully generated summary for article", { articleId });
     } catch (error) {
-      logger.error("Failed to generate summary for article", { articleId, error });
+      logger.error("Failed to generate summary for article", {
+        articleId,
+        error,
+      });
     }
   }
 }
@@ -58,11 +61,11 @@ async function ensureArticleTakeaways(articleId: string) {
   const article = await prisma.article.findUnique({
     where: { id: articleId },
   });
-  
+
   if (!article || !article.content) {
     return;
   }
-  
+
   if (!article.takeaways || article.takeaways.length === 0) {
     logger.info("Generating missing takeaways for article", { articleId });
     try {
@@ -72,10 +75,16 @@ async function ensureArticleTakeaways(articleId: string) {
           where: { id: articleId },
           data: { takeaways },
         });
-        logger.info("Successfully generated takeaways for article", { articleId, count: takeaways.length });
+        logger.info("Successfully generated takeaways for article", {
+          articleId,
+          count: takeaways.length,
+        });
       }
     } catch (error) {
-      logger.error("Failed to generate takeaways for article", { articleId, error });
+      logger.error("Failed to generate takeaways for article", {
+        articleId,
+        error,
+      });
     }
   }
 }
@@ -395,10 +404,10 @@ export const getLearningMapAndSubjectForArticle = createServerFn({
 
         const { learningMap } = article;
         const { subject, ...learningMapWithoutSubject } = learningMap;
-        
+
         // Ensure all articles in the learning map have summaries and takeaways
         await ensureLearningMapContent(learningMap.id);
-        
+
         // Refetch the learning map with updated content
         const updatedLearningMap = await prisma.learningMap.findUnique({
           where: { id: learningMap.id },

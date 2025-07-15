@@ -42,22 +42,23 @@ export const generateSummary = createServerFn({ method: "POST" })
           "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
           "Helicone-Property-Type": "summary",
           "Helicone-Property-Article-Id": data.articleId,
-        }
+        },
       });
 
       const response = await robustLLMCall(
-        () => anthropic.messages.create({
-          model: "claude-3-haiku-20240307",
-          max_tokens: 1024,
-          messages: [{ role: "user", content: prompt }],
-        }),
+        () =>
+          anthropic.messages.create({
+            model: "claude-3-haiku-20240307",
+            max_tokens: 1024,
+            messages: [{ role: "user", content: prompt }],
+          }),
         {
-          provider: 'anthropic',
-          requestType: 'summary',
+          provider: "anthropic",
+          requestType: "summary",
           metadata: {
             articleId: data.articleId,
             contentLength: article.content.length,
-          }
+          },
         }
       );
 
@@ -65,7 +66,9 @@ export const generateSummary = createServerFn({ method: "POST" })
       const parsedResponse = JSON.parse(jsonString);
       const validatedResponse = summarySchema.parse(parsedResponse);
 
-      logger.info(`Successfully generated summary: "${validatedResponse.summary}"`);
+      logger.info(
+        `Successfully generated summary: "${validatedResponse.summary}"`
+      );
 
       const updatedArticle = await prisma.article.update({
         where: { id: data.articleId },

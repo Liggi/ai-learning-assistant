@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SuggestedQuestions } from "./suggested-questions";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";
@@ -56,6 +56,10 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
   // Only changes when the ID / updatedAt changes
   const stableLearningMap = useStableLearningMap(learningMap);
 
+  useEffect(() => {
+    console.log({ stableLearningMap });
+  }, [stableLearningMap]);
+
   const toggleLayout = () => {
     setIsMapExpanded((prev) => !prev);
   };
@@ -96,7 +100,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
         questionText,
         parentArticleId,
       });
-      
+
       // Add the question node to the map immediately
       mapRef.current?.addNode({
         type: "question",
