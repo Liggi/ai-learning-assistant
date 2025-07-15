@@ -8,10 +8,34 @@ export function useMapCore(
   onLayoutComplete?: (nodes: MapNode[], edges: MapEdge[]) => void
 ) {
   const newlyAddedNodeId = useRef<string | null>(null);
+  const hasCompletedFirstLayout = useRef<boolean>(false);
   
   const handleLayoutComplete = useCallback((nodes: MapNode[], edges: MapEdge[]) => {
+    // If this is the first layout, show all nodes and edges
+    if (!hasCompletedFirstLayout.current) {
+      const updatedNodes = flow.getNodes().map(node => ({
+        ...node,
+        style: {
+          ...node.style,
+          opacity: 1,
+          pointerEvents: "auto" as const,
+          transition: "opacity 0.5s ease-in-out"
+        }
+      }));
+      const updatedEdges = flow.getEdges().map(edge => ({
+        ...edge,
+        style: {
+          ...edge.style,
+          opacity: 1,
+          transition: "opacity 0.5s ease-in-out"
+        }
+      }));
+      flow.setNodes(updatedNodes);
+      flow.setEdges(updatedEdges);
+      hasCompletedFirstLayout.current = true;
+    }
     // Show the newly added node after layout completes
-    if (newlyAddedNodeId.current) {
+    else if (newlyAddedNodeId.current) {
       const updatedNodes = flow.getNodes().map(node => 
         node.id === newlyAddedNodeId.current
           ? { 

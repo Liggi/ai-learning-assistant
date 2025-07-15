@@ -41,6 +41,10 @@ function convertLearningMapToNodes(learningMap: SerializedLearningMap): {
           isUser: false,
           isRoot: article.isRoot,
         },
+        style: {
+          opacity: 0,
+          pointerEvents: "none" as const,
+        },
       });
     });
   }
@@ -57,6 +61,10 @@ function convertLearningMapToNodes(learningMap: SerializedLearningMap): {
           id: question.id,
           text: question.text,
         },
+        style: {
+          opacity: 0,
+          pointerEvents: "none" as const,
+        },
       });
 
       // Create edges: parent article -> question -> child article
@@ -66,6 +74,9 @@ function convertLearningMapToNodes(learningMap: SerializedLearningMap): {
         target: question.id,
         type: "smoothstep",
         animated: false,
+        style: {
+          opacity: 0,
+        },
       });
 
       edges.push({
@@ -74,6 +85,9 @@ function convertLearningMapToNodes(learningMap: SerializedLearningMap): {
         target: question.childArticleId,
         type: "smoothstep",
         animated: false,
+        style: {
+          opacity: 0,
+        },
       });
     });
   }
