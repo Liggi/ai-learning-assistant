@@ -177,6 +177,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
             <CustomQuestionInput
               activeArticle={activeArticle}
               onArticleCreated={handleArticleCreated}
+              onQuestionCreated={handleQuestionCreated}
             />
             <SuggestedQuestions
               subject={subject}

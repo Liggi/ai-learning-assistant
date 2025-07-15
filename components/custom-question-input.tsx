@@ -10,11 +10,13 @@ const logger = new Logger({ context: "CustomQuestionInput" });
 interface CustomQuestionInputProps {
   activeArticle: SerializedArticle | null | undefined;
   onArticleCreated: (articleId: string) => void;
+  onQuestionCreated?: (questionText: string, parentArticleId: string) => void;
 }
 
 export const CustomQuestionInput: React.FC<CustomQuestionInputProps> = ({
   activeArticle,
   onArticleCreated,
+  onQuestionCreated,
 }) => {
   const [questionText, setQuestionText] = useState("");
   const createArticleMutation = useCreateArticleFromQuestion();
@@ -34,6 +36,10 @@ export const CustomQuestionInput: React.FC<CustomQuestionInputProps> = ({
       learningMapId: activeArticle.learningMapId,
       parentArticleId: activeArticle.id,
     });
+
+    if (onQuestionCreated) {
+      onQuestionCreated(questionText.trim(), activeArticle.id);
+    }
 
     createArticleMutation.mutate(
       {
