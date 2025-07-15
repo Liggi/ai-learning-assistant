@@ -1,8 +1,14 @@
 import { useCallback } from "react";
 import type { ReactFlowInstance } from "@xyflow/react";
-import type { MapEdge, MapNode, QuestionNodeData, ArticleNodeData, NodeCreationOptions } from "./types";
+import { useElkLayout } from "./use-elk-layout";
+import type { MapEdge, MapNode, NodeCreationOptions } from "./types";
 
-export function useLearningMapPlayground(flow: ReactFlowInstance) {
+export function useMapCore(
+  flow: ReactFlowInstance,
+  onLayoutComplete?: (nodes: MapNode[], edges: MapEdge[]) => void
+) {
+  const runLayout = useElkLayout(flow, onLayoutComplete);
+
   const addNode = useCallback(
     (options: NodeCreationOptions) => {
       const { type, data, sourceNodeId } = options;
@@ -45,7 +51,6 @@ export function useLearningMapPlayground(flow: ReactFlowInstance) {
     [flow]
   );
 
-
   const showHiddenNodes = useCallback(() => {
     const nodes = flow
       .getNodes()
@@ -66,5 +71,5 @@ export function useLearningMapPlayground(flow: ReactFlowInstance) {
     flow.setEdges(edges);
   }, [flow]);
 
-  return { addNode, showHiddenNodes };
+  return { addNode, showHiddenNodes, runLayout };
 }

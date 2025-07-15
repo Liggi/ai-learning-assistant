@@ -14,8 +14,7 @@ import type {
   ArticleNodeData,
   NodeCreationOptions,
 } from "./types";
-import { useElkLayout } from "./use-elk-layout";
-import { useLearningMapPlayground } from "./use-learning-map-playground";
+import { useMapCore } from "./use-map-core";
 import "@xyflow/react/dist/style.css";
 
 export interface LearningMapHandle {
@@ -49,8 +48,7 @@ const LearningMapCore = forwardRef<
 ) {
   const flow = useReactFlow();
 
-  const runLayout = useElkLayout(flow, onLayoutComplete);
-  const { addNode, showHiddenNodes } = useLearningMapPlayground(flow);
+  const { addNode, showHiddenNodes, runLayout } = useMapCore(flow, onLayoutComplete);
 
   useImperativeHandle(ref, () => ({ runLayout, addNode, showHiddenNodes }), [
     runLayout,
