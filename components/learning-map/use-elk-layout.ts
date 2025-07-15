@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef, useEffect } from "react";
 import { ReactFlowInstance, useNodesInitialized } from "@xyflow/react";
 import { calculateElkLayout } from "@/services/layouts/elk";
 import { hasFinalPosition } from "./has-final-position";
@@ -67,6 +67,13 @@ export function useElkLayout(
     };
     requestAnimationFrame(animate);
   }, [nodesInitialized, allNodesReady, flow, onLayoutComplete]);
+
+  // Auto-trigger layout when nodes are ready
+  useEffect(() => {
+    if (nodesInitialized && allNodesReady) {
+      runLayout();
+    }
+  }, [nodesInitialized, allNodesReady, runLayout]);
 
   return runLayout;
 }

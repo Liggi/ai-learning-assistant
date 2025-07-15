@@ -48,7 +48,7 @@ export function useMapCore(
       flow.addNodes([newNode]);
       flow.addEdges([newEdge]);
     },
-    [flow]
+    [flow, runLayout]
   );
 
   const showHiddenNodes = useCallback(() => {
