@@ -1,29 +1,10 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  ReactFlow,
-  Background,
-  useNodesInitialized,
-  useNodesState,
-  useEdgesState,
-  Edge,
-  useReactFlow,
-} from "@xyflow/react";
-import ConversationNode from "./react-flow/conversation-node";
-import QuestionNode from "./react-flow/question-node";
+import React, { useCallback, useMemo } from "react";
+import LearningMap from "./learning-map";
+import ArticleNode from "./learning-map/article-node";
+import QuestionNode from "./learning-map/question-node";
 import { SerializedLearningMap } from "@/types/serialized";
-import {
-  LearningMapFlowNode,
-  useLearningMapElkLayout,
-  useLearningMapFlowLayout,
-} from "@/hooks/use-react-flow-layout";
-import { calculateElkLayout } from "@/services/layouts/elk";
-import { Logger } from "@/lib/logger";
+import type { MapNode, MapEdge } from "./learning-map/types";
+import type { SerializedArticle, SerializedQuestion } from "@/types/serialized";
 
 interface PersonalLearningMapFlowProps {
   onNodeClick?: (nodeId: string) => void;
@@ -31,130 +12,103 @@ interface PersonalLearningMapFlowProps {
 }
 
 const nodeTypes = {
-  conversationNode: ConversationNode,
+  articleNode: ArticleNode,
   questionNode: QuestionNode,
 };
 
-const emptyFlowState: ReturnType<typeof useLearningMapElkLayout> = {
-  nodes: [],
-  edges: [],
-  isLayouting: false,
-  hasLayouted: false,
-  error: null,
-};
+// Convert SerializedLearningMap to our MapNode/MapEdge format
+function convertLearningMapToNodes(learningMap: SerializedLearningMap): {
+  nodes: MapNode[];
+  edges: MapEdge[];
+} {
+  const nodes: MapNode[] = [];
+  const edges: MapEdge[] = [];
 
-const logger = new Logger({
-  context: "PersonalLearningMapFlow",
-  enabled: true,
-});
+  // Convert articles to article nodes
+  if (learningMap.articles) {
+    learningMap.articles.forEach((article, index) => {
+      nodes.push({
+        id: article.id,
+        type: "articleNode",
+        position: { x: 0, y: index * 200 }, // Temporary positions, layout will fix
+        data: {
+          id: article.id,
+          content: {
+            summary: article.summary,
+            takeaways: article.takeaways,
+          },
+          isUser: false,
+          isRoot: article.isRoot,
+        },
+      });
+    });
+  }
+
+  // Convert questions to question nodes and create edges
+  if (learningMap.questions) {
+    learningMap.questions.forEach((question, index) => {
+      // Create question node
+      nodes.push({
+        id: question.id,
+        type: "questionNode",
+        position: { x: 300, y: index * 200 }, // Temporary positions
+        data: {
+          id: question.id,
+          text: question.text,
+        },
+      });
+
+      // Create edges: parent article -> question -> child article
+      edges.push({
+        id: `${question.parentArticleId}-${question.id}`,
+        source: question.parentArticleId,
+        target: question.id,
+        type: "smoothstep",
+        animated: false,
+      });
+
+      edges.push({
+        id: `${question.id}-${question.childArticleId}`,
+        source: question.id,
+        target: question.childArticleId,
+        type: "smoothstep",
+        animated: false,
+      });
+    });
+  }
+
+  return { nodes, edges };
+}
 
 const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
   onNodeClick,
   learningMap,
 }) => {
-  const flow = useReactFlow();
-
-  const { nodes, edges } = learningMap
-    ? useLearningMapFlowLayout(learningMap)
-    : emptyFlowState;
-
-  const [flowNodes, setFlowNodes, onFlowNodesChange] =
-    useNodesState<LearningMapFlowNode>(nodes);
-  const [flowEdges, setFlowEdges, onFlowEdgesChange] =
-    useEdgesState<Edge>(edges);
-  const nodesInitialized = useNodesInitialized();
-  const [isFlowVisible, setIsFlowVisible] = useState(false);
-
-  const isLayouting = useRef(false);
-  const hasLayouted = useRef(false);
-  const allNodesReady = useMemo(
-    () =>
-      flowNodes.length > 0 &&
-      flowNodes
-        .filter((n) => n.type === "conversationNode")
-        .every((node) => node.data.ready === true),
-    [flowNodes]
-  );
-
-  useEffect(() => {
-    const runLayout = async () => {
-      if (!nodesInitialized || hasLayouted.current || !allNodesReady) {
-        return;
-      }
-
-      if (isLayouting.current) {
-        return;
-      }
-
-      logger.info("Calculating ELK layout for nodes", { flowNodes });
-
-      isLayouting.current = true;
-      const result = await calculateElkLayout(flowNodes, flowEdges);
-      isLayouting.current = false;
-
-      if (!result) {
-        return;
-      }
-
-      setFlowNodes(result.nodes);
-      setFlowEdges(result.edges);
-
-      hasLayouted.current = true;
-      isLayouting.current = false;
-
-      setTimeout(() => {
-        setIsFlowVisible(true);
-        flow.fitView();
-      }, 0);
-    };
-
-    runLayout();
-  }, [flowNodes, flowEdges, nodesInitialized, allNodesReady]);
-
-  const defaultEdgeOptions = {
-    type: "smoothstep" as const,
-    animated: true,
-  };
+  const { nodes, edges } = useMemo(() => {
+    if (!learningMap) {
+      return { nodes: [], edges: [] };
+    }
+    return convertLearningMapToNodes(learningMap);
+  }, [learningMap]);
 
   const handleNodeClick = useCallback(
-    (_: any, node: any) => {
+    (nodeId: string) => {
       if (onNodeClick) {
-        onNodeClick(node.id);
+        onNodeClick(nodeId);
       }
     },
     [onNodeClick]
   );
 
   return (
-    <div
-      className={`w-full h-full transition-opacity duration-300 ease-in-out ${
-        isFlowVisible ? "opacity-100" : "opacity-0"
-      }`}
-    >
-      <ReactFlow
-        nodes={flowNodes}
-        edges={flowEdges}
-        onNodesChange={(changes) => {
-          const isStructuralChange = changes.some(
-            (change) => change.type === "add" || change.type === "remove"
-          );
-          if (isStructuralChange) {
-            hasLayouted.current = false;
-            setIsFlowVisible(false);
-          }
-          onFlowNodesChange(changes);
-        }}
-        onEdgesChange={onFlowEdgesChange}
+    <div className="w-full h-full">
+      <LearningMap
+        defaultNodes={nodes}
+        defaultEdges={edges}
         nodeTypes={nodeTypes}
         onNodeClick={handleNodeClick}
-        fitView
-        fitViewOptions={{ padding: 0.2 }}
-        minZoom={0.1}
-        maxZoom={2}
-        defaultEdgeOptions={defaultEdgeOptions}
-      >
-        <Background color="#f0f0f0" gap={24} size={1} />
-      </ReactFlow>
+        className="w-full h-full"
+      />
     </div>
   );
 };

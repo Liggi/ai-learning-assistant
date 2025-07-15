@@ -10,8 +10,75 @@ import {
 } from "@/types/serializers";
 import { fromPrismaJson } from "@/lib/prisma-utils";
 import { generateSummary } from "@/features/generators/article-summary";
+import { extractTakeaways } from "@/lib/article-takeaway-parser";
 
 const logger = new Logger({ context: "ArticleService", enabled: false });
+
+// Helper function to ensure all articles in a learning map have summaries and takeaways
+async function ensureLearningMapContent(learningMapId: string) {
+  const articles = await prisma.article.findMany({
+    where: { learningMapId },
+    select: { id: true },
+  });
+  
+  // Process articles in parallel
+  const promises = articles.map(async (article) => {
+    await Promise.all([
+      ensureArticleSummary(article.id),
+      ensureArticleTakeaways(article.id),
+    ]);
+  });
+  
+  await Promise.all(promises);
+}
+
+// Helper function to ensure an article has a summary
+async function ensureArticleSummary(articleId: string) {
+  const article = await prisma.article.findUnique({
+    where: { id: articleId },
+  });
+  
+  if (!article || !article.content) {
+    return;
+  }
+  
+  if (!article.summary || article.summary.trim() === "") {
+    logger.info("Generating missing summary for article", { articleId });
+    try {
+      await generateSummary({ data: { articleId } });
+      logger.info("Successfully generated summary for article", { articleId });
+    } catch (error) {
+      logger.error("Failed to generate summary for article", { articleId, error });
+    }
+  }
+}
+
+// Helper function to ensure an article has takeaways
+async function ensureArticleTakeaways(articleId: string) {
+  const article = await prisma.article.findUnique({
+    where: { id: articleId },
+  });
+  
+  if (!article || !article.content) {
+    return;
+  }
+  
+  if (!article.takeaways || article.takeaways.length === 0) {
+    logger.info("Generating missing takeaways for article", { articleId });
+    try {
+      const takeaways = extractTakeaways(article.content);
+      if (takeaways.length > 0) {
+        await prisma.article.update({
+          where: { id: articleId },
+          data: { takeaways },
+        });
+        logger.info("Successfully generated takeaways for article", { articleId, count: takeaways.length });
+      }
+    } catch (error) {
+      logger.error("Failed to generate takeaways for article", { articleId, error });
+    }
+  }
+}
 
 /**
  * Server function to create a new article in a learning map
@@ -327,10 +394,22 @@ export const getLearningMapAndSubjectForArticle = createServerFn({
 
         const { learningMap } = article;
         const { subject, ...learningMapWithoutSubject } = learningMap;
+        
+        // Ensure all articles in the learning map have summaries and takeaways
+        await ensureLearningMapContent(learningMap.id);
+        
+        // Refetch the learning map with updated content
+        const updatedLearningMap = await prisma.learningMap.findUnique({
+          where: { id: learningMap.id },
+          include: {
+            articles: true,
+            questions: true,
+          },
+        });
 
         return {
           article: serializeArticle(article),
-          learningMap: serializeLearningMap(learningMapWithoutSubject),
+          learningMap: serializeLearningMap(updatedLearningMap!),
           subject: serializeSubject(subject),
         };
       } catch (error) {

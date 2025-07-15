@@ -47,8 +47,8 @@ export const generateSummary = createServerFn({ method: "POST" })
 
       const response = await robustLLMCall(
         () => anthropic.messages.create({
-          model: "claude-3-7-sonnet-latest",
-          max_tokens: 4096,
+          model: "claude-3-haiku-20240307",
+          max_tokens: 1024,
           messages: [{ role: "user", content: prompt }],
         }),
         {
