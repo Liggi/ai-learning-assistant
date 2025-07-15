@@ -21,6 +21,7 @@ export interface LearningMapHandle {
   runLayout: () => void;
   addNode: (options: NodeCreationOptions) => void;
   showHiddenNodes: () => void;
+  getNodes: () => MapNode[];
 }
 
 interface LearningMapProps {
@@ -50,10 +51,13 @@ const LearningMapCore = forwardRef<
 
   const { addNode, showHiddenNodes, runLayout } = useMapCore(flow, onLayoutComplete);
 
-  useImperativeHandle(ref, () => ({ runLayout, addNode, showHiddenNodes }), [
+  const getNodes = () => flow.getNodes();
+
+  useImperativeHandle(ref, () => ({ runLayout, addNode, showHiddenNodes, getNodes }), [
     runLayout,
     addNode,
     showHiddenNodes,
+    getNodes,
   ]);
 
   const handleNodeClick = (_: React.MouseEvent, node: MapNode) => {

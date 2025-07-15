@@ -198,11 +198,6 @@ export const updateArticle = createServerFn({ method: "POST" })
       }
 
       // Update the article
-      logger.info("Update data being sent to Prisma:", {
-        updateData: JSON.stringify(data),
-        updateDataType: typeof data,
-      });
-
       const updatedArticle = await prisma.article.update({
         where: { id: data.id },
         data: {
@@ -338,6 +333,12 @@ export const createArticleFromQuestion = createServerFn({ method: "POST" })
             parentArticleId: data.parentArticleId,
             childArticleId: childArticle.id,
           },
+        });
+
+        // 3. Update the learning map's updatedAt timestamp
+        await tx.learningMap.update({
+          where: { id: data.learningMapId },
+          data: { updatedAt: new Date() },
         });
 
         const result = serializeArticle(childArticle);
