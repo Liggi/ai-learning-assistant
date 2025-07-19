@@ -1,4 +1,4 @@
-import prisma from "../prisma/client.js";
+import prisma from "../prisma/client.ts";
 
 async function clearDatabase() {
   // Delete in order of dependencies (children first, then parents)
