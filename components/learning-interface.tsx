@@ -13,6 +13,7 @@ import { useNavigate } from "@tanstack/react-router";
 import ArticleContent from "./article-content";
 import { CustomQuestionInput } from "./custom-question-input";
 import { useStableLearningMap } from "@/hooks/use-stable-learning-map";
+import { useMapReconciliation } from "@/hooks/use-map-reconciliation";
 import { LearningMapHandle } from "./learning-map";
 
 const logger = new Logger({ context: "LearningInterface", enabled: false });
@@ -56,9 +57,9 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
   // Only changes when the ID / updatedAt changes
   const stableLearningMap = useStableLearningMap(learningMap);
 
-  useEffect(() => {
-    console.log({ stableLearningMap });
-  }, [stableLearningMap]);
+
+  // Handle reconciliation between server state and map state
+  useMapReconciliation(stableLearningMap, mapRef);
 
   const toggleLayout = () => {
     setIsMapExpanded((prev) => !prev);
@@ -96,19 +97,9 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
 
   const handleQuestionCreated = useCallback(
     (questionText: string, parentArticleId: string) => {
-      logger.info("Question created, adding to map", {
+      logger.info("Question created, will be added via reconciliation", {
         questionText,
         parentArticleId,
-      });
-
-      // Add the question node to the map immediately
-      mapRef.current?.addNode({
-        type: "question",
-        data: {
-          id: `temp-${Date.now()}`, // Temporary ID until we get the real one
-          text: questionText,
-        },
-        sourceNodeId: parentArticleId,
       });
     },
     []

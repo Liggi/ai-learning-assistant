@@ -15,6 +15,7 @@ import type {
   NodeReplacementOptions,
 } from "./types";
 import { useMapCore } from "./use-map-core";
+import type { SerializedLearningMap } from "@/types/serialized";
 import "@xyflow/react/dist/style.css";
 
 export interface LearningMapHandle {
@@ -23,6 +24,7 @@ export interface LearningMapHandle {
   replaceNode: (options: NodeReplacementOptions) => void;
   showHiddenNodes: () => void;
   getNodes: () => Node[];
+  addDependentNodesChain: (newNodes: MapNode[], learningMap: SerializedLearningMap) => void;
 }
 
 interface LearningMapProps {
@@ -50,7 +52,7 @@ const LearningMapCore = forwardRef<
 ) {
   const flow = useReactFlow();
 
-  const { addNode, replaceNode, showHiddenNodes, runLayout } = useMapCore(
+  const { addNode, replaceNode, showHiddenNodes, runLayout, addDependentNodesChain } = useMapCore(
     flow,
     onLayoutComplete
   );
@@ -59,8 +61,8 @@ const LearningMapCore = forwardRef<
 
   useImperativeHandle(
     ref,
-    () => ({ runLayout, addNode, replaceNode, showHiddenNodes, getNodes }),
-    [runLayout, addNode, replaceNode, showHiddenNodes, getNodes]
+    () => ({ runLayout, addNode, replaceNode, showHiddenNodes, getNodes, addDependentNodesChain }),
+    [runLayout, addNode, replaceNode, showHiddenNodes, getNodes, addDependentNodesChain]
   );
 
   const handleNodeClick = (_: React.MouseEvent, node: MapNode) => {

@@ -3,6 +3,7 @@ import { useUpdateArticle } from "@/hooks/api/articles";
 import { Logger } from "@/lib/logger";
 import { useQuestionByChildArticleId } from "@/hooks/api/questions";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 
 const logger = new Logger({
   context: "useStreamArticleContent",
@@ -110,6 +111,7 @@ export function useStreamArticleContent(
     timestamp: Date.now(),
   });
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const [content, setContent] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -206,9 +208,14 @@ export function useStreamArticleContent(
         content: fullContent,
       });
 
+      
+      // Invalidate React Query cache for article data
       queryClient.invalidateQueries({
         queryKey: ["article", currentArticleId],
       });
+
+      // Force router to refresh route loader data (this will reload learning map)
+      router.invalidate();
 
       setStreamComplete(true);
     } catch (error) {
