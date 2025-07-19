@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { ErrorDisplay } from "@/components/error-display";
 import LearningInterface from "@/components/learning-interface";
 import { getSubject } from "@/prisma/subjects";
@@ -61,6 +61,18 @@ export const Route = createFileRoute("/learning/$subjectId")({
     } else {
       logger.info("Root article already exists", {
         learningMapId: learningMap.id,
+      });
+    }
+
+    // Find root article and redirect to article route
+    const rootArticle = learningMap.articles?.find((article) => article.isRoot);
+    if (rootArticle) {
+      logger.info("Redirecting to root article", {
+        rootArticleId: rootArticle.id,
+      });
+      throw redirect({
+        to: "/learning/article/$articleId",
+        params: { articleId: rootArticle.id },
       });
     }
 
