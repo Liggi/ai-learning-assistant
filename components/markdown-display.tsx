@@ -240,7 +240,6 @@ const StrongText: React.FC<StrongTextProps> = ({
                     : "bg-slate-800 hover:bg-slate-700 text-slate-200"
                 }`}
                 onClick={() => {
-                  console.log(`Tell me more about: ${concept}`);
                   onLearnMore?.(concept);
                 }}
                 disabled={isCreatingArticle}

@@ -3,7 +3,8 @@
     "allow": [
       "WebFetch(domain:docs.helicone.ai)",
       "Bash(rg:*)",
-      "WebFetch(domain:reactflow.dev)"
+      "WebFetch(domain:reactflow.dev)",
+      "Bash(git-graph:*)"
     ],
     "deny": []
   }

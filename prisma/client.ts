@@ -9,7 +9,7 @@ import { Logger } from "@/lib/logger";
 // We create a *base* client first so we can reuse it inside our extension
 const basePrisma = new PrismaClient();
 
-const log = new Logger({ context: "PrismaTouchMap", enabled: true });
+const log = new Logger({ context: "PrismaTouchMap", enabled: false });
 
 const prisma = basePrisma.$extends({
   query: {
