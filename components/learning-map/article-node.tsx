@@ -6,6 +6,7 @@ import {
 } from "@xyflow/react";
 import { useParams } from "@tanstack/react-router";
 import MarkdownDisplay from "../markdown-display";
+import { Skeleton } from "../ui/skeleton";
 
 interface ArticleNodeData extends Record<string, unknown> {
   id: string;
@@ -43,6 +44,9 @@ export default function ArticleNode({ data }: ArticleNodeProps) {
 
   const isQuestionType = data.isUser;
   const style = isQuestionType ? nodeStyles.question : nodeStyles.answer;
+  
+  // Show loading skeleton if article has no summary (content is streaming)
+  const isLoading = !isQuestionType && (!data.content.summary || data.content.summary.trim() === "");
 
   return (
     <div
@@ -68,24 +72,53 @@ export default function ArticleNode({ data }: ArticleNodeProps) {
         {isQuestionType ? "Question" : "Article"}
       </div>
 
-      <div className="text-gray-100 text-sm font-medium mb-3">
-        {data.content.summary}
-      </div>
-      
-      {data.content.takeaways && data.content.takeaways.length > 0 && (
-        <div className="space-y-1.5 pt-2 border-t border-slate-700/50">
-          {data.content.takeaways.map((takeaway, index) => (
-            <div
-              key={index}
-              className="flex items-start gap-2 text-xs text-slate-300"
-            >
-              <div className="mt-2 w-1.5 h-1.5 rounded-full bg-green-500/40 flex-shrink-0" />
-              <div>
-                <MarkdownDisplay content={takeaway} />
-              </div>
+      {isLoading ? (
+        <>
+          {/* Loading skeleton for summary */}
+          <div className="space-y-2 mb-3">
+            <Skeleton className="h-4 w-full bg-slate-700/50" />
+            <Skeleton className="h-4 w-4/5 bg-slate-700/50" />
+            <Skeleton className="h-4 w-3/4 bg-slate-700/50" />
+          </div>
+          
+          {/* Loading skeleton for takeaways */}
+          <div className="space-y-2 pt-2 border-t border-slate-700/50">
+            <div className="flex items-start gap-2">
+              <Skeleton className="mt-2 w-1.5 h-1.5 rounded-full bg-slate-700/50" />
+              <Skeleton className="h-3 w-3/4 bg-slate-700/50" />
             </div>
-          ))}
-        </div>
+            <div className="flex items-start gap-2">
+              <Skeleton className="mt-2 w-1.5 h-1.5 rounded-full bg-slate-700/50" />
+              <Skeleton className="h-3 w-2/3 bg-slate-700/50" />
+            </div>
+            <div className="flex items-start gap-2">
+              <Skeleton className="mt-2 w-1.5 h-1.5 rounded-full bg-slate-700/50" />
+              <Skeleton className="h-3 w-4/5 bg-slate-700/50" />
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="text-gray-100 text-sm font-medium mb-3">
+            {data.content.summary}
+          </div>
+          
+          {data.content.takeaways && data.content.takeaways.length > 0 && (
+            <div className="space-y-1.5 pt-2 border-t border-slate-700/50">
+              {data.content.takeaways.map((takeaway, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-2 text-xs text-slate-300"
+                >
+                  <div className="mt-2 w-1.5 h-1.5 rounded-full bg-green-500/40 flex-shrink-0" />
+                  <div>
+                    <MarkdownDisplay content={takeaway} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       <Handle
