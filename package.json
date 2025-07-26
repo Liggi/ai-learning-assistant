@@ -38,6 +38,7 @@
     "@tanstack/start": "^1.95.1",
     "@types/lodash": "^4.17.16",
     "@xyflow/react": "^12.3.6",
+    "better-auth": "^1.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "elkjs": "^0.10.0",

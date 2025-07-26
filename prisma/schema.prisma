@@ -27,6 +27,8 @@ model Subject {
   id                        String        @id @default(uuid())
   title                     String
   initiallyFamiliarConcepts String[]      @default([])
+  userId                    String
+  user                      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt                 DateTime      @default(now())
   updatedAt                 DateTime      @updatedAt
   learningMaps              LearningMap[]
@@ -69,4 +71,65 @@ model Question {
   learningMap   LearningMap @relation(fields: [learningMapId], references: [id], onDelete: Cascade)
   parentArticle Article     @relation("ChildQuestions", fields: [parentArticleId], references: [id], onDelete: Cascade) // If parent deleted, delete question
   childArticle  Article     @relation("ParentQuestion", fields: [childArticleId], references: [id], onDelete: Cascade) // If child deleted, delete question
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
+  subjects      Subject[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
 }
