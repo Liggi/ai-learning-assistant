@@ -11,7 +11,7 @@ const logger = new Logger({ context: "ArticleRouteLoader" });
 
 export const Route = createFileRoute("/learning/article/$articleId")({
   beforeLoad: async () => {
-    const session = await getSession()
+    const { data: session } = await getSession()
     if (!session) {
       throw redirect({ to: "/auth" })
     }

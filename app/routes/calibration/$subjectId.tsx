@@ -10,7 +10,7 @@ const logger = new Logger({ context: "CalibrationRoute" });
 
 export const Route = createFileRoute("/calibration/$subjectId")({
   beforeLoad: async () => {
-    const session = await getSession()
+    const { data: session } = await getSession()
     if (!session) {
       throw redirect({ to: "/auth" })
     }

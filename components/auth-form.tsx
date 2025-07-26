@@ -5,6 +5,7 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Card } from "./ui/card"
 import { signIn, signUp } from "../lib/auth-client"
+import { useRouter } from "@tanstack/react-router"
 
 export function AuthForm() {
   const [mode, setMode] = useState<"signin" | "signup">("signin")
@@ -12,6 +13,7 @@ export function AuthForm() {
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -30,6 +32,8 @@ export function AuthForm() {
           password,
         })
       }
+      // Redirect to home page after successful auth
+      router.navigate({ to: "/" })
     } catch (error) {
       console.error("Auth error:", error)
     } finally {

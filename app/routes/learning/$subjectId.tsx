@@ -12,7 +12,7 @@ const logger = new Logger({ context: "LearningRouteLoader" });
 
 export const Route = createFileRoute("/learning/$subjectId")({
   beforeLoad: async () => {
-    const session = await getSession()
+    const { data: session } = await getSession()
     if (!session) {
       throw redirect({ to: "/auth" })
     }
