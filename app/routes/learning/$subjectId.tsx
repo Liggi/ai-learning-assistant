@@ -6,10 +6,17 @@ import { getOrCreateLearningMap } from "@/prisma/learning-maps";
 import { createArticle, getArticle } from "@/prisma/articles";
 import { Logger } from "@/lib/logger";
 import { useQuery } from "@tanstack/react-query";
+import { getSession } from "@/lib/auth-client";
 
 const logger = new Logger({ context: "LearningRouteLoader" });
 
 export const Route = createFileRoute("/learning/$subjectId")({
+  beforeLoad: async () => {
+    const session = await getSession()
+    if (!session) {
+      throw redirect({ to: "/auth" })
+    }
+  },
   loader: async ({ params }) => {
     const { subjectId } = params;
     logger.info("Loading subject", { subjectId });

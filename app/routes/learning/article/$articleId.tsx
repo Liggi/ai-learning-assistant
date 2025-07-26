@@ -1,14 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { ErrorDisplay } from "@/components/error-display";
 import LearningInterface from "@/components/learning-interface";
 import { getLearningMapAndSubjectForArticle } from "@/prisma/articles";
 import { Logger } from "@/lib/logger";
 import { useQuery } from "@tanstack/react-query";
 import { getArticle } from "@/prisma/articles";
+import { getSession } from "@/lib/auth-client";
 
 const logger = new Logger({ context: "ArticleRouteLoader" });
 
 export const Route = createFileRoute("/learning/article/$articleId")({
+  beforeLoad: async () => {
+    const session = await getSession()
+    if (!session) {
+      throw redirect({ to: "/auth" })
+    }
+  },
   loader: async ({ params }) => {
     const { articleId } = params;
     logger.info("Loading article", { articleId });

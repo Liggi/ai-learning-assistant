@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as MapPlaygroundImport } from './routes/map-playground'
 import { Route as LoadingImport } from './routes/loading'
+import { Route as AuthImport } from './routes/auth'
 import { Route as IndexImport } from './routes/index'
 import { Route as LearningSubjectIdImport } from './routes/learning/$subjectId'
 import { Route as CalibrationSubjectIdImport } from './routes/calibration/$subjectId'
@@ -29,6 +30,12 @@ const MapPlaygroundRoute = MapPlaygroundImport.update({
 const LoadingRoute = LoadingImport.update({
   id: '/loading',
   path: '/loading',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthRoute = AuthImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -65,6 +72,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
     '/loading': {
@@ -109,6 +123,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/loading': typeof LoadingRoute
   '/map-playground': typeof MapPlaygroundRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
@@ -118,6 +133,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/loading': typeof LoadingRoute
   '/map-playground': typeof MapPlaygroundRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
@@ -128,6 +144,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/loading': typeof LoadingRoute
   '/map-playground': typeof MapPlaygroundRoute
   '/calibration/$subjectId': typeof CalibrationSubjectIdRoute
@@ -139,6 +156,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/loading'
     | '/map-playground'
     | '/calibration/$subjectId'
@@ -147,6 +165,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/loading'
     | '/map-playground'
     | '/calibration/$subjectId'
@@ -155,6 +174,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/loading'
     | '/map-playground'
     | '/calibration/$subjectId'
@@ -165,6 +185,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   LoadingRoute: typeof LoadingRoute
   MapPlaygroundRoute: typeof MapPlaygroundRoute
   CalibrationSubjectIdRoute: typeof CalibrationSubjectIdRoute
@@ -174,6 +195,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   LoadingRoute: LoadingRoute,
   MapPlaygroundRoute: MapPlaygroundRoute,
   CalibrationSubjectIdRoute: CalibrationSubjectIdRoute,
@@ -192,6 +214,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/auth",
         "/loading",
         "/map-playground",
         "/calibration/$subjectId",
@@ -201,6 +224,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/auth": {
+      "filePath": "auth.tsx"
     },
     "/loading": {
       "filePath": "loading.tsx"

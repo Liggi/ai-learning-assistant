@@ -1,13 +1,20 @@
-import { createFileRoute, useParams, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useParams, useRouter, redirect } from "@tanstack/react-router";
 import { Logger } from "@/lib/logger";
 import Calibration from "@/components/calibration/calibration";
 import { useSubject, useUpdateSubject } from "@/hooks/api/subjects";
 import Loading from "@/components/ui/loading";
 import { toast } from "sonner";
+import { getSession } from "@/lib/auth-client";
 
 const logger = new Logger({ context: "CalibrationRoute" });
 
 export const Route = createFileRoute("/calibration/$subjectId")({
+  beforeLoad: async () => {
+    const session = await getSession()
+    if (!session) {
+      throw redirect({ to: "/auth" })
+    }
+  },
   component: function CalibrationRoute() {
     const { subjectId } = useParams({ from: "/calibration/$subjectId" });
     const { data: subject, isLoading } = useSubject(subjectId);
