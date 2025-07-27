@@ -9,6 +9,7 @@ import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ReactFlowProvider } from "@xyflow/react";
+import cssUrl from "@/styles/globals.css?url";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ export const Route = createRootRoute({
         title: "AI Learning Assistant",
       },
     ],
+    links: [{ rel: "stylesheet", href: cssUrl }],
   }),
   component: RootComponent,
 });
@@ -50,11 +52,11 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: ReactNode }) {
   return (
-    <html className="dark">
+    <html lang="en" className="dark">
       <head>
         <HeadContent />
       </head>
-      <body>{children}</body>
+      <body className="bg-background text-foreground font-sans antialiased">{children}</body>
     </html>
   );
 }

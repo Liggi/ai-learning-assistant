@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { AuthForm } from '../../components/auth-form'
+import { AuthForm } from '@/components/auth-form'
 
 export const Route = createFileRoute('/auth')({
   component: AuthPage,
@@ -7,7 +7,7 @@ export const Route = createFileRoute('/auth')({
 
 function AuthPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-4">
       <AuthForm />
     </div>
   )

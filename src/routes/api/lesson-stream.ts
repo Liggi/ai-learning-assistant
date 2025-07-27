@@ -1,11 +1,11 @@
-import { createAPIFileRoute } from "@tanstack/react-start/api";
+import { createServerFileRoute } from '@tanstack/react-start/server'
 import { AnthropicProvider } from "@/features/anthropic";
 import { createPrompt } from "@/prompts/chat/lesson";
 import { Logger } from "@/lib/logger";
 
 const streamLogger = new Logger({ context: "API:/api/lesson-stream" });
 
-export const APIRoute = createAPIFileRoute("/api/lesson-stream")({
+export const ServerRoute = createServerFileRoute('/api/lesson-stream').methods({
   POST: async ({ request }) => {
     const reqId = `stream_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     try {

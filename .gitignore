@@ -3,3 +3,11 @@ node_modules
 .output
 .vinxi
 .claude
+
+# Build outputs
+.nitro/
+.tanstack/
+.vercel/
+
+# Temporary files
+app.config.timestamp_*.js
