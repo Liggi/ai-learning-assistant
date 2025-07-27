@@ -5,7 +5,8 @@
       "Bash(rg:*)",
       "WebFetch(domain:reactflow.dev)",
       "Bash(git-graph:*)",
-      "WebFetch(domain:www.prisma.io)"
+      "WebFetch(domain:www.prisma.io)",
+      "Bash(pnpm prisma generate:*)"
     ],
     "deny": []
   }
