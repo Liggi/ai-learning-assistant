@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
-    "build": "vite build",
+    "build": "prisma migrate deploy && vite build",
     "postinstall": "prisma generate",
     "start": "node .vercel/output/static/___vc/__nitro_entry.mjs",
     "clear-db": "tsx scripts/clear-database.ts",
