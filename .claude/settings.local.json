@@ -7,7 +7,9 @@
       "Bash(git-graph:*)",
       "WebFetch(domain:www.prisma.io)",
       "Bash(pnpm prisma generate:*)",
-      "WebFetch(domain:www.better-auth.com)"
+      "WebFetch(domain:www.better-auth.com)",
+      "Bash(psql:*)",
+      "Bash(npx prisma migrate dev:*)"
     ],
     "deny": []
   }
