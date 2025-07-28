@@ -1,9 +1,11 @@
 import { createAuthClient } from "better-auth/react"
 
 const getBaseURL = () => {
-  if (process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+  // Client-side: use current origin (works for all Vercel environments)
+  if (typeof window !== "undefined") {
+    return window.location.origin;
   }
+  // Server-side fallback
   return process.env.BETTER_AUTH_URL || "http://localhost:3000";
 };
 
