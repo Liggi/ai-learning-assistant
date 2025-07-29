@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import ReactMarkdown from "react-markdown";
 import { motion, useAnimationControls, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 interface MarkdownDisplayProps {
   content: string;
@@ -24,42 +24,16 @@ const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
   onLearnMore,
   isCreatingArticle = false,
 }) => {
-  // Track all StrongText components with tooltips for staggered animation
-  const [tooltipElements, setTooltipElements] = useState<string[]>([]);
-
-  // Reset tooltip elements when content changes
-  useEffect(() => {
-    setTooltipElements([]);
-  }, [content]);
-
-  // Register a tooltip element for staggered animation
-  const registerTooltipElement = (concept: string) => {
-    setTooltipElements((prev) => {
-      if (!prev.includes(concept)) {
-        return [...prev, concept];
-      }
-      return prev;
-    });
-  };
-
-  // Define the staggered animation variants for the container and items
-  const container = {
-    hidden: { opacity: 1 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.3,
-      },
-    },
-  };
+  
+  console.log(`MarkdownDisplay render`, {
+    contentLength: content.length,
+    tooltipsReady,
+    isCreatingArticle,
+    stackTrace: new Error().stack?.split('\n').slice(1, 4).join('\n') // Show who's calling this
+  });
 
   return (
-    <motion.div
-      variants={container}
-      initial="hidden"
-      animate={tooltipElements.length > 0 ? "show" : "hidden"}
-    >
+    <div>
       <ReactMarkdown
         className="prose prose-invert prose-sm max-w-none [&>:first-child]:mt-0 [&>:last-child]:mb-0 prose-pre:bg-transparent
                    [&>h1+h2]:mt-3 [&>h2+h3]:mt-2"
@@ -77,9 +51,6 @@ const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
               {...props}
               tooltips={tooltips}
               tooltipsReady={tooltipsReady}
-              tooltipElements={tooltipElements}
-              registerTooltipElement={registerTooltipElement}
-              index={tooltipElements.length}
               onLearnMore={onLearnMore}
               isCreatingArticle={isCreatingArticle}
             />
@@ -89,7 +60,7 @@ const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
       >
         {content}
       </ReactMarkdown>
-    </motion.div>
+    </div>
   );
 };
 
@@ -159,9 +130,6 @@ interface StrongTextProps {
   children?: React.ReactNode;
   tooltips: Record<string, string>;
   tooltipsReady: boolean;
-  tooltipElements: string[];
-  registerTooltipElement: (concept: string) => void;
-  index: number;
   onLearnMore?: (concept: string) => void;
   isCreatingArticle: boolean;
 }
@@ -170,39 +138,13 @@ const StrongText: React.FC<StrongTextProps> = ({
   children,
   tooltips,
   tooltipsReady,
-  tooltipElements,
-  registerTooltipElement,
-  index,
   onLearnMore,
   isCreatingArticle,
 }) => {
   const concept = String(children).trim();
   const tooltipText = tooltips[concept.toLowerCase()];
   const hasTooltip = tooltipText != null;
-  const isRegistered = useRef(false);
   const [isOpen, setIsOpen] = useState(false);
-
-  // Define simpler animation variants
-  const item = {
-    hidden: {
-      borderBottom: "0px solid transparent",
-    },
-    show: {
-      borderBottom: "1px solid rgba(148, 163, 184, 0.3)",
-      transition: {
-        duration: 0.3,
-        delay: index * 0.1,
-      },
-    },
-  };
-
-  // Register this tooltip element for staggered animation
-  useEffect(() => {
-    if (hasTooltip && !isRegistered.current) {
-      registerTooltipElement(concept);
-      isRegistered.current = true;
-    }
-  }, [hasTooltip, concept, registerTooltipElement]);
 
   if (!hasTooltip) {
     return <span className="font-bold text-white">{children}</span>;
@@ -212,16 +154,11 @@ const StrongText: React.FC<StrongTextProps> = ({
     <>
       <Tooltip onOpenChange={setIsOpen}>
         <TooltipTrigger asChild>
-          <motion.span
-            className="font-bold text-white cursor-help relative"
-            variants={item}
-            whileHover={{
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-              transition: { duration: 0.2 },
-            }}
+          <span
+            className="font-bold text-white cursor-help relative border-b border-slate-400/30 hover:bg-white/5 transition-colors duration-200"
           >
             {children}
-          </motion.span>
+          </span>
         </TooltipTrigger>
         <TooltipPortal>
           <TooltipContent
