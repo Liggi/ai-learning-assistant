@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Card } from "./ui/card"
-import { signIn, signUp } from "../lib/auth-client"
+import { signIn, signUp, getSession } from "../lib/auth-client"
 import { useRouter } from "@tanstack/react-router"
 
 export function AuthForm() {
@@ -25,15 +25,27 @@ export function AuthForm() {
           email,
           password,
           name,
+        }, {
+          onSuccess: () => {
+            router.navigate({ to: "/" })
+          },
+          onError: (ctx) => {
+            console.error("Signup error:", ctx.error)
+          }
         })
       } else {
         await signIn.email({
           email,
           password,
+        }, {
+          onSuccess: () => {
+            router.navigate({ to: "/" })
+          },
+          onError: (ctx) => {
+            console.error("Signin error:", ctx.error)
+          }
         })
       }
-      // Redirect to home page after successful auth
-      router.navigate({ to: "/" })
     } catch (error) {
       console.error("Auth error:", error)
     } finally {
@@ -47,6 +59,13 @@ export function AuthForm() {
       await signIn.social({ 
         provider: "github",
         callbackURL: "/",
+      }, {
+        onSuccess: () => {
+          router.navigate({ to: "/" })
+        },
+        onError: (ctx) => {
+          console.error("GitHub auth error:", ctx.error)
+        }
       })
     } catch (error) {
       console.error("GitHub auth error:", error)

@@ -9,7 +9,8 @@
       "Bash(pnpm prisma generate:*)",
       "WebFetch(domain:www.better-auth.com)",
       "Bash(psql:*)",
-      "Bash(npx prisma migrate dev:*)"
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(/Users/jasonliggi/bin/o3_search:*)"
     ],
     "deny": []
   }
