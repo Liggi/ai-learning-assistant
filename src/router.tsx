@@ -1,5 +1,6 @@
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
+import { queryClient } from "./routes/__root";
 
 function NotFound() {
   return (
@@ -13,11 +14,13 @@ function NotFound() {
 }
 
 export function createRouter() {
-  // Use the most basic configuration to avoid any potential issues
   const router = createTanStackRouter({
     routeTree,
     defaultNotFoundComponent: NotFound,
     scrollRestoration: true,
+    context: {
+      queryClient,
+    },
   });
 
   return router;

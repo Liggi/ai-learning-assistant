@@ -1,6 +1,6 @@
 import {
   Outlet,
-  createRootRoute,
+  createRootRouteWithContext,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -11,9 +11,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ReactFlowProvider } from "@xyflow/react";
 import cssUrl from "@/styles/globals.css?url";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   head: () => ({
     meta: [
       {

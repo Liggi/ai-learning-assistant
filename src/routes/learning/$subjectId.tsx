@@ -6,16 +6,23 @@ import { getOrCreateLearningMap } from "@/prisma/learning-maps";
 import { createArticle, getArticle } from "@/prisma/articles";
 import { Logger } from "@/lib/logger";
 import { useQuery } from "@tanstack/react-query";
-import { getSession } from "@/lib/auth-client";
+import { getServerSession } from "@/server/getServerSession";
 
 const logger = new Logger({ context: "LearningRouteLoader" });
 
 export const Route = createFileRoute("/learning/$subjectId")({
-  beforeLoad: async () => {
-    const { data: session } = await getSession()
+  beforeLoad: async ({ context }) => {
+    console.log("[beforeLoad] Starting beforeLoad for learning route");
+    
+    const session = await getServerSession();
+    console.log("[beforeLoad] Direct session call result:", session ? "Session found" : "No session", session?.user?.email || "No user email");
+
     if (!session) {
-      throw redirect({ to: "/auth" })
+      console.log("[beforeLoad] No session found, redirecting to /auth");
+      throw redirect({ to: "/auth", replace: true });
     }
+    
+    console.log("[beforeLoad] Session valid, proceeding to loader");
   },
   loader: async ({ params }) => {
     const { subjectId } = params;

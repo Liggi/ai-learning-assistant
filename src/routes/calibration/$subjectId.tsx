@@ -4,15 +4,16 @@ import Calibration from "@/components/calibration/calibration";
 import { useSubject, useUpdateSubject } from "@/hooks/api/subjects";
 import Loading from "@/components/ui/loading";
 import { toast } from "sonner";
-import { getSession } from "@/lib/auth-client";
+import { getServerSession } from "@/server/getServerSession";
 
 const logger = new Logger({ context: "CalibrationRoute" });
 
 export const Route = createFileRoute("/calibration/$subjectId")({
-  beforeLoad: async () => {
-    const { data: session } = await getSession()
+  beforeLoad: async ({ context }) => {
+    const session = await getServerSession();
+
     if (!session) {
-      throw redirect({ to: "/auth" })
+      throw redirect({ to: "/auth", replace: true });
     }
   },
   component: function CalibrationRoute() {

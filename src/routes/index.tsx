@@ -19,20 +19,21 @@ export const Route = createFileRoute("/")({
 function Home() {
   const router = useRouter();
   const navigate = useNavigate();
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending, isRefetching } = useSession();
+  const loading = isPending || isRefetching;
 
   const [userSubject, setUserSubject] = useState("");
   const { data: subjects = [] } = useSubjects();
 
   useEffect(() => {
-    if (!isPending && !session) {
+    if (!loading && !session) {
       console.log("No session found, redirecting to auth");
       navigate({ to: "/auth" });
     }
-  }, [session, isPending, navigate]);
+  }, [loading, session, navigate]);
 
   // Show loading while checking session
-  if (isPending) {
+  if (loading) {
     return (
       <div className="w-screen h-screen bg-background flex items-center justify-center">
         <div>Loading...</div>

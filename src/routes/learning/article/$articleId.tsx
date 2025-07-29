@@ -5,15 +5,16 @@ import { getLearningMapAndSubjectForArticle } from "@/prisma/articles";
 import { Logger } from "@/lib/logger";
 import { useQuery } from "@tanstack/react-query";
 import { getArticle } from "@/prisma/articles";
-import { getSession } from "@/lib/auth-client";
+import { getServerSession } from "@/server/getServerSession";
 
 const logger = new Logger({ context: "ArticleRouteLoader" });
 
 export const Route = createFileRoute("/learning/article/$articleId")({
-  beforeLoad: async () => {
-    const { data: session } = await getSession()
+  beforeLoad: async ({ context }) => {
+    const session = await getServerSession();
+
     if (!session) {
-      throw redirect({ to: "/auth" })
+      throw redirect({ to: "/auth", replace: true });
     }
   },
   loader: async ({ params }) => {
