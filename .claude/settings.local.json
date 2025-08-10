@@ -10,7 +10,9 @@
       "WebFetch(domain:www.better-auth.com)",
       "Bash(psql:*)",
       "Bash(npx prisma migrate dev:*)",
-      "Bash(/Users/jasonliggi/bin/o3_search:*)"
+      "Bash(/Users/jasonliggi/bin/o3_search:*)",
+      "WebFetch(domain:trpc.io)",
+      "Bash(bat:*)"
     ],
     "deny": []
   }

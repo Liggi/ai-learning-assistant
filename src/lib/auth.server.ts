@@ -20,9 +20,18 @@ export const auth = betterAuth({
     },
   },
   session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // 1 day
-    cookieCache: { enabled: true, maxAge: 300 },
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
+    cookieCache: { 
+      enabled: true, 
+      maxAge: 5 * 60
+    },
+    cookie: {
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      path: '/',
+    }
   },
   secret: process.env.BETTER_AUTH_SECRET!,
   baseURL: process.env.BETTER_AUTH_URL!,
@@ -31,6 +40,7 @@ export const auth = betterAuth({
     "https://thekg.io",
     "https://www.thekg.io",
     "http://localhost:3000",
+    "http://localhost:3001",
   ],
   plugins: [reactStartCookies()],
 })

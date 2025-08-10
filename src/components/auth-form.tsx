@@ -20,31 +20,34 @@ export function AuthForm() {
     setIsLoading(true)
     
     try {
+      let result
       if (mode === "signup") {
-        await signUp.email({
+        result = await signUp.email({
           email,
           password,
           name,
-        }, {
-          onSuccess: () => {
-            router.navigate({ to: "/" })
-          },
-          onError: (ctx) => {
-            console.error("Signup error:", ctx.error)
-          }
         })
       } else {
-        await signIn.email({
+        result = await signIn.email({
           email,
           password,
-        }, {
-          onSuccess: () => {
-            router.navigate({ to: "/" })
-          },
-          onError: (ctx) => {
-            console.error("Signin error:", ctx.error)
-          }
         })
+      }
+      
+      if (result.data) {
+        let attempts = 0;
+        let session = null;
+        while (attempts < 10 && !session) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          session = await getSession();
+          attempts++;
+        }
+        
+        if (session) {
+          router.navigate({ to: "/" });
+        } else {
+          router.navigate({ to: "/loading" });
+        }
       }
     } catch (error) {
       console.error("Auth error:", error)
@@ -56,17 +59,26 @@ export function AuthForm() {
   async function handleGitHubSignIn() {
     setIsLoading(true)
     try {
-      await signIn.social({ 
+      const result = await signIn.social({ 
         provider: "github",
         callbackURL: "/",
-      }, {
-        onSuccess: () => {
-          router.navigate({ to: "/" })
-        },
-        onError: (ctx) => {
-          console.error("GitHub auth error:", ctx.error)
-        }
       })
+      
+      if (result.data) {
+        let attempts = 0;
+        let session = null;
+        while (attempts < 10 && !session) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          session = await getSession();
+          attempts++;
+        }
+        
+        if (session) {
+          router.navigate({ to: "/" });
+        } else {
+          router.navigate({ to: "/loading" });
+        }
+      }
     } catch (error) {
       console.error("GitHub auth error:", error)
     } finally {

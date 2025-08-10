@@ -5,7 +5,7 @@ import { getWebRequest } from "@tanstack/react-start/server";
 import { Logger } from "@/lib/logger";
 import { SerializedSubject } from "@/types/serialized";
 import { serializeSubject } from "@/types/serializers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth.server";
 
 const logger = new Logger({ context: "SubjectsService", enabled: false });
 

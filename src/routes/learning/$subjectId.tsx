@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { ErrorDisplay } from "@/components/error-display";
 import LearningInterface from "@/components/learning-interface";
 import { getSubject } from "@/prisma/subjects";
@@ -6,24 +6,13 @@ import { getOrCreateLearningMap } from "@/prisma/learning-maps";
 import { createArticle, getArticle } from "@/prisma/articles";
 import { Logger } from "@/lib/logger";
 import { useQuery } from "@tanstack/react-query";
-import { getServerSession } from "@/server/getServerSession";
+import { useSession } from "@/lib/auth-client";
+import { useEffect } from "react";
+import Loading from "@/components/ui/loading";
 
 const logger = new Logger({ context: "LearningRouteLoader" });
 
 export const Route = createFileRoute("/learning/$subjectId")({
-  beforeLoad: async ({ context }) => {
-    console.log("[beforeLoad] Starting beforeLoad for learning route");
-    
-    const session = await getServerSession();
-    console.log("[beforeLoad] Direct session call result:", session ? "Session found" : "No session", session?.user?.email || "No user email");
-
-    if (!session) {
-      console.log("[beforeLoad] No session found, redirecting to /auth");
-      throw redirect({ to: "/auth", replace: true });
-    }
-    
-    console.log("[beforeLoad] Session valid, proceeding to loader");
-  },
   loader: async ({ params }) => {
     const { subjectId } = params;
     logger.info("Loading subject", { subjectId });
@@ -97,6 +86,22 @@ export const Route = createFileRoute("/learning/$subjectId")({
   },
   component: function LearningRoute() {
     const { subject, learningMap } = Route.useLoaderData();
+    const router = useRouter();
+    const { data: session, isPending, isRefetching } = useSession();
+
+    useEffect(() => {
+      if (!isPending && !isRefetching && !session) {
+        router.navigate({ to: "/auth" });
+      }
+    }, [session, isPending, isRefetching, router]);
+
+    if (isPending || isRefetching) {
+      return <Loading context="default" progress={50} />;
+    }
+
+    if (!session) {
+      return null;
+    }
 
     const initialRootArticle =
       learningMap.articles?.find((article) => article.isRoot) || null;

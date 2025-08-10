@@ -41,7 +41,7 @@ export function useCreateSubject() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
-    },
+    }
   });
 }
 

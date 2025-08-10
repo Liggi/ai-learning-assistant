@@ -4,23 +4,32 @@ import Calibration from "@/components/calibration/calibration";
 import { useSubject, useUpdateSubject } from "@/hooks/api/subjects";
 import Loading from "@/components/ui/loading";
 import { toast } from "sonner";
-import { getServerSession } from "@/server/getServerSession";
+import { useSession } from "@/lib/auth-client";
+import { useEffect } from "react";
 
 const logger = new Logger({ context: "CalibrationRoute" });
 
 export const Route = createFileRoute("/calibration/$subjectId")({
-  beforeLoad: async ({ context }) => {
-    const session = await getServerSession();
-
-    if (!session) {
-      throw redirect({ to: "/auth", replace: true });
-    }
-  },
   component: function CalibrationRoute() {
     const { subjectId } = useParams({ from: "/calibration/$subjectId" });
     const { data: subject, isLoading } = useSubject(subjectId);
     const router = useRouter();
     const updateSubject = useUpdateSubject();
+    const { data: session, isPending, isRefetching } = useSession();
+
+    useEffect(() => {
+      if (!isPending && !isRefetching && !session) {
+        router.navigate({ to: "/auth" });
+      }
+    }, [session, isPending, isRefetching, router]);
+
+    if (isPending || isRefetching) {
+      return <Loading context="default" progress={50} />;
+    }
+
+    if (!session) {
+      return null;
+    }
 
     if (isLoading) {
       return <Loading context="calibration" progress={90} />;
