@@ -13,20 +13,45 @@ export function AuthForm() {
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setIsLoading(true)
+    setError(null)
     
     try {
       let result
       if (mode === "signup") {
-        result = await signUp.email({
-          email,
-          password,
-          name,
-        })
+        try {
+          // Use direct fetch instead of Better Auth client for signup
+          // The Better Auth React client was hanging indefinitely on signup requests
+          const response = await fetch('/api/auth/sign-up/email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email,
+              password,
+              name,
+            })
+          })
+          
+          if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.message || `Signup failed with status ${response.status}`)
+          }
+          
+          const data = await response.json()
+          // Structure the result to match Better Auth format
+          result = { data: data }
+          
+        } catch (signupError) {
+          setError(signupError.message || "Sign up failed")
+          return
+        }
       } else {
         result = await signIn.email({
           email,
@@ -48,9 +73,14 @@ export function AuthForm() {
         } else {
           router.navigate({ to: "/loading" });
         }
+      } else if (result.error) {
+        setError(result.error.message || "Authentication failed")
+      } else {
+        setError("Authentication failed - please try again")
       }
     } catch (error) {
       console.error("Auth error:", error)
+      setError(error instanceof Error ? error.message : "An unexpected error occurred")
     } finally {
       setIsLoading(false)
     }
@@ -58,6 +88,8 @@ export function AuthForm() {
 
   async function handleGitHubSignIn() {
     setIsLoading(true)
+    setError(null)
+    
     try {
       const result = await signIn.social({ 
         provider: "github",
@@ -78,9 +110,14 @@ export function AuthForm() {
         } else {
           router.navigate({ to: "/loading" });
         }
+      } else if (result.error) {
+        setError(result.error.message || "GitHub authentication failed")
+      } else {
+        setError("GitHub authentication failed - please try again")
       }
     } catch (error) {
       console.error("GitHub auth error:", error)
+      setError(error instanceof Error ? error.message : "GitHub authentication failed")
     } finally {
       setIsLoading(false)
     }
@@ -98,6 +135,12 @@ export function AuthForm() {
             : "Start your personalized learning journey"}
         </p>
       </div>
+
+      {error && (
+        <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+          {error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {mode === "signup" && (
