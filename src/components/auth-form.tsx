@@ -14,18 +14,19 @@ export function AuthForm() {
   const [name, setName] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const router = useRouter()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
+    setSuccess(null)
     
     try {
       let result
       if (mode === "signup") {
         try {
-          // Use direct fetch instead of Better Auth client for signup
           // The Better Auth React client was hanging indefinitely on signup requests
           const response = await fetch('/api/auth/sign-up/email', {
             method: 'POST',
@@ -39,14 +40,23 @@ export function AuthForm() {
             })
           })
           
+          
           if (!response.ok) {
-            const errorData = await response.json()
-            throw new Error(errorData.message || `Signup failed with status ${response.status}`)
+            let errorData
+            try {
+              errorData = await response.json()
+            } catch (parseError) {
+              const textError = await response.text()
+              throw new Error(`Signup failed with status ${response.status}: ${textError}`)
+            }
+            throw new Error(errorData.message || errorData.error || `Signup failed with status ${response.status}`)
           }
           
           const data = await response.json()
           // Structure the result to match Better Auth format
           result = { data: data }
+          
+          setSuccess("Account created successfully! Signing you in...")
           
         } catch (signupError) {
           setError(signupError.message || "Sign up failed")
@@ -60,6 +70,10 @@ export function AuthForm() {
       }
       
       if (result.data) {
+        if (mode === "signup") {
+          setSuccess("Account created successfully! Checking authentication...")
+        }
+        
         let attempts = 0;
         let session = null;
         while (attempts < 10 && !session) {
@@ -69,9 +83,15 @@ export function AuthForm() {
         }
         
         if (session) {
+          if (mode === "signup") {
+            setSuccess("Welcome! Your account has been created successfully.")
+            await new Promise(resolve => setTimeout(resolve, 2500))
+            setSuccess("Redirecting to your dashboard...")
+            await new Promise(resolve => setTimeout(resolve, 1000))
+          }
           router.navigate({ to: "/" });
         } else {
-          router.navigate({ to: "/loading" });
+          setError("Authentication successful but session setup failed. Please try signing in.")
         }
       } else if (result.error) {
         setError(result.error.message || "Authentication failed")
@@ -142,6 +162,12 @@ export function AuthForm() {
         </div>
       )}
 
+      {success && (
+        <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">
+          {success}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         {mode === "signup" && (
           <div>
@@ -175,7 +201,7 @@ export function AuthForm() {
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium mb-1">
-            Password
+            Password {mode === "signup" && <span className="text-xs text-muted-foreground">(minimum 8 characters)</span>}
           </label>
           <Input
             id="password"
@@ -188,7 +214,11 @@ export function AuthForm() {
         </div>
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Loading..." : mode === "signup" ? "Create Account" : "Sign In"}
+          {isLoading ? (
+            mode === "signup" ? "Creating Account..." : "Signing In..."
+          ) : (
+            mode === "signup" ? "Create Account" : "Sign In"
+          )}
         </Button>
       </form>
 
