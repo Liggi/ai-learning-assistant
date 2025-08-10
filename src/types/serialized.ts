@@ -21,6 +21,7 @@ export type SerializedArticle = {
   content: string;
   summary: string;
   takeaways: string[];
+  type: string;
   tooltips: Record<string, string>;
   learningMapId: string;
   isRoot: boolean;

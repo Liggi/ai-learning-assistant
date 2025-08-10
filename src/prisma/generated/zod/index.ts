@@ -60,7 +60,7 @@ export const SubjectScalarFieldEnumSchema = z.enum(['id','title','initiallyFamil
 
 export const LearningMapScalarFieldEnumSchema = z.enum(['id','subjectId','createdAt','updatedAt']);
 
-export const ArticleScalarFieldEnumSchema = z.enum(['id','content','summary','takeaways','learningMapId','tooltips','isRoot','createdAt','updatedAt']);
+export const ArticleScalarFieldEnumSchema = z.enum(['id','content','summary','takeaways','type','learningMapId','tooltips','isRoot','createdAt','updatedAt']);
 
 export const QuestionScalarFieldEnumSchema = z.enum(['id','text','learningMapId','parentArticleId','childArticleId','createdAt','updatedAt']);
 
@@ -81,6 +81,11 @@ export const QueryModeSchema = z.enum(['default','insensitive']);
 export const JsonNullValueFilterSchema = z.enum(['DbNull','JsonNull','AnyNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.JsonNull : value === 'AnyNull' ? Prisma.AnyNull : value);
 
 export const NullsOrderSchema = z.enum(['first','last']);
+
+export const ArticleTypeSchema = z.enum(['DEEP_DIVE','OVERVIEW']);
+
+export type ArticleTypeType = `${z.infer<typeof ArticleTypeSchema>}`
+
 /////////////////////////////////////////
 // MODELS
 /////////////////////////////////////////
@@ -118,6 +123,7 @@ export type LearningMap = z.infer<typeof LearningMapSchema>
 /////////////////////////////////////////
 
 export const ArticleSchema = z.object({
+  type: ArticleTypeSchema,
   id: z.string().uuid(),
   content: z.string(),
   summary: z.string(),

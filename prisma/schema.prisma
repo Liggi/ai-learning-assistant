@@ -26,6 +26,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ArticleType {
+  DEEP_DIVE
+  OVERVIEW
+}
+
 model Subject {
   id                        String        @id @default(uuid())
   title                     String
@@ -52,6 +57,7 @@ model Article {
   content        String
   summary        String      @default("")
   takeaways      String[]    @default([])
+  type           ArticleType @default(DEEP_DIVE)
   learningMapId  String
   tooltips       Json?
   isRoot         Boolean     @default(false)

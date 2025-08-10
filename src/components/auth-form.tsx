@@ -89,6 +89,7 @@ export function AuthForm() {
             setSuccess("Redirecting to your dashboard...")
             await new Promise(resolve => setTimeout(resolve, 1000))
           }
+          // @TODO: After successful signup, redirect to dashboard shows blank screen - Claude to fix
           router.navigate({ to: "/" });
         } else {
           setError("Authentication successful but session setup failed. Please try signing in.")

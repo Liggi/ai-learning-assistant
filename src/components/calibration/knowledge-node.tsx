@@ -52,6 +52,7 @@ export function KnowledgeNode({
       transition={{ duration: 0.5, ease: "easeOut" }}
       style={{ pointerEvents: "auto" }}
     >
+      {/* @TODO: Should use proper checkbox input for accessibility, not button - Claude to fix */}
       <button
         onClick={() => onClick(id)}
         className={`
