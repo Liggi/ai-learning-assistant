@@ -7,7 +7,6 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/library";
-import type * as $Enums from "../enums";
 import type * as Prisma from "../internal/prismaNamespace";
 
 /**
@@ -89,7 +88,7 @@ export type ArticleCountAggregateInputType = {
 };
 
 export type ArticleAggregateArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Article to aggregate.
@@ -148,7 +147,7 @@ export type GetArticleAggregateType<T extends ArticleAggregateArgs> = {
 };
 
 export type ArticleGroupByArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.ArticleWhereInput;
   orderBy?: Prisma.ArticleOrderByWithAggregationInput | Prisma.ArticleOrderByWithAggregationInput[];
@@ -870,7 +869,7 @@ export type ArticleCountOutputType = {
 };
 
 export type ArticleCountOutputTypeSelect<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   childQuestions?: boolean | ArticleCountOutputTypeCountChildQuestionsArgs;
 };
@@ -891,7 +890,7 @@ export type ArticleCountOutputTypeDefaultArgs<
  * ArticleCountOutputType without action
  */
 export type ArticleCountOutputTypeCountChildQuestionsArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.QuestionWhereInput;
 };
@@ -1028,7 +1027,7 @@ export type ArticleGetPayload<S extends boolean | null | undefined | ArticleDefa
   runtime.Types.Result.GetResult<Prisma.$ArticlePayload, S>;
 
 export type ArticleCountArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = Omit<ArticleFindManyArgs, "select" | "include" | "distinct" | "omit"> & {
   select?: ArticleCountAggregateInputType | true;
 };
@@ -1847,7 +1846,7 @@ export type ArticleCreateArgs<
  * Article createMany
  */
 export type ArticleCreateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to create many Articles.
@@ -1913,7 +1912,7 @@ export type ArticleUpdateArgs<
  * Article updateMany
  */
 export type ArticleUpdateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to update Articles.
@@ -2021,7 +2020,7 @@ export type ArticleDeleteArgs<
  * Article deleteMany
  */
 export type ArticleDeleteManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Articles to delete

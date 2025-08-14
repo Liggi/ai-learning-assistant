@@ -7,7 +7,6 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/library";
-import type * as $Enums from "../enums";
 import type * as Prisma from "../internal/prismaNamespace";
 
 /**
@@ -91,7 +90,7 @@ export type SessionCountAggregateInputType = {
 };
 
 export type SessionAggregateArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Session to aggregate.
@@ -150,7 +149,7 @@ export type GetSessionAggregateType<T extends SessionAggregateArgs> = {
 };
 
 export type SessionGroupByArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.SessionWhereInput;
   orderBy?: Prisma.SessionOrderByWithAggregationInput | Prisma.SessionOrderByWithAggregationInput[];
@@ -697,7 +696,7 @@ export type SessionGetPayload<S extends boolean | null | undefined | SessionDefa
   runtime.Types.Result.GetResult<Prisma.$SessionPayload, S>;
 
 export type SessionCountArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = Omit<SessionFindManyArgs, "select" | "include" | "distinct" | "omit"> & {
   select?: SessionCountAggregateInputType | true;
 };
@@ -1491,7 +1490,7 @@ export type SessionCreateArgs<
  * Session createMany
  */
 export type SessionCreateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to create many Sessions.
@@ -1557,7 +1556,7 @@ export type SessionUpdateArgs<
  * Session updateMany
  */
 export type SessionUpdateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to update Sessions.
@@ -1665,7 +1664,7 @@ export type SessionDeleteArgs<
  * Session deleteMany
  */
 export type SessionDeleteManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Sessions to delete

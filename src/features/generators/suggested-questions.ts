@@ -25,7 +25,7 @@ export const generate = createServerFn({ method: "POST" })
       });
 
       const prompt = createPrompt(data);
-      logger.info(`[${requestId}] Generated question prompt:`, prompt.substring(0, 200) + "...");
+      logger.info(`[${requestId}] Generated question prompt:`, `${prompt.substring(0, 200)}...`);
 
       logger.info(`[${requestId}] Calling Anthropic API for question generation`);
 

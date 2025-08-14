@@ -1,4 +1,3 @@
-import type { Node } from "@xyflow/react";
 import { useEffect } from "react";
 import type { LearningMapHandle } from "@/components/learning-map";
 import type { MapNode } from "@/components/learning-map/types";
@@ -82,7 +81,7 @@ function convertLearningMapToNodes(learningMap: SerializedLearningMap): {
   return { nodes, edges };
 }
 
-function findSourceNodeId(node: MapNode, learningMap: SerializedLearningMap): string | undefined {
+function _findSourceNodeId(node: MapNode, learningMap: SerializedLearningMap): string | undefined {
   if (node.type === "questionNode") {
     const question = learningMap.questions?.find((q) => q.id === node.id);
     return question?.parentArticleId;
@@ -150,8 +149,8 @@ export function useMapReconciliation(
       if (hasChanged) {
         logger.info("Node update detected", {
           nodeId: desired.id,
-          currentSummary: current.data?.content?.summary?.substring(0, 50) + "...",
-          desiredSummary: desired.data?.content?.summary?.substring(0, 50) + "...",
+          currentSummary: `${current.data?.content?.summary?.substring(0, 50)}...`,
+          desiredSummary: `${desired.data?.content?.summary?.substring(0, 50)}...`,
           currentTakeawaysCount: current.data?.content?.takeaways?.length || 0,
           desiredTakeawaysCount: desired.data?.content?.takeaways?.length || 0,
         });

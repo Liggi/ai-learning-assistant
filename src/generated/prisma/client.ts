@@ -14,7 +14,6 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 import type * as runtime from "@prisma/client/runtime/library";
-import * as $Enums from "./enums";
 import * as $Class from "./internal/class";
 import * as Prisma from "./internal/prismaNamespace";
 

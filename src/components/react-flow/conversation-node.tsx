@@ -7,8 +7,7 @@ import {
   useReactFlow,
   useUpdateNodeInternals,
 } from "@xyflow/react";
-import debounce from "lodash/debounce";
-import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { useArticle } from "@/hooks/api/articles";
 import { useArticleSummary } from "@/hooks/use-article-summary";
 import { useArticleTakeaways } from "@/hooks/use-article-takeaways";
@@ -42,7 +41,7 @@ const nodeStyles = {
 };
 
 export default function ConversationNode({ id, data }: ConversationNodeProps) {
-  const updateNodeInternals = useUpdateNodeInternals();
+  const _updateNodeInternals = useUpdateNodeInternals();
   const flow = useReactFlow();
 
   const params = useParams({ strict: false }) as {
@@ -89,7 +88,7 @@ export default function ConversationNode({ id, data }: ConversationNodeProps) {
         )
       );
     }
-  }, [id, summary, takeaways, updateNodeInternals, flow]);
+  }, [id, summary, takeaways, flow]);
 
   return (
     <div

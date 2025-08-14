@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { useMapReconciliation } from "@/hooks/use-map-reconciliation";
 import { useStableLearningMap } from "@/hooks/use-stable-learning-map";
 import { Logger } from "@/lib/logger";
@@ -89,7 +89,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
         replace: true,
       });
     },
-    [navigate]
+    [navigate, activeArticle?.id]
   );
 
   const handleQuestionCreated = useCallback((questionText: string, parentArticleId: string) => {
@@ -128,6 +128,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
           }`}
         >
           <button
+            type="button"
             onClick={toggleLayout}
             className="bg-slate-800 hover:bg-slate-700 rounded-full p-1.5 shadow-md"
             aria-label={isMapExpanded ? "Expand content" : "Expand map"}
@@ -146,13 +147,11 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
           <div className="flex-1 overflow-hidden flex flex-col">
             <div className="flex-1 overflow-y-auto p-8">
               {activeArticle && subject ? (
-                <>
-                  {activeArticle.content ? (
-                    <ArticleContent article={activeArticle} subject={subject} />
-                  ) : (
-                    <StreamingArticleDisplay article={activeArticle} subject={subject} />
-                  )}
-                </>
+                activeArticle.content ? (
+                  <ArticleContent article={activeArticle} subject={subject} />
+                ) : (
+                  <StreamingArticleDisplay article={activeArticle} subject={subject} />
+                )
               ) : (
                 <div>Select an article or topic on the map to learn more.</div>
               )}

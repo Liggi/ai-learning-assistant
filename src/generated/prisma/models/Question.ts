@@ -7,7 +7,6 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/library";
-import type * as $Enums from "../enums";
 import type * as Prisma from "../internal/prismaNamespace";
 
 /**
@@ -85,7 +84,7 @@ export type QuestionCountAggregateInputType = {
 };
 
 export type QuestionAggregateArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Question to aggregate.
@@ -144,7 +143,7 @@ export type GetQuestionAggregateType<T extends QuestionAggregateArgs> = {
 };
 
 export type QuestionGroupByArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.QuestionWhereInput;
   orderBy?:
@@ -995,7 +994,7 @@ export type QuestionGetPayload<S extends boolean | null | undefined | QuestionDe
   runtime.Types.Result.GetResult<Prisma.$QuestionPayload, S>;
 
 export type QuestionCountArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = Omit<QuestionFindManyArgs, "select" | "include" | "distinct" | "omit"> & {
   select?: QuestionCountAggregateInputType | true;
 };
@@ -1836,7 +1835,7 @@ export type QuestionCreateArgs<
  * Question createMany
  */
 export type QuestionCreateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to create many Questions.
@@ -1902,7 +1901,7 @@ export type QuestionUpdateArgs<
  * Question updateMany
  */
 export type QuestionUpdateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to update Questions.
@@ -2010,7 +2009,7 @@ export type QuestionDeleteArgs<
  * Question deleteMany
  */
 export type QuestionDeleteManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Questions to delete

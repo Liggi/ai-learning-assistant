@@ -128,7 +128,7 @@ export function useArticleSummary(article: SerializedArticle | null | undefined)
         });
       }
     },
-    [isLoading, error, queryClient]
+    [isLoading, queryClient]
   );
 
   // Reset the state when the article changes
@@ -136,7 +136,7 @@ export function useArticleSummary(article: SerializedArticle | null | undefined)
     setError(null);
     setHasCompleted(false);
     setIsLoading(false);
-  }, [article?.id]);
+  }, []);
 
   useEffect(() => {
     const status = getArticleSummaryStatus(article, isLoading, error, hasCompleted);

@@ -15,7 +15,7 @@ export function useContextualTooltips(
   const [tooltips, setTooltips] = useState<Record<string, string>>({});
   const [tooltipsReady, setTooltipsReady] = useState(false);
 
-  const queryClient = useQueryClient();
+  const _queryClient = useQueryClient();
 
   const tooltipGenerationAttempted = useRef<boolean>(false);
 
@@ -92,7 +92,7 @@ export function useContextualTooltips(
     };
 
     generateTooltips();
-  }, [article?.id, article?.content, subject.title, updateArticleMutation, queryClient]);
+  }, [article?.id, article?.content, subject.title, updateArticleMutation]);
 
   useEffect(() => {
     if (tooltipGenerationAttempted.current) {

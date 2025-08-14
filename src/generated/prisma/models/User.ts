@@ -7,7 +7,6 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/library";
-import type * as $Enums from "../enums";
 import type * as Prisma from "../internal/prismaNamespace";
 
 /**
@@ -85,7 +84,7 @@ export type UserCountAggregateInputType = {
 };
 
 export type UserAggregateArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which User to aggregate.
@@ -144,7 +143,7 @@ export type GetUserAggregateType<T extends UserAggregateArgs> = {
 };
 
 export type UserGroupByArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.UserWhereInput;
   orderBy?: Prisma.UserOrderByWithAggregationInput | Prisma.UserOrderByWithAggregationInput[];
@@ -694,7 +693,7 @@ export type UserCountOutputType = {
 };
 
 export type UserCountOutputTypeSelect<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs;
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs;
@@ -717,7 +716,7 @@ export type UserCountOutputTypeDefaultArgs<
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountSessionsArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.SessionWhereInput;
 };
@@ -726,7 +725,7 @@ export type UserCountOutputTypeCountSessionsArgs<
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountAccountsArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.AccountWhereInput;
 };
@@ -735,7 +734,7 @@ export type UserCountOutputTypeCountAccountsArgs<
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountSubjectsArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.SubjectWhereInput;
 };
@@ -814,10 +813,10 @@ export type UserInclude<
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type UserIncludeCreateManyAndReturn<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {};
 export type UserIncludeUpdateManyAndReturn<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {};
 
 export type $UserPayload<
@@ -848,7 +847,7 @@ export type UserGetPayload<S extends boolean | null | undefined | UserDefaultArg
   runtime.Types.Result.GetResult<Prisma.$UserPayload, S>;
 
 export type UserCountArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = Omit<UserFindManyArgs, "select" | "include" | "distinct" | "omit"> & {
   select?: UserCountAggregateInputType | true;
 };
@@ -1655,7 +1654,7 @@ export type UserCreateArgs<
  * User createMany
  */
 export type UserCreateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to create many Users.
@@ -1717,7 +1716,7 @@ export type UserUpdateArgs<
  * User updateMany
  */
 export type UserUpdateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to update Users.
@@ -1821,7 +1820,7 @@ export type UserDeleteArgs<
  * User deleteMany
  */
 export type UserDeleteManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Users to delete

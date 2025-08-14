@@ -81,6 +81,7 @@ const SuggestedQuestionsContent: React.FC<SuggestedQuestionsContentProps> = ({
         {questions.map((question, index) => (
           <button
             key={index}
+            type="button"
             className={`px-4 py-2 rounded-lg border border-slate-800 bg-slate-900/90 hover:bg-slate-800/90 hover:border-slate-500 shadow-sm hover:shadow-md text-sm transition-all duration-300 ease-in-out ${
               createArticleMutation.isPending ? "opacity-50 cursor-not-allowed" : ""
             }`}

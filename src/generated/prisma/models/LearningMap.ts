@@ -7,7 +7,6 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/library";
-import type * as $Enums from "../enums";
 import type * as Prisma from "../internal/prismaNamespace";
 
 /**
@@ -67,7 +66,7 @@ export type LearningMapCountAggregateInputType = {
 };
 
 export type LearningMapAggregateArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which LearningMap to aggregate.
@@ -128,7 +127,7 @@ export type GetLearningMapAggregateType<T extends LearningMapAggregateArgs> = {
 };
 
 export type LearningMapGroupByArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.LearningMapWhereInput;
   orderBy?:
@@ -683,7 +682,7 @@ export type LearningMapCountOutputType = {
 };
 
 export type LearningMapCountOutputTypeSelect<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   articles?: boolean | LearningMapCountOutputTypeCountArticlesArgs;
   questions?: boolean | LearningMapCountOutputTypeCountQuestionsArgs;
@@ -705,7 +704,7 @@ export type LearningMapCountOutputTypeDefaultArgs<
  * LearningMapCountOutputType without action
  */
 export type LearningMapCountOutputTypeCountArticlesArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.ArticleWhereInput;
 };
@@ -714,7 +713,7 @@ export type LearningMapCountOutputTypeCountArticlesArgs<
  * LearningMapCountOutputType without action
  */
 export type LearningMapCountOutputTypeCountQuestionsArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.QuestionWhereInput;
 };
@@ -818,7 +817,7 @@ export type LearningMapGetPayload<S extends boolean | null | undefined | Learnin
   runtime.Types.Result.GetResult<Prisma.$LearningMapPayload, S>;
 
 export type LearningMapCountArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = Omit<LearningMapFindManyArgs, "select" | "include" | "distinct" | "omit"> & {
   select?: LearningMapCountAggregateInputType | true;
 };
@@ -1659,7 +1658,7 @@ export type LearningMapCreateArgs<
  * LearningMap createMany
  */
 export type LearningMapCreateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to create many LearningMaps.
@@ -1725,7 +1724,7 @@ export type LearningMapUpdateArgs<
  * LearningMap updateMany
  */
 export type LearningMapUpdateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to update LearningMaps.
@@ -1839,7 +1838,7 @@ export type LearningMapDeleteArgs<
  * LearningMap deleteMany
  */
 export type LearningMapDeleteManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which LearningMaps to delete

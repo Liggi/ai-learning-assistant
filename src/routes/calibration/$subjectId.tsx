@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useParams, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useParams, useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import Calibration from "@/components/calibration/calibration";

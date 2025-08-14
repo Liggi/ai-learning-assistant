@@ -7,7 +7,6 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/library";
-import type * as $Enums from "../enums";
 import type * as Prisma from "../internal/prismaNamespace";
 
 /**
@@ -75,7 +74,7 @@ export type SubjectCountAggregateInputType = {
 };
 
 export type SubjectAggregateArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Subject to aggregate.
@@ -134,7 +133,7 @@ export type GetSubjectAggregateType<T extends SubjectAggregateArgs> = {
 };
 
 export type SubjectGroupByArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.SubjectWhereInput;
   orderBy?: Prisma.SubjectOrderByWithAggregationInput | Prisma.SubjectOrderByWithAggregationInput[];
@@ -662,7 +661,7 @@ export type SubjectCountOutputType = {
 };
 
 export type SubjectCountOutputTypeSelect<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   learningMaps?: boolean | SubjectCountOutputTypeCountLearningMapsArgs;
 };
@@ -683,7 +682,7 @@ export type SubjectCountOutputTypeDefaultArgs<
  * SubjectCountOutputType without action
  */
 export type SubjectCountOutputTypeCountLearningMapsArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.LearningMapWhereInput;
 };
@@ -794,7 +793,7 @@ export type SubjectGetPayload<S extends boolean | null | undefined | SubjectDefa
   runtime.Types.Result.GetResult<Prisma.$SubjectPayload, S>;
 
 export type SubjectCountArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = Omit<SubjectFindManyArgs, "select" | "include" | "distinct" | "omit"> & {
   select?: SubjectCountAggregateInputType | true;
 };
@@ -1597,7 +1596,7 @@ export type SubjectCreateArgs<
  * Subject createMany
  */
 export type SubjectCreateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to create many Subjects.
@@ -1663,7 +1662,7 @@ export type SubjectUpdateArgs<
  * Subject updateMany
  */
 export type SubjectUpdateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to update Subjects.
@@ -1771,7 +1770,7 @@ export type SubjectDeleteArgs<
  * Subject deleteMany
  */
 export type SubjectDeleteManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Subjects to delete

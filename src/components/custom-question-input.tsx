@@ -89,6 +89,7 @@ export const CustomQuestionInput: React.FC<CustomQuestionInputProps> = ({
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
+              aria-label="Creating article..."
             >
               <circle
                 className="opacity-25"

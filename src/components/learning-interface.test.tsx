@@ -3,8 +3,6 @@ import * as reactRouter from "@tanstack/react-router";
 import { type RenderResult, render as rtlRender } from "@testing-library/react";
 import { act } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import * as contextualTooltipsHook from "@/hooks/use-contextual-tooltips";
-import * as rootArticleHook from "@/hooks/use-root-article";
 import type { SerializedLearningMap, SerializedSubject } from "@/types/serialized";
 import LearningInterface from "./learning-interface";
 import PersonalLearningMapFlow from "./personal-learning-map-flow";

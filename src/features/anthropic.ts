@@ -1,5 +1,4 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { TextBlock } from "@anthropic-ai/sdk/resources/messages/messages.js";
 import type { z } from "zod";
 import { Logger } from "@/lib/logger";
 import { robustLLMCall } from "@/lib/robust-llm-call";
@@ -23,8 +22,8 @@ export class AnthropicProvider implements LLMProvider<AnthropicProviderOptions> 
   public client: Anthropic;
 
   constructor() {
-    const apiKey = process.env["ANTHROPIC_API_KEY"];
-    const heliconeApiKey = process.env["HELICONE_API_KEY"];
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const heliconeApiKey = process.env.HELICONE_API_KEY;
 
     if (!apiKey) {
       anthropicLogger.error("ANTHROPIC_API_KEY is not set in environment variables");
@@ -101,7 +100,7 @@ export class AnthropicProvider implements LLMProvider<AnthropicProviderOptions> 
       length: stringResponse.length,
     });
 
-    let parsedResponse;
+    let parsedResponse: unknown;
     try {
       const jsonString = extractJSON(stringResponse);
       parsedResponse = JSON.parse(jsonString);

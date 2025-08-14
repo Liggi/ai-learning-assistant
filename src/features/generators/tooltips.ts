@@ -7,7 +7,7 @@ import { robustLLMCall } from "@/lib/robust-llm-call";
 
 const logger = new Logger({ context: "TooltipsGenerator", enabled: false });
 
-const tooltipResponseSchema = z.object({
+const _tooltipResponseSchema = z.object({
   tooltips: z.record(z.string()),
 });
 

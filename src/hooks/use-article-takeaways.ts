@@ -115,7 +115,7 @@ export function useArticleTakeaways(article: SerializedArticle | null | undefine
     setError(null);
     setHasCompleted(false);
     setIsLoading(false);
-  }, [article?.id]);
+  }, []);
 
   useEffect(() => {
     const status = getArticleTakeawaysStatus(article, isLoading, error, hasCompleted);

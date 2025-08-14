@@ -1,9 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import type {
-  SerializedArticle,
-  SerializedLearningMap,
-  SerializedQuestion,
-} from "@/types/serialized";
+import type { SerializedLearningMap } from "@/types/serialized";
 import LearningMap, { type LearningMapHandle } from "./learning-map";
 import ArticleNode from "./learning-map/article-node";
 import QuestionNode from "./learning-map/question-node";

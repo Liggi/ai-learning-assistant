@@ -22,8 +22,8 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
   public client: OpenAI;
 
   constructor() {
-    const apiKey = process.env["OPENAI_API_KEY"];
-    const heliconeApiKey = process.env["HELICONE_API_KEY"];
+    const apiKey = process.env.OPENAI_API_KEY;
+    const heliconeApiKey = process.env.HELICONE_API_KEY;
 
     if (!apiKey) {
       openaiLogger.error("OPENAI_API_KEY is not set in environment variables");

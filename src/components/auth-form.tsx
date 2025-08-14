@@ -2,7 +2,7 @@
 
 import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
-import { getSession, signIn, signUp } from "../lib/auth-client";
+import { getSession, signIn } from "../lib/auth-client";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
@@ -23,7 +23,7 @@ export function AuthForm() {
     setSuccess(null);
 
     try {
-      let result;
+      let result: unknown;
       if (mode === "signup") {
         try {
           // The Better Auth React client was hanging indefinitely on signup requests
@@ -40,10 +40,10 @@ export function AuthForm() {
           });
 
           if (!response.ok) {
-            let errorData;
+            let errorData: unknown;
             try {
               errorData = await response.json();
-            } catch (parseError) {
+            } catch (_parseError) {
               const textError = await response.text();
               throw new Error(`Signup failed with status ${response.status}: ${textError}`);
             }
@@ -106,7 +106,7 @@ export function AuthForm() {
     }
   }
 
-  async function handleGitHubSignIn() {
+  async function _handleGitHubSignIn() {
     setIsLoading(true);
     setError(null);
 

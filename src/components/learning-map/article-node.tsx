@@ -98,8 +98,8 @@ export default function ArticleNode({ data }: ArticleNodeProps) {
 
           {data.content.takeaways && data.content.takeaways.length > 0 && (
             <div className="space-y-1.5 pt-2 border-t border-slate-700/50">
-              {data.content.takeaways.map((takeaway, index) => (
-                <div key={index} className="flex items-start gap-2 text-xs text-slate-300">
+              {data.content.takeaways.map((takeaway) => (
+                <div key={takeaway} className="flex items-start gap-2 text-xs text-slate-300">
                   <div className="mt-2 w-1.5 h-1.5 rounded-full bg-green-500/40 flex-shrink-0" />
                   <div>
                     <MarkdownDisplay content={takeaway} />

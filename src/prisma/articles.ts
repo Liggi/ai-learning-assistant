@@ -1,11 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
 import { generateSummary } from "@/features/generators/article-summary";
 import { extractTakeaways } from "@/lib/article-takeaway-parser";
 import { Logger } from "@/lib/logger";
-import { fromPrismaJson } from "@/lib/prisma-utils";
 import prisma from "@/prisma/client";
-import { ArticleMetadata } from "@/types/serialized";
 import { serializeArticle, serializeLearningMap, serializeSubject } from "@/types/serializers";
 
 const logger = new Logger({ context: "ArticleService", enabled: false });

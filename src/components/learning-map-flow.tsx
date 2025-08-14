@@ -1,4 +1,4 @@
-import { Background, Controls, Edge, ReactFlow, ReactFlowProvider } from "@xyflow/react";
+import { Background, Controls, ReactFlow, ReactFlowProvider } from "@xyflow/react";
 import type React from "react";
 import { useCallback } from "react";
 import { useLearningMapElkLayout } from "@/hooks/use-react-flow-layout";
@@ -29,7 +29,7 @@ const LearningMapFlow: React.FC<LearningMapFlowProps> = ({
   });
 
   const handleNodeClick = useCallback(
-    (event: React.MouseEvent, node: any) => {
+    (_event: React.MouseEvent, node: { id: string }) => {
       if (onNodeClick) {
         onNodeClick(node.id);
       }

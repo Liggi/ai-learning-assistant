@@ -1,7 +1,7 @@
 import pRetry from "p-retry";
 import { Logger } from "./logger";
 
-const logger = new Logger({ context: "RobustLLMCall", enabled: false });
+const _logger = new Logger({ context: "RobustLLMCall", enabled: false });
 
 interface LLMCallOptions {
   retries?: number;
@@ -101,7 +101,7 @@ export async function robustLLMCall<T = LLMResponse>(
   );
 }
 
-function parseResponse(response: any, provider?: string): LLMResponse {
+function parseResponse(response: any, _provider?: string): LLMResponse {
   // OpenAI format
   if (response?.choices?.[0]?.message?.content) {
     return {

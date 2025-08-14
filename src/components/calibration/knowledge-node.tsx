@@ -54,6 +54,7 @@ export function KnowledgeNode({
     >
       {/* @TODO: Should use proper checkbox input for accessibility, not button - Claude to fix */}
       <button
+        type="button"
         onClick={() => onClick(id)}
         className={`
           block w-full text-left px-3 py-2 rounded-2xl transition-all duration-200

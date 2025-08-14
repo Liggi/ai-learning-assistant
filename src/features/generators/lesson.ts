@@ -11,7 +11,7 @@ const stripResponsePlanning = (text: string): string => {
   return text.replace(/<response_planning>[\s\S]*?<\/response_planning>/g, "").trim();
 };
 
-const lessonResponseSchema = z.object({
+const _lessonResponseSchema = z.object({
   response: z.string(),
 });
 

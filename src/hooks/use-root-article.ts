@@ -28,7 +28,14 @@ export function useRootArticle(learningMap: SerializedLearningMap | null | undef
         }
       );
     }
-  }, [learningMap?.id, rootArticle]);
+  }, [
+    learningMap?.id,
+    rootArticle,
+    createArticleMutation.mutate,
+    isCreating,
+    createArticleMutation.isPending,
+    learningMap,
+  ]);
 
   return {
     article: rootArticle,

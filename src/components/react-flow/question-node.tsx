@@ -13,7 +13,7 @@ interface QuestionNodeProps {
 }
 
 function QuestionNode({ data, selected = false }: QuestionNodeProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [_isHovered, setIsHovered] = useState(false);
 
   return (
     <div

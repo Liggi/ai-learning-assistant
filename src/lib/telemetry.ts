@@ -1,11 +1,11 @@
+import * as fs from "node:fs";
 import { SpanKind, type SpanStatusCode, trace } from "@opentelemetry/api";
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from "@opentelemetry/semantic-conventions";
-import * as fs from "fs";
 
 // Server-side imports (will be tree-shaken on client)
 let NodeSDK: any;
 let getNodeAutoInstrumentations: any;
-let ConsoleSpanExporter: any;
+let _ConsoleSpanExporter: any;
 
 // File exporter for server-side traces
 class FileSpanExporter {
@@ -27,7 +27,7 @@ class FileSpanExporter {
         })),
       };
 
-      fs.appendFileSync("./traces.json", JSON.stringify(traceData, null, 2) + "\n");
+      fs.appendFileSync("./traces.json", `${JSON.stringify(traceData, null, 2)}\n`);
       resultCallback({ code: 0 });
     } catch (error) {
       resultCallback({ code: 1, error });
@@ -42,7 +42,7 @@ class FileSpanExporter {
 // Client-side imports (will be tree-shaken on server)
 let WebTracerProvider: any;
 let SimpleSpanProcessor: any;
-let BatchSpanProcessor: any;
+let _BatchSpanProcessor: any;
 let Resource: any;
 
 // Client-side console exporter that's easy to copy
@@ -50,7 +50,7 @@ class ClientTraceExporter {
   export(spans: any[], resultCallback: any) {
     try {
       const timestamp = new Date().toISOString();
-      const traceData = {
+      const _traceData = {
         timestamp,
         source: "client",
         spans: spans.map((span) => ({
@@ -86,7 +86,7 @@ async function loadServerDependencies() {
 
     NodeSDK = nodeModule.NodeSDK;
     getNodeAutoInstrumentations = autoInstrumentationsModule.getNodeAutoInstrumentations;
-    ConsoleSpanExporter = traceModule.ConsoleSpanExporter;
+    _ConsoleSpanExporter = traceModule.ConsoleSpanExporter;
   }
 }
 
@@ -98,9 +98,9 @@ async function loadClientDependencies() {
 
     WebTracerProvider = webModule.WebTracerProvider;
     SimpleSpanProcessor = webModule.SimpleSpanProcessor;
-    BatchSpanProcessor = webModule.BatchSpanProcessor;
+    _BatchSpanProcessor = webModule.BatchSpanProcessor;
     Resource = resourceModule.resourceFromAttributes;
-    ConsoleSpanExporter = webModule.ConsoleSpanExporter;
+    _ConsoleSpanExporter = webModule.ConsoleSpanExporter;
   }
 }
 

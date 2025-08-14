@@ -156,13 +156,13 @@ export const ServerRoute = createServerFileRoute("/api/lesson-stream").methods({
 
             // Process the stream of events from Anthropic
             let chunkCount = 0;
-            let totalBytes = 0;
+            let _totalBytes = 0;
 
             for await (const event of messageStream) {
               if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
                 const text = event.delta.text;
                 const encoded = new TextEncoder().encode(text);
-                totalBytes += encoded.length;
+                _totalBytes += encoded.length;
                 chunkCount++;
 
                 if (chunkCount % 20 === 0) {

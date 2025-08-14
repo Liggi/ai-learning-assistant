@@ -7,7 +7,6 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/library";
-import type * as $Enums from "../enums";
 import type * as Prisma from "../internal/prismaNamespace";
 
 /**
@@ -79,7 +78,7 @@ export type VerificationCountAggregateInputType = {
 };
 
 export type VerificationAggregateArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Verification to aggregate.
@@ -140,7 +139,7 @@ export type GetVerificationAggregateType<T extends VerificationAggregateArgs> = 
 };
 
 export type VerificationGroupByArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.VerificationWhereInput;
   orderBy?:
@@ -414,7 +413,7 @@ export type VerificationGetPayload<S extends boolean | null | undefined | Verifi
   runtime.Types.Result.GetResult<Prisma.$VerificationPayload, S>;
 
 export type VerificationCountArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = Omit<VerificationFindManyArgs, "select" | "include" | "distinct" | "omit"> & {
   select?: VerificationCountAggregateInputType | true;
 };
@@ -937,9 +936,9 @@ export interface VerificationDelegate<
  */
 export interface Prisma__VerificationClient<
   T,
-  Null = never,
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
-  GlobalOmitOptions = {},
+  _Null = never,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _GlobalOmitOptions = {},
 > extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise";
   /**
@@ -1197,7 +1196,7 @@ export type VerificationCreateArgs<
  * Verification createMany
  */
 export type VerificationCreateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to create many Verifications.
@@ -1255,7 +1254,7 @@ export type VerificationUpdateArgs<
  * Verification updateMany
  */
 export type VerificationUpdateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to update Verifications.
@@ -1357,7 +1356,7 @@ export type VerificationDeleteArgs<
  * Verification deleteMany
  */
 export type VerificationDeleteManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Verifications to delete

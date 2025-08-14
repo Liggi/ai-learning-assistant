@@ -233,11 +233,12 @@ export function useStreamArticleContent(
     streamComplete,
     updateArticleMutation,
     article?.id,
-    article?.isRoot,
     needsContext,
     isLoadingQuestion,
     questionData,
-    questionError,
+    questionError, // Invalidate React Query cache for article data
+    queryClient.invalidateQueries, // Force router to refresh route loader data (this will reload learning map)
+    router.invalidate,
   ]);
 
   // Effect 1: Reset state on article ID change ONLY

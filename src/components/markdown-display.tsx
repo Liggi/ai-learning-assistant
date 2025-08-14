@@ -1,13 +1,6 @@
-import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipPortal,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipPortal, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface MarkdownDisplayProps {
   content: string;
@@ -132,65 +125,63 @@ const StrongText: React.FC<StrongTextProps> = ({
   const concept = String(children).trim();
   const tooltipText = tooltips[concept.toLowerCase()];
   const hasTooltip = tooltipText != null;
-  const [isOpen, setIsOpen] = useState(false);
+  const [_isOpen, setIsOpen] = useState(false);
 
   if (!hasTooltip) {
     return <span className="font-bold text-white">{children}</span>;
   }
 
   return (
-    <>
-      <Tooltip onOpenChange={setIsOpen}>
-        <TooltipTrigger asChild>
-          <span className="font-bold text-white cursor-help relative border-b border-slate-400/30 hover:bg-white/5 transition-colors duration-200">
-            {children}
-          </span>
-        </TooltipTrigger>
-        <TooltipPortal>
-          <TooltipContent
-            className="p-4 text-sm backdrop-blur-sm bg-slate-900 text-slate-100 border border-slate-700 rounded-lg shadow-lg shadow-slate-900/50 z-50"
-            sideOffset={5}
-            style={{ maxWidth: "500px", willChange: "opacity, transform" }}
-          >
-            <ReactMarkdown className="prose prose-invert prose-sm max-w-none [&>:first-child]:mt-0 [&>:last-child]:mb-0 prose-headings:mb-2 prose-headings:text-slate-200 prose-headings:text-sm prose-headings:font-semibold prose-headings:leading-tight prose-headings:tracking-wide prose-headings:uppercase prose-p:mb-2 prose-p:text-slate-300">
-              {tooltipText}
-            </ReactMarkdown>
-            <div className="mt-3 pt-3 border-t border-slate-700/50">
-              <button
-                className={`px-3 py-1.5 rounded-full text-xs transition-colors flex items-center gap-1.5 ${
-                  isCreatingArticle
-                    ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-                    : "bg-slate-800 hover:bg-slate-700 text-slate-200"
-                }`}
-                onClick={() => {
-                  onLearnMore?.(concept);
-                }}
-                disabled={isCreatingArticle}
-              >
-                <span className="text-cyan-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M12 16v-4"></path>
-                    <path d="M12 8h.01"></path>
-                  </svg>
-                </span>
-                {isCreatingArticle ? "Creating..." : "Tell me more about this"}
-              </button>
-            </div>
-          </TooltipContent>
-        </TooltipPortal>
-      </Tooltip>
-    </>
+    <Tooltip onOpenChange={setIsOpen}>
+      <TooltipTrigger asChild>
+        <span className="font-bold text-white cursor-help relative border-b border-slate-400/30 hover:bg-white/5 transition-colors duration-200">
+          {children}
+        </span>
+      </TooltipTrigger>
+      <TooltipPortal>
+        <TooltipContent
+          className="p-4 text-sm backdrop-blur-sm bg-slate-900 text-slate-100 border border-slate-700 rounded-lg shadow-lg shadow-slate-900/50 z-50"
+          sideOffset={5}
+          style={{ maxWidth: "500px", willChange: "opacity, transform" }}
+        >
+          <ReactMarkdown className="prose prose-invert prose-sm max-w-none [&>:first-child]:mt-0 [&>:last-child]:mb-0 prose-headings:mb-2 prose-headings:text-slate-200 prose-headings:text-sm prose-headings:font-semibold prose-headings:leading-tight prose-headings:tracking-wide prose-headings:uppercase prose-p:mb-2 prose-p:text-slate-300">
+            {tooltipText}
+          </ReactMarkdown>
+          <div className="mt-3 pt-3 border-t border-slate-700/50">
+            <button
+              className={`px-3 py-1.5 rounded-full text-xs transition-colors flex items-center gap-1.5 ${
+                isCreatingArticle
+                  ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+                  : "bg-slate-800 hover:bg-slate-700 text-slate-200"
+              }`}
+              onClick={() => {
+                onLearnMore?.(concept);
+              }}
+              disabled={isCreatingArticle}
+            >
+              <span className="text-cyan-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 16v-4"></path>
+                  <path d="M12 8h.01"></path>
+                </svg>
+              </span>
+              {isCreatingArticle ? "Creating..." : "Tell me more about this"}
+            </button>
+          </div>
+        </TooltipContent>
+      </TooltipPortal>
+    </Tooltip>
   );
 };
 

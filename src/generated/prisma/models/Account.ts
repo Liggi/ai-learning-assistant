@@ -7,7 +7,6 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/library";
-import type * as $Enums from "../enums";
 import type * as Prisma from "../internal/prismaNamespace";
 
 /**
@@ -121,7 +120,7 @@ export type AccountCountAggregateInputType = {
 };
 
 export type AccountAggregateArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Account to aggregate.
@@ -180,7 +179,7 @@ export type GetAccountAggregateType<T extends AccountAggregateArgs> = {
 };
 
 export type AccountGroupByArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.AccountWhereInput;
   orderBy?: Prisma.AccountOrderByWithAggregationInput | Prisma.AccountOrderByWithAggregationInput[];
@@ -891,7 +890,7 @@ export type AccountGetPayload<S extends boolean | null | undefined | AccountDefa
   runtime.Types.Result.GetResult<Prisma.$AccountPayload, S>;
 
 export type AccountCountArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = Omit<AccountFindManyArgs, "select" | "include" | "distinct" | "omit"> & {
   select?: AccountCountAggregateInputType | true;
 };
@@ -1690,7 +1689,7 @@ export type AccountCreateArgs<
  * Account createMany
  */
 export type AccountCreateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to create many Accounts.
@@ -1756,7 +1755,7 @@ export type AccountUpdateArgs<
  * Account updateMany
  */
 export type AccountUpdateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * The data used to update Accounts.
@@ -1864,7 +1863,7 @@ export type AccountDeleteArgs<
  * Account deleteMany
  */
 export type AccountDeleteManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  _ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
    * Filter which Accounts to delete
