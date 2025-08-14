@@ -77,9 +77,37 @@ export function useMapCore(
         nodes: JSON.stringify(nodes.map(n => ({ id: n.id, position: n.position })))
       });
 
-      // If this is the first layout, show all nodes and edges
       if (!hasCompletedFirstLayout.current) {
         logger.info("First layout - showing all nodes");
+        
+        // Center viewport on the root article before making nodes visible
+        const allNodes = flow.getNodes();
+        const rootNode = allNodes.find(node => node.data?.isRoot === true);
+        if (rootNode) {
+          logger.info("Centering viewport on root node", { 
+            rootNodeId: rootNode.id,
+            position: rootNode.position,
+            measured: rootNode.measured,
+            width: rootNode.width,
+            height: rootNode.height
+          });
+          
+          // Calculate the center of the node
+          const nodeWidth = rootNode.width || rootNode.measured?.width || 350;
+          const nodeHeight = rootNode.height || rootNode.measured?.height || 350;
+          const centerX = rootNode.position.x + nodeWidth / 2;
+          const centerY = rootNode.position.y + nodeHeight / 2;
+          
+          logger.info("Calculated node center", { 
+            centerX, 
+            centerY, 
+            nodeWidth, 
+            nodeHeight 
+          });
+          
+          flow.setCenter(centerX, centerY, { zoom: 0.8, duration: 100 });
+        }
+        
         const updatedNodes = flow.getNodes().map((node) => ({
           ...node,
           style: {
