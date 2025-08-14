@@ -7,7 +7,7 @@ import { serializeLearningMap } from "@/types/serializers";
 import { generateSummary } from "@/features/generators/article-summary";
 import { extractTakeaways } from "@/lib/article-takeaway-parser";
 
-const logger = new Logger({ context: "LearningMapService" });
+const logger = new Logger({ context: "LearningMapService", enabled: false });
 
 const getOrCreateLearningMapSchema = z.object({
   subjectId: z.string().min(1, "Subject ID is required"),

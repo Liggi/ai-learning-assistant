@@ -6,7 +6,7 @@ import { z } from "zod";
 import { Logger } from "@/lib/logger";
 import Anthropic from "@anthropic-ai/sdk";
 
-const logger = new Logger({ context: "KnowledgeNodes" });
+const logger = new Logger({ context: "KnowledgeNodes", enabled: false });
 
 const knowledgeNodesSchema = z.object({
   nodes: z.array(

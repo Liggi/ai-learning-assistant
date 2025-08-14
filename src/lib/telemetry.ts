@@ -36,7 +36,6 @@ class FileSpanExporter {
       );
       resultCallback({ code: 0 });
     } catch (error) {
-      console.error("Failed to write trace to file:", error);
       resultCallback({ code: 1, error });
     }
   }
@@ -73,13 +72,9 @@ class ClientTraceExporter {
         })),
       };
 
-      console.log("=== CLIENT TRACE BATCH ===");
-      console.log(JSON.stringify(traceData, null, 2));
-      console.log("=== END CLIENT BATCH ===");
 
       resultCallback({ code: 0 });
     } catch (error) {
-      console.error("Failed to export client trace:", error);
       resultCallback({ code: 1, error });
     }
   }
@@ -140,7 +135,6 @@ export async function initializeServerTelemetry() {
   });
 
   sdk.start();
-  console.log("🔧 Server OpenTelemetry initialized");
   return sdk;
 }
 
@@ -164,7 +158,6 @@ export async function initializeClientTelemetry() {
   });
 
   provider.register();
-  console.log("🌐 Client OpenTelemetry initialized");
   return provider;
 }
 

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { AnthropicProvider } from "@/features/anthropic"; // Import the Provider
 import { Logger } from "@/lib/logger"; // Import Logger if needed for route-level logging
 
-const apiLogger = new Logger({ context: "API:/api/generate-response" });
+const apiLogger = new Logger({ context: "API:/api/generate-response", enabled: false });
 
 // Define the expected shape of the LLM's JSON response
 const ResponseSchema = z.object({

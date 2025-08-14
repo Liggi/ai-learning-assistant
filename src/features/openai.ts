@@ -12,7 +12,7 @@ import {
   extractJSON,
 } from "./llm-base";
 
-const openaiLogger = new Logger({ context: "OpenAIProvider" });
+const openaiLogger = new Logger({ context: "OpenAIProvider", enabled: false });
 
 type OpenAIProviderOptions = {
   model?: string;

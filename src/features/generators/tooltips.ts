@@ -5,7 +5,7 @@ import { extractJSON } from "@/features/llm-base";
 import { Logger } from "@/lib/logger";
 import Anthropic from "@anthropic-ai/sdk";
 
-const logger = new Logger({ context: "TooltipsGenerator" });
+const logger = new Logger({ context: "TooltipsGenerator", enabled: false });
 
 const tooltipResponseSchema = z.object({
   tooltips: z.record(z.string()),

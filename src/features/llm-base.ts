@@ -3,7 +3,7 @@ import { Logger } from "@/lib/logger";
 import { AnthropicProvider } from "./anthropic";
 import { OpenAIProvider } from "./openai";
 
-const llmBaseLogger = new Logger({ context: "LLMBase" });
+const llmBaseLogger = new Logger({ context: "LLMBase", enabled: false });
 
 export type LLMCallOptions = {
   maxRetries?: number;

@@ -25,12 +25,6 @@ const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
   isCreatingArticle = false,
 }) => {
   
-  console.log(`MarkdownDisplay render`, {
-    contentLength: content.length,
-    tooltipsReady,
-    isCreatingArticle,
-    stackTrace: new Error().stack?.split('\n').slice(1, 4).join('\n') // Show who's calling this
-  });
 
   return (
     <div>

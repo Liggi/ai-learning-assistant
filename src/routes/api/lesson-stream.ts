@@ -3,7 +3,7 @@ import { AnthropicProvider } from "@/features/anthropic";
 import { createPrompt } from "@/prompts/chat/lesson";
 import { Logger } from "@/lib/logger";
 
-const streamLogger = new Logger({ context: "API:/api/lesson-stream" });
+const streamLogger = new Logger({ context: "API:/api/lesson-stream", enabled: false });
 
 export const ServerRoute = createServerFileRoute('/api/lesson-stream').methods({
   POST: async ({ request }) => {

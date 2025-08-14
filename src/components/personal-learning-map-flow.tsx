@@ -100,17 +100,8 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
   learningMap,
   ref,
 }) => {
-  console.log(`PersonalLearningMapFlow render`, {
-    learningMapId: learningMap?.id,
-    learningMapUpdatedAt: learningMap?.updatedAt,
-    stackTrace: new Error().stack?.split('\n').slice(1, 3).join('\n')
-  });
   
   const { nodes, edges } = useMemo(() => {
-    console.log(`PersonalLearningMapFlow useMemo recalculating`, {
-      learningMapId: learningMap?.id,
-      learningMapUpdatedAt: learningMap?.updatedAt,
-    });
     if (!learningMap) {
       return { nodes: [], edges: [] };
     }

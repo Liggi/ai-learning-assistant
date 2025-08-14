@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { useEffect } from "react";
 
-const logger = new Logger({ context: "CalibrationRoute" });
+const logger = new Logger({ context: "CalibrationRoute", enabled: false });
 
 export const Route = createFileRoute("/calibration/$subjectId")({
   component: function CalibrationRoute() {

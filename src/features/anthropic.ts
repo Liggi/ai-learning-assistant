@@ -13,7 +13,7 @@ import {
   extractJSON,
 } from "./llm-base";
 
-const anthropicLogger = new Logger({ context: "AnthropicProvider" });
+const anthropicLogger = new Logger({ context: "AnthropicProvider", enabled: false });
 
 type AnthropicProviderOptions = {
   model?: string;

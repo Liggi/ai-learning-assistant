@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Logger } from "@/lib/logger";
 import { ArrowRight } from "lucide-react";
 
-const logger = new Logger({ context: "CustomQuestionInput" });
+const logger = new Logger({ context: "CustomQuestionInput", enabled: false });
 
 interface CustomQuestionInputProps {
   activeArticle: SerializedArticle | null | undefined;

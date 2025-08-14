@@ -42,10 +42,6 @@ const nodeStyles = {
 };
 
 export default function ConversationNode({ id, data }: ConversationNodeProps) {
-  console.log(`ConversationNode render for ${data.id}`, {
-    hasInitialContent: !!data.content,
-    stackTrace: new Error().stack?.split('\n').slice(1, 3).join('\n')
-  });
   
   const updateNodeInternals = useUpdateNodeInternals();
   const flow = useReactFlow();

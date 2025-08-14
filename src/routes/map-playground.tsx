@@ -45,9 +45,7 @@ function MapPlaygroundPage() {
     mapRef.current?.runLayout();
   };
 
-  const handleLayoutComplete = () => {
-    console.log("Layout completed!");
-  };
+  const handleLayoutComplete = () => {};
 
   const addQuestionNode = () => {
     const questionData: QuestionNodeData = {

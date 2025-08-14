@@ -6,7 +6,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { Logger } from "@/lib/logger";
 import Anthropic from "@anthropic-ai/sdk";
 
-const logger = new Logger({ context: "SuggestedQuestionsGenerator" });
+const logger = new Logger({ context: "SuggestedQuestionsGenerator", enabled: false });
 
 const suggestionsSchema = z.object({
   questions: z.array(z.string()),

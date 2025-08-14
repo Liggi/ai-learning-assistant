@@ -10,7 +10,7 @@ import { useSession } from "@/lib/auth-client";
 import { useEffect } from "react";
 import Loading from "@/components/ui/loading";
 
-const logger = new Logger({ context: "LearningRouteLoader" });
+const logger = new Logger({ context: "LearningRouteLoader", enabled: false });
 
 export const Route = createFileRoute("/learning/$subjectId")({
   loader: async ({ params }) => {

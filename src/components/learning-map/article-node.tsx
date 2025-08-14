@@ -32,11 +32,6 @@ const nodeStyles = {
 };
 
 export default function ArticleNode({ data }: ArticleNodeProps) {
-  console.log(`ArticleNode render for ${data.id}`, {
-    hasSummary: !!data.content?.summary,
-    takeawaysCount: data.content?.takeaways?.length || 0,
-    stackTrace: new Error().stack?.split('\n').slice(1, 3).join('\n')
-  });
   
   const params = useParams({ strict: false }) as {
     articleId?: string;

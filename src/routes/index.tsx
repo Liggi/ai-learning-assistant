@@ -10,7 +10,7 @@ import { useSession } from "@/lib/auth-client";
 
 import "@xyflow/react/dist/style.css";
 
-const logger = new Logger({ context: "HomeRoute" });
+const logger = new Logger({ context: "HomeRoute", enabled: false });
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -27,7 +27,6 @@ function Home() {
 
   useEffect(() => {
     if (!loading && !session) {
-      console.log("No session found, redirecting to auth");
       navigate({ to: "/auth" });
     }
   }, [loading, session, navigate]);

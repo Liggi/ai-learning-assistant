@@ -7,7 +7,7 @@ import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
 import { useNavigate } from "@tanstack/react-router";
 import { Logger } from "@/lib/logger";
 
-const logger = new Logger({ context: "ArticleContent" });
+const logger = new Logger({ context: "ArticleContent", enabled: false });
 
 interface ArticleContentProps {
   article: SerializedArticle | null | undefined;

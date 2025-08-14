@@ -1,7 +1,7 @@
 import pRetry from 'p-retry';
 import { Logger } from './logger';
 
-const logger = new Logger({ context: 'RobustLLMCall' });
+const logger = new Logger({ context: 'RobustLLMCall', enabled: false });
 
 interface LLMCallOptions {
   retries?: number;
@@ -37,6 +37,7 @@ export async function robustLLMCall<T = LLMResponse>(
   const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   const contextLogger = new Logger({ 
     context: 'RobustLLMCall',
+    enabled: false,
     metadata: { requestId, requestType, provider, ...metadata }
   });
 

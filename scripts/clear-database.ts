@@ -11,12 +11,10 @@ async function clearDatabase() {
   // Delete Subject (no dependencies)
   await prisma.subject.deleteMany();
 
-  console.log("Database cleared: all data removed.");
 }
 
 clearDatabase()
   .catch((error) => {
-    console.error(error);
     process.exit(1);
   })
   .finally(async () => {

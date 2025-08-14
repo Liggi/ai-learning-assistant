@@ -5,7 +5,7 @@ import { createPrompt } from "@/prompts/chat/lesson";
 import { Logger } from "@/lib/logger";
 import Anthropic from "@anthropic-ai/sdk";
 
-const logger = new Logger({ context: "LessonGenerator" });
+const logger = new Logger({ context: "LessonGenerator", enabled: false });
 
 const stripResponsePlanning = (text: string): string => {
   return text
