@@ -1,21 +1,21 @@
 import {
+  Background,
+  type Node,
+  type NodeProps,
   ReactFlow,
   ReactFlowProvider,
-  Background,
   useReactFlow,
-  type NodeProps,
-  type Node,
 } from "@xyflow/react";
 import { forwardRef, useImperativeHandle } from "react";
+import type { SerializedLearningMap } from "@/types/serialized";
 import type {
-  MapNode,
   MapEdge,
+  MapNode,
   MapNodeData,
   NodeCreationOptions,
   NodeReplacementOptions,
 } from "./types";
 import { useMapCore } from "./use-map-core";
-import type { SerializedLearningMap } from "@/types/serialized";
 import "@xyflow/react/dist/style.css";
 
 export interface LearningMapHandle {
@@ -37,63 +37,63 @@ interface LearningMapProps {
   className?: string;
 }
 
-const LearningMapCore = forwardRef<
-  LearningMapHandle,
-  Omit<LearningMapProps, "className">
->(function LearningMapCore(
-  {
-    defaultNodes = [],
-    defaultEdges = [],
-    nodeTypes,
-    onNodeClick,
-    onLayoutComplete,
-  },
-  ref
-) {
-  const flow = useReactFlow();
+const LearningMapCore = forwardRef<LearningMapHandle, Omit<LearningMapProps, "className">>(
+  function LearningMapCore(
+    { defaultNodes = [], defaultEdges = [], nodeTypes, onNodeClick, onLayoutComplete },
+    ref
+  ) {
+    const flow = useReactFlow();
 
-  const { addNode, replaceNode, showHiddenNodes, runLayout, addDependentNodesChain } = useMapCore(
-    flow,
-    onLayoutComplete
-  );
+    const { addNode, replaceNode, showHiddenNodes, runLayout, addDependentNodesChain } = useMapCore(
+      flow,
+      onLayoutComplete
+    );
 
-  const getNodes = () => flow.getNodes();
+    const getNodes = () => flow.getNodes();
 
-  useImperativeHandle(
-    ref,
-    () => ({ runLayout, addNode, replaceNode, showHiddenNodes, getNodes, addDependentNodesChain }),
-    [runLayout, addNode, replaceNode, showHiddenNodes, getNodes, addDependentNodesChain]
-  );
+    useImperativeHandle(
+      ref,
+      () => ({
+        runLayout,
+        addNode,
+        replaceNode,
+        showHiddenNodes,
+        getNodes,
+        addDependentNodesChain,
+      }),
+      [runLayout, addNode, replaceNode, showHiddenNodes, getNodes, addDependentNodesChain]
+    );
 
-  const handleNodeClick = (_: React.MouseEvent, node: MapNode) => {
-    if (onNodeClick) {
-      onNodeClick(node.id, node.data);
-    }
-  };
+    const handleNodeClick = (_: React.MouseEvent, node: MapNode) => {
+      if (onNodeClick) {
+        onNodeClick(node.id, node.data);
+      }
+    };
 
-  return (
-    <ReactFlow
-      defaultNodes={defaultNodes}
-      defaultEdges={defaultEdges}
-      nodeTypes={nodeTypes}
-      onNodeClick={handleNodeClick}
-      defaultEdgeOptions={{
-        animated: false,
-        style: {
-          stroke: "#64748b",
-          strokeWidth: 2,
-        },
-      }}
-      minZoom={0.1}
-      maxZoom={2}
-      nodesDraggable={true}
-      nodesConnectable={false}
-      elementsSelectable={true}
-    >
-      <Background color="#f0f0f0" gap={24} size={1} />
-    </ReactFlow>
-  );
-});
+    return (
+      <ReactFlow
+        defaultNodes={defaultNodes}
+        defaultEdges={defaultEdges}
+        nodeTypes={nodeTypes}
+        onNodeClick={handleNodeClick}
+        defaultEdgeOptions={{
+          animated: false,
+          style: {
+            stroke: "#64748b",
+            strokeWidth: 2,
+          },
+        }}
+        minZoom={0.1}
+        maxZoom={2}
+        nodesDraggable={true}
+        nodesConnectable={false}
+        elementsSelectable={true}
+      >
+        <Background color="#f0f0f0" gap={24} size={1} />
+      </ReactFlow>
+    );
+  }
+);
 
 const LearningMapComponent = forwardRef<LearningMapHandle, LearningMapProps>(
   function LearningMap(props, ref) {

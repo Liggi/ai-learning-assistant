@@ -1,8 +1,8 @@
-import { betterAuth } from "better-auth"
-import { prismaAdapter } from "better-auth/adapters/prisma"
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "@prisma/client";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -30,4 +30,4 @@ export const auth = betterAuth({
     "https://www.thekg.io",
     "http://localhost:3000",
   ],
-})
+});

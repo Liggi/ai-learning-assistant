@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
-import { SerializedArticle } from "@/types/serialized";
-import { Input } from "@/components/ui/input";
-import { Logger } from "@/lib/logger";
 import { ArrowRight } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
+import { Logger } from "@/lib/logger";
+import type { SerializedArticle } from "@/types/serialized";
 
 const logger = new Logger({ context: "CustomQuestionInput", enabled: false });
 
@@ -23,11 +24,7 @@ export const CustomQuestionInput: React.FC<CustomQuestionInputProps> = ({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (
-      !questionText.trim() ||
-      !activeArticle ||
-      createArticleMutation.isPending
-    ) {
+    if (!questionText.trim() || !activeArticle || createArticleMutation.isPending) {
       return;
     }
 
@@ -49,10 +46,7 @@ export const CustomQuestionInput: React.FC<CustomQuestionInputProps> = ({
       },
       {
         onSuccess: (data) => {
-          logger.info(
-            "Successfully created article from custom question:",
-            data
-          );
+          logger.info("Successfully created article from custom question:", data);
           setQuestionText(""); // Clear input on success
           onArticleCreated(data.id);
         },
@@ -117,9 +111,7 @@ export const CustomQuestionInput: React.FC<CustomQuestionInputProps> = ({
       </div>
 
       {createArticleMutation.isError && (
-        <p className="text-red-500 text-sm">
-          Error: {createArticleMutation.error.message}
-        </p>
+        <p className="text-red-500 text-sm">Error: {createArticleMutation.error.message}</p>
       )}
     </form>
   );

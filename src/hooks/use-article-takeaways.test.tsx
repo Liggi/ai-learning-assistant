@@ -1,12 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import React, { act, JSX } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
-
-import { useArticleTakeaways } from "./use-article-takeaways";
-import { extractTakeaways } from "@/lib/article-takeaway-parser";
+import type React from "react";
+import { act, type JSX } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useUpdateArticle } from "@/hooks/api/articles";
-import { SerializedArticle } from "@/types/serialized";
+import { extractTakeaways } from "@/lib/article-takeaway-parser";
+import type { SerializedArticle } from "@/types/serialized";
+import { useArticleTakeaways } from "./use-article-takeaways";
 
 vi.mock("@/lib/article-takeaway-parser");
 vi.mock("@/hooks/api/articles");
@@ -108,12 +108,9 @@ describe("useArticleTakeaways", () => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    const { result } = renderHook(
-      () => useArticleTakeaways(articleWithTakeaways),
-      {
-        wrapper,
-      }
-    );
+    const { result } = renderHook(() => useArticleTakeaways(articleWithTakeaways), {
+      wrapper,
+    });
     expect(result.current.data).toEqual(["First takeaway", "Second takeaway"]);
     expect(result.current.loading).toBe(false);
     expect(result.current.error).toBeNull();
@@ -149,13 +146,10 @@ describe("useArticleTakeaways", () => {
       });
     });
 
-    const { result, rerender } = renderHook(
-      ({ article }) => useArticleTakeaways(article),
-      {
-        initialProps: { article: articleNeedingTakeaways },
-        wrapper,
-      }
-    );
+    const { result, rerender } = renderHook(({ article }) => useArticleTakeaways(article), {
+      initialProps: { article: articleNeedingTakeaways },
+      wrapper,
+    });
 
     // Initially, no takeaways, and loading
     expect(result.current.data).toEqual([]);
@@ -164,9 +158,7 @@ describe("useArticleTakeaways", () => {
 
     // Check extraction function was called
     expect(mockExtractTakeaways).toHaveBeenCalledTimes(1);
-    expect(mockExtractTakeaways).toHaveBeenCalledWith(
-      "Needs takeaways content"
-    );
+    expect(mockExtractTakeaways).toHaveBeenCalledWith("Needs takeaways content");
 
     // Wait for extraction to complete
     await waitFor(() => {
@@ -211,12 +203,9 @@ describe("useArticleTakeaways", () => {
       throw extractionError;
     });
 
-    const { result } = renderHook(
-      () => useArticleTakeaways(articleNeedingTakeaways),
-      {
-        wrapper,
-      }
-    );
+    const { result } = renderHook(() => useArticleTakeaways(articleNeedingTakeaways), {
+      wrapper,
+    });
 
     // Wait for extraction attempt
     expect(mockExtractTakeaways).toHaveBeenCalledTimes(1);

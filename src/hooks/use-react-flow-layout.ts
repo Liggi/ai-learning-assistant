@@ -1,9 +1,9 @@
+import type { Edge, Node as ReactFlowNode } from "@xyflow/react";
 import { useMemo } from "react";
-import { Node as ReactFlowNode, Edge } from "@xyflow/react";
-import { SerializedLearningMap } from "@/types/serialized";
-import { useLearningMapTree } from "./use-learning-map-tree";
-import type { TreeArticleNode } from "./use-learning-map-tree";
+import type { SerializedLearningMap } from "@/types/serialized";
 import { useElkLayout } from "./use-elk-layout";
+import type { TreeArticleNode } from "./use-learning-map-tree";
+import { useLearningMapTree } from "./use-learning-map-tree";
 
 interface ArticleNodeData {
   nodeType: "article";
@@ -49,9 +49,7 @@ const initialPosition = { x: 0, y: 0 }; // ELK will calculate final positions
 /**
  * Converts the learning map tree structure into React Flow nodes and edges.
  */
-export function useReactFlowLayout(
-  rootNode: TreeArticleNode | null
-): ReactFlowLayout {
+export function useReactFlowLayout(rootNode: TreeArticleNode | null): ReactFlowLayout {
   return useMemo(() => {
     if (!rootNode) {
       return { nodes: [], edges: [] };
@@ -140,9 +138,7 @@ export function useLearningMapFlowLayout(
  * Enhanced learning map layout that automatically positions nodes using the ELK algorithm.
  * Returns the layouted nodes/edges plus loading state for UI feedback.
  */
-export function useLearningMapElkLayout(
-  learningMap: SerializedLearningMap | null | undefined
-): {
+export function useLearningMapElkLayout(learningMap: SerializedLearningMap | null | undefined): {
   nodes: LearningMapFlowNode[];
   edges: Edge[];
   isLayouting: boolean;
@@ -150,8 +146,7 @@ export function useLearningMapElkLayout(
   error: string | null;
 } {
   // First, get the basic node structure without proper layout
-  const { nodes: initialNodes, edges: initialEdges } =
-    useLearningMapFlowLayout(learningMap);
+  const { nodes: initialNodes, edges: initialEdges } = useLearningMapFlowLayout(learningMap);
 
   // Then apply the ELK layout algorithm to position the nodes
   return useElkLayout<

@@ -1,9 +1,9 @@
+import Anthropic from "@anthropic-ai/sdk";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { robustLLMCall } from "@/lib/robust-llm-call";
 import { extractJSON } from "@/features/llm-base";
 import { Logger } from "@/lib/logger";
-import Anthropic from "@anthropic-ai/sdk";
+import { robustLLMCall } from "@/lib/robust-llm-call";
 
 const logger = new Logger({ context: "TooltipsGenerator", enabled: false });
 
@@ -26,30 +26,31 @@ export const generate = createServerFn({ method: "POST" })
           "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
           "Helicone-Property-Type": "tooltip",
           "Helicone-Property-Subject": data.subject,
-        }
+        },
       });
 
       // Generate tooltips in parallel, one per concept
       const tooltipPromises = data.concepts.map(async (concept, index) => {
         const prompt = createSingleTooltipPrompt(concept, data.subject, data.articleContent);
-        
+
         try {
           const response = await robustLLMCall(
-            () => anthropic.messages.create({
-              model: "claude-3-haiku-20240307",
-              max_tokens: 1024,
-              messages: [{ role: "user", content: prompt }],
-            }),
+            () =>
+              anthropic.messages.create({
+                model: "claude-3-haiku-20240307",
+                max_tokens: 1024,
+                messages: [{ role: "user", content: prompt }],
+              }),
             {
-              provider: 'anthropic',
-              requestType: 'tooltip',
+              provider: "anthropic",
+              requestType: "tooltip",
               metadata: {
                 subject: data.subject,
                 concept,
                 conceptIndex: index,
                 totalConcepts: data.concepts.length,
                 articleContentLength: data.articleContent.length,
-              }
+              },
             }
           );
 
@@ -62,7 +63,7 @@ export const generate = createServerFn({ method: "POST" })
           logger.warn(`Failed to generate tooltip for concept "${concept}"`, {
             subject: data.subject,
             concept,
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? error.message : "Unknown error",
           });
           return { concept, tooltip: null };
         }
@@ -70,19 +71,19 @@ export const generate = createServerFn({ method: "POST" })
 
       // Wait for all tooltips to complete
       const results = await Promise.allSettled(tooltipPromises);
-      
+
       // Collect successful tooltips
       const tooltips: Record<string, string> = {};
       let successCount = 0;
 
       results.forEach((result) => {
-        if (result.status === 'fulfilled' && result.value.tooltip) {
+        if (result.status === "fulfilled" && result.value.tooltip) {
           tooltips[result.value.concept.toLowerCase()] = result.value.tooltip;
           successCount++;
         }
       });
 
-      logger.info('Tooltip generation completed', {
+      logger.info("Tooltip generation completed", {
         subject: data.subject,
         requestedCount: data.concepts.length,
         successCount,
@@ -96,7 +97,11 @@ export const generate = createServerFn({ method: "POST" })
     }
   });
 
-function createSingleTooltipPrompt(concept: string, subject: string, articleContent: string): string {
+function createSingleTooltipPrompt(
+  concept: string,
+  subject: string,
+  articleContent: string
+): string {
   return `You are helping explain a concept in the context of learning about ${subject}.
 
 Here is the full article content for context:

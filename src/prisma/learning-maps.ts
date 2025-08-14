@@ -1,11 +1,11 @@
-import { z } from "zod";
-import prisma from "@/prisma/client";
 import { createServerFn } from "@tanstack/react-start";
-import { Logger } from "@/lib/logger";
-import { SerializedLearningMap } from "@/types/serialized";
-import { serializeLearningMap } from "@/types/serializers";
+import { z } from "zod";
 import { generateSummary } from "@/features/generators/article-summary";
 import { extractTakeaways } from "@/lib/article-takeaway-parser";
+import { Logger } from "@/lib/logger";
+import prisma from "@/prisma/client";
+import type { SerializedLearningMap } from "@/types/serialized";
+import { serializeLearningMap } from "@/types/serializers";
 
 const logger = new Logger({ context: "LearningMapService", enabled: false });
 
@@ -18,11 +18,11 @@ async function ensureArticleSummary(articleId: string) {
   const article = await prisma.article.findUnique({
     where: { id: articleId },
   });
-  
+
   if (!article || !article.content) {
     return;
   }
-  
+
   if (!article.summary || article.summary.trim() === "") {
     logger.info("Generating missing summary for article", { articleId });
     try {
@@ -39,11 +39,11 @@ async function ensureArticleTakeaways(articleId: string) {
   const article = await prisma.article.findUnique({
     where: { id: articleId },
   });
-  
+
   if (!article || !article.content) {
     return;
   }
-  
+
   if (!article.takeaways || article.takeaways.length === 0) {
     logger.info("Generating missing takeaways for article", { articleId });
     try {
@@ -53,7 +53,10 @@ async function ensureArticleTakeaways(articleId: string) {
           where: { id: articleId },
           data: { takeaways },
         });
-        logger.info("Successfully generated takeaways for article", { articleId, count: takeaways.length });
+        logger.info("Successfully generated takeaways for article", {
+          articleId,
+          count: takeaways.length,
+        });
       }
     } catch (error) {
       logger.error("Failed to generate takeaways for article", { articleId, error });
@@ -67,15 +70,12 @@ async function ensureLearningMapContent(learningMapId: string) {
     where: { learningMapId },
     select: { id: true },
   });
-  
+
   // Process articles in parallel
   const promises = articles.map(async (article) => {
-    await Promise.all([
-      ensureArticleSummary(article.id),
-      ensureArticleTakeaways(article.id),
-    ]);
+    await Promise.all([ensureArticleSummary(article.id), ensureArticleTakeaways(article.id)]);
   });
-  
+
   await Promise.all(promises);
 }
 
@@ -105,10 +105,10 @@ export const getOrCreateLearningMap = createServerFn({ method: "POST" })
 
     if (existingMap) {
       logger.info("Found existing learning map", { id: existingMap.id });
-      
+
       // Ensure all articles have summaries and takeaways
       await ensureLearningMapContent(existingMap.id);
-      
+
       // Refetch the learning map with updated content
       const updatedMap = await prisma.learningMap.findUnique({
         where: { id: existingMap.id },
@@ -117,7 +117,7 @@ export const getOrCreateLearningMap = createServerFn({ method: "POST" })
           questions: true,
         },
       });
-      
+
       return serializeLearningMap(updatedMap!);
     }
 

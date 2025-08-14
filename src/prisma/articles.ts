@@ -1,16 +1,12 @@
-import { z } from "zod";
-import prisma from "@/prisma/client";
 import { createServerFn } from "@tanstack/react-start";
-import { Logger } from "@/lib/logger";
-import { ArticleMetadata } from "@/types/serialized";
-import {
-  serializeArticle,
-  serializeLearningMap,
-  serializeSubject,
-} from "@/types/serializers";
-import { fromPrismaJson } from "@/lib/prisma-utils";
+import { z } from "zod";
 import { generateSummary } from "@/features/generators/article-summary";
 import { extractTakeaways } from "@/lib/article-takeaway-parser";
+import { Logger } from "@/lib/logger";
+import { fromPrismaJson } from "@/lib/prisma-utils";
+import prisma from "@/prisma/client";
+import { ArticleMetadata } from "@/types/serialized";
+import { serializeArticle, serializeLearningMap, serializeSubject } from "@/types/serializers";
 
 const logger = new Logger({ context: "ArticleService", enabled: false });
 
@@ -23,10 +19,7 @@ async function ensureLearningMapContent(learningMapId: string) {
 
   // Process articles in parallel
   const promises = articles.map(async (article) => {
-    await Promise.all([
-      ensureArticleSummary(article.id),
-      ensureArticleTakeaways(article.id),
-    ]);
+    await Promise.all([ensureArticleSummary(article.id), ensureArticleTakeaways(article.id)]);
   });
 
   await Promise.all(promises);
@@ -93,9 +86,7 @@ async function ensureArticleTakeaways(articleId: string) {
  * Server function to create a new article in a learning map
  */
 export const createArticle = createServerFn({ method: "POST" })
-  .validator(
-    (data: { learningMapId: string; content: string; isRoot?: boolean }) => data
-  )
+  .validator((data: { learningMapId: string; content: string; isRoot?: boolean }) => data)
   .handler(async ({ data }) => {
     logger.info("Creating article", {
       learningMapId: data.learningMapId,
@@ -212,9 +203,7 @@ export const updateArticle = createServerFn({ method: "POST" })
         data: {
           ...(data.content !== undefined ? { content: data.content } : {}),
           ...(data.summary !== undefined ? { summary: data.summary } : {}),
-          ...(data.takeaways !== undefined
-            ? { takeaways: data.takeaways }
-            : {}),
+          ...(data.takeaways !== undefined ? { takeaways: data.takeaways } : {}),
           ...(data.tooltips !== undefined ? { tooltips: data.tooltips } : {}),
         },
       });
@@ -292,11 +281,7 @@ export const getRootArticle = createServerFn({ method: "GET" })
  */
 export const createArticleFromQuestion = createServerFn({ method: "POST" })
   .validator(
-    (data: {
-      learningMapId: string;
-      parentArticleId: string;
-      questionText: string;
-    }) => data
+    (data: { learningMapId: string; parentArticleId: string; questionText: string }) => data
   )
   .handler(async ({ data }) => {
     logger.info("Creating article from question", {
@@ -466,9 +451,7 @@ export const getQuestionByChildArticleId = createServerFn({ method: "GET" })
           createdAt: question.createdAt.toISOString(),
           updatedAt: question.updatedAt.toISOString(),
         },
-        parentArticle: question.parentArticle
-          ? serializeArticle(question.parentArticle)
-          : null,
+        parentArticle: question.parentArticle ? serializeArticle(question.parentArticle) : null,
       };
     } catch (error) {
       logger.error("Error getting question by child article ID", {

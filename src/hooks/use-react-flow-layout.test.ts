@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { useReactFlowLayout } from "./use-react-flow-layout";
+import { describe, expect, it } from "vitest";
 import type { SerializedArticle, SerializedQuestion } from "@/types/serialized";
+import { useReactFlowLayout } from "./use-react-flow-layout";
 
 // Define the tree node types directly as they aren't exported
 interface TreeArticleNode {
@@ -208,19 +208,13 @@ describe("useReactFlowLayout", () => {
     expect(nodes.find((n) => n.id === "article-a2")).toBeDefined();
 
     // Check node types and basic data
-    expect(nodes.find((n) => n.id === "article-a1")?.type).toBe(
-      "conversationNode"
-    );
-    expect(nodes.find((n) => n.id === "question-q1")?.type).toBe(
-      "questionNode"
-    );
+    expect(nodes.find((n) => n.id === "article-a1")?.type).toBe("conversationNode");
+    expect(nodes.find((n) => n.id === "question-q1")?.type).toBe("questionNode");
     expect(nodes.find((n) => n.id === "question-q1")?.data).toMatchObject({
       nodeType: "question",
       text: "Q1 Text",
     });
-    expect(nodes.find((n) => n.id === "article-a2")?.type).toBe(
-      "conversationNode"
-    );
+    expect(nodes.find((n) => n.id === "article-a2")?.type).toBe("conversationNode");
     expect(nodes.find((n) => n.id === "article-a2")?.data).toMatchObject({
       id: "a2",
       content: {
@@ -280,12 +274,8 @@ describe("useReactFlowLayout", () => {
     // Edges: article-a1 -> question-q-nochild (only one edge)
     expect(edges).toHaveLength(1);
     expect(
-      edges.find(
-        (e) => e.source === "article-a1" && e.target === "question-q-nochild"
-      )
+      edges.find((e) => e.source === "article-a1" && e.target === "question-q-nochild")
     ).toBeDefined();
-    expect(
-      edges.find((e) => e.source === "question-q-nochild")
-    ).toBeUndefined(); // No outgoing edge from the question
+    expect(edges.find((e) => e.source === "question-q-nochild")).toBeUndefined(); // No outgoing edge from the question
   });
 });

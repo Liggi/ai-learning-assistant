@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useMemo, useRef } from "react";
 import type { SerializedLearningMap } from "@/types/serialized";
 
 /**
@@ -7,9 +7,7 @@ import type { SerializedLearningMap } from "@/types/serialized";
 export function useStableLearningMap(
   map: SerializedLearningMap | null | undefined
 ): SerializedLearningMap | null | undefined {
-  const lastRef = useRef<{ key: string; map: SerializedLearningMap } | null>(
-    null
-  );
+  const lastRef = useRef<{ key: string; map: SerializedLearningMap } | null>(null);
   const key = map ? `${map.id}-${new Date(map.updatedAt).getTime()}` : "";
 
   return useMemo(() => {

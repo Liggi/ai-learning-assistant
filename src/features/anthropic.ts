@@ -1,16 +1,16 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { TextBlock } from "@anthropic-ai/sdk/resources/messages/messages.js";
-import { z } from "zod";
+import type { z } from "zod";
 import { Logger } from "@/lib/logger";
 import { robustLLMCall } from "@/lib/robust-llm-call";
 import {
-  LLMProvider,
-  LLMCallOptions,
-  responseCache,
   CACHE_TTL,
-  MAX_CACHE_SIZE,
-  generateCacheKey,
   extractJSON,
+  generateCacheKey,
+  type LLMCallOptions,
+  type LLMProvider,
+  MAX_CACHE_SIZE,
+  responseCache,
 } from "./llm-base";
 
 const anthropicLogger = new Logger({ context: "AnthropicProvider", enabled: false });
@@ -19,33 +19,29 @@ type AnthropicProviderOptions = {
   model?: string;
 };
 
-export class AnthropicProvider
-  implements LLMProvider<AnthropicProviderOptions>
-{
+export class AnthropicProvider implements LLMProvider<AnthropicProviderOptions> {
   public client: Anthropic;
 
   constructor() {
     const apiKey = process.env["ANTHROPIC_API_KEY"];
     const heliconeApiKey = process.env["HELICONE_API_KEY"];
-    
+
     if (!apiKey) {
-      anthropicLogger.error(
-        "ANTHROPIC_API_KEY is not set in environment variables"
-      );
+      anthropicLogger.error("ANTHROPIC_API_KEY is not set in environment variables");
       throw new Error("Anthropic API key is not configured");
     }
-    
+
     if (!heliconeApiKey) {
       anthropicLogger.error("HELICONE_API_KEY is not set in environment variables");
       throw new Error("Helicone API key is not configured");
     }
-    
-    this.client = new Anthropic({ 
+
+    this.client = new Anthropic({
       apiKey,
       baseURL: "https://anthropic.helicone.ai/",
       defaultHeaders: {
-        "Helicone-Auth": `Bearer ${heliconeApiKey}`
-      }
+        "Helicone-Auth": `Bearer ${heliconeApiKey}`,
+      },
     });
   }
 
@@ -65,29 +61,37 @@ export class AnthropicProvider
       if (metadata.articleId) heliconeHeaders["Helicone-Property-Article-Id"] = metadata.articleId;
       if (metadata.userId) heliconeHeaders["Helicone-User-Id"] = metadata.userId;
       if (metadata.sessionId) heliconeHeaders["Helicone-Session-Id"] = metadata.sessionId;
-      if (metadata.pipelineId) heliconeHeaders["Helicone-Property-Pipeline-Id"] = metadata.pipelineId;
-      if (metadata.pipelineStage) heliconeHeaders["Helicone-Property-Pipeline-Stage"] = metadata.pipelineStage;
-      if (metadata.sequence !== undefined) heliconeHeaders["Helicone-Property-Sequence"] = metadata.sequence.toString();
-      if (metadata.parentRequestId) heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
+      if (metadata.pipelineId)
+        heliconeHeaders["Helicone-Property-Pipeline-Id"] = metadata.pipelineId;
+      if (metadata.pipelineStage)
+        heliconeHeaders["Helicone-Property-Pipeline-Stage"] = metadata.pipelineStage;
+      if (metadata.sequence !== undefined)
+        heliconeHeaders["Helicone-Property-Sequence"] = metadata.sequence.toString();
+      if (metadata.parentRequestId)
+        heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
     }
 
     const response = await robustLLMCall(
-      () => this.client.messages.create({
-        max_tokens: 4096,
-        messages: [{ role: "user", content: prompt }],
-        model: model,
-      }, {
-        headers: heliconeHeaders,
-      }),
+      () =>
+        this.client.messages.create(
+          {
+            max_tokens: 4096,
+            messages: [{ role: "user", content: prompt }],
+            model: model,
+          },
+          {
+            headers: heliconeHeaders,
+          }
+        ),
       {
-        provider: 'anthropic',
-        requestType: options?.heliconeMetadata?.type || 'generate',
+        provider: "anthropic",
+        requestType: options?.heliconeMetadata?.type || "generate",
         retries: options?.maxRetries ?? 3,
         metadata: {
           requestId,
           model,
           promptLength: prompt.length,
-        }
+        },
       }
     );
 
@@ -139,9 +143,7 @@ export async function callAnthropic<T>(
 ): Promise<T> {
   const maxRetries = options?.maxRetries ?? 3;
   let attempt = 0;
-  const reqId =
-    requestId ||
-    `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  const reqId = requestId || `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   const model = options?.model ?? "claude-3-7-sonnet-latest";
 
   if (!options?.bypassCache) {
@@ -194,15 +196,12 @@ export async function callAnthropic<T>(
 
       return result;
     } catch (err: any) {
-      anthropicLogger.error(
-        `[${reqId}] Attempt ${attempt}/${maxRetries} failed`,
-        { error: err?.message || err }
-      );
+      anthropicLogger.error(`[${reqId}] Attempt ${attempt}/${maxRetries} failed`, {
+        error: err?.message || err,
+      });
 
       if (attempt >= maxRetries) {
-        anthropicLogger.error(
-          `[${reqId}] All attempts failed after ${maxRetries} retries.`
-        );
+        anthropicLogger.error(`[${reqId}] All attempts failed after ${maxRetries} retries.`);
         throw err;
       }
 

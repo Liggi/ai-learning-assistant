@@ -1,10 +1,5 @@
-import { useState, useEffect } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { AnimatePresence, motion, useSpring, useTransform } from "framer-motion";
+import { useEffect, useState } from "react";
 
 // Define different sets of phrases for different contexts
 const phraseSets = {
@@ -45,10 +40,7 @@ interface LoadingProps {
   context?: LoadingContext;
 }
 
-export default function Loading({
-  progress,
-  context = "default",
-}: LoadingProps) {
+export default function Loading({ progress, context = "default" }: LoadingProps) {
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const hasProgress = progress !== undefined;
 

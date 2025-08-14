@@ -1,15 +1,15 @@
 import OpenAI from "openai";
-import { z } from "zod";
+import type { z } from "zod";
 import { Logger } from "@/lib/logger";
 import { robustLLMCall } from "@/lib/robust-llm-call";
 import {
-  LLMProvider,
-  LLMCallOptions,
-  responseCache,
   CACHE_TTL,
-  MAX_CACHE_SIZE,
-  generateCacheKey,
   extractJSON,
+  generateCacheKey,
+  type LLMCallOptions,
+  type LLMProvider,
+  MAX_CACHE_SIZE,
+  responseCache,
 } from "./llm-base";
 
 const openaiLogger = new Logger({ context: "OpenAIProvider", enabled: false });
@@ -24,23 +24,23 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
   constructor() {
     const apiKey = process.env["OPENAI_API_KEY"];
     const heliconeApiKey = process.env["HELICONE_API_KEY"];
-    
+
     if (!apiKey) {
       openaiLogger.error("OPENAI_API_KEY is not set in environment variables");
       throw new Error("OpenAI API key is not configured");
     }
-    
+
     if (!heliconeApiKey) {
       openaiLogger.error("HELICONE_API_KEY is not set in environment variables");
       throw new Error("Helicone API key is not configured");
     }
-    
-    this.client = new OpenAI({ 
+
+    this.client = new OpenAI({
       apiKey,
       baseURL: "https://oai.helicone.ai/v1",
       defaultHeaders: {
-        "Helicone-Auth": `Bearer ${heliconeApiKey}`
-      }
+        "Helicone-Auth": `Bearer ${heliconeApiKey}`,
+      },
     });
   }
 
@@ -60,28 +60,36 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
       if (metadata.articleId) heliconeHeaders["Helicone-Property-Article-Id"] = metadata.articleId;
       if (metadata.userId) heliconeHeaders["Helicone-User-Id"] = metadata.userId;
       if (metadata.sessionId) heliconeHeaders["Helicone-Session-Id"] = metadata.sessionId;
-      if (metadata.pipelineId) heliconeHeaders["Helicone-Property-Pipeline-Id"] = metadata.pipelineId;
-      if (metadata.pipelineStage) heliconeHeaders["Helicone-Property-Pipeline-Stage"] = metadata.pipelineStage;
-      if (metadata.sequence !== undefined) heliconeHeaders["Helicone-Property-Sequence"] = metadata.sequence.toString();
-      if (metadata.parentRequestId) heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
+      if (metadata.pipelineId)
+        heliconeHeaders["Helicone-Property-Pipeline-Id"] = metadata.pipelineId;
+      if (metadata.pipelineStage)
+        heliconeHeaders["Helicone-Property-Pipeline-Stage"] = metadata.pipelineStage;
+      if (metadata.sequence !== undefined)
+        heliconeHeaders["Helicone-Property-Sequence"] = metadata.sequence.toString();
+      if (metadata.parentRequestId)
+        heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
     }
 
     const response = await robustLLMCall(
-      () => this.client.chat.completions.create({
-        messages: [{ role: "user", content: prompt }],
-        model: model,
-      }, {
-        headers: heliconeHeaders,
-      }),
+      () =>
+        this.client.chat.completions.create(
+          {
+            messages: [{ role: "user", content: prompt }],
+            model: model,
+          },
+          {
+            headers: heliconeHeaders,
+          }
+        ),
       {
-        provider: 'openai',
-        requestType: options?.heliconeMetadata?.type || 'generate',
+        provider: "openai",
+        requestType: options?.heliconeMetadata?.type || "generate",
         retries: options?.maxRetries ?? 3,
         metadata: {
           requestId,
           model,
           promptLength: prompt.length,
-        }
+        },
       }
     );
 
@@ -163,32 +171,40 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
       if (metadata.articleId) heliconeHeaders["Helicone-Property-Article-Id"] = metadata.articleId;
       if (metadata.userId) heliconeHeaders["Helicone-User-Id"] = metadata.userId;
       if (metadata.sessionId) heliconeHeaders["Helicone-Session-Id"] = metadata.sessionId;
-      if (metadata.pipelineId) heliconeHeaders["Helicone-Property-Pipeline-Id"] = metadata.pipelineId;
-      if (metadata.pipelineStage) heliconeHeaders["Helicone-Property-Pipeline-Stage"] = metadata.pipelineStage;
-      if (metadata.sequence !== undefined) heliconeHeaders["Helicone-Property-Sequence"] = metadata.sequence.toString();
-      if (metadata.parentRequestId) heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
+      if (metadata.pipelineId)
+        heliconeHeaders["Helicone-Property-Pipeline-Id"] = metadata.pipelineId;
+      if (metadata.pipelineStage)
+        heliconeHeaders["Helicone-Property-Pipeline-Stage"] = metadata.pipelineStage;
+      if (metadata.sequence !== undefined)
+        heliconeHeaders["Helicone-Property-Sequence"] = metadata.sequence.toString();
+      if (metadata.parentRequestId)
+        heliconeHeaders["Helicone-Property-Parent-Request"] = metadata.parentRequestId;
     }
 
     const response = await robustLLMCall(
-      () => this.client.images.generate({
-        model,
-        prompt: options.prompt,
-        n: options.n,
-        size: sizeParam,
-        response_format: options.response_format,
-        user: options.user,
-      }, {
-        headers: heliconeHeaders,
-      }),
+      () =>
+        this.client.images.generate(
+          {
+            model,
+            prompt: options.prompt,
+            n: options.n,
+            size: sizeParam,
+            response_format: options.response_format,
+            user: options.user,
+          },
+          {
+            headers: heliconeHeaders,
+          }
+        ),
       {
-        provider: 'openai',
-        requestType: 'image-generation',
+        provider: "openai",
+        requestType: "image-generation",
         retries: 3,
         metadata: {
           model,
           promptLength: options.prompt.length,
           size: sizeParam,
-        }
+        },
       }
     );
 
@@ -216,9 +232,7 @@ export async function callOpenAI<T>(
 ): Promise<T> {
   const maxRetries = options?.maxRetries ?? 3;
   let attempt = 0;
-  const reqId =
-    requestId ||
-    `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  const reqId = requestId || `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   const model = options?.model ?? "gpt-4o"; // Defaulting to gpt-4o
 
   if (!options?.bypassCache) {
@@ -246,9 +260,7 @@ export async function callOpenAI<T>(
   while (attempt < maxRetries) {
     try {
       attempt++;
-      openaiLogger.info(
-        `[${reqId}] Attempt ${attempt}/${maxRetries}: Calling OpenAIProvider`
-      );
+      openaiLogger.info(`[${reqId}] Attempt ${attempt}/${maxRetries}: Calling OpenAIProvider`);
 
       const result = await provider.generateResponse(prompt, schema, reqId, {
         maxRetries: 1, // Retries are handled in this outer function
@@ -276,9 +288,7 @@ export async function callOpenAI<T>(
       });
 
       if (attempt >= maxRetries) {
-        openaiLogger.error(
-          `[${reqId}] All attempts failed after ${maxRetries} retries.`
-        );
+        openaiLogger.error(`[${reqId}] All attempts failed after ${maxRetries} retries.`);
         throw err;
       }
 
@@ -290,7 +300,5 @@ export async function callOpenAI<T>(
   }
 
   // This should be unreachable if maxRetries >= 1, but satisfies TypeScript
-  throw new Error(
-    `[${reqId}] Unreachable: Failed to obtain a valid OpenAI response after retries`
-  );
+  throw new Error(`[${reqId}] Unreachable: Failed to obtain a valid OpenAI response after retries`);
 }

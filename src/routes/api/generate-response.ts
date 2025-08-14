@@ -1,4 +1,4 @@
-import { createServerFileRoute } from '@tanstack/react-start/server'
+import { createServerFileRoute } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { AnthropicProvider } from "@/features/anthropic"; // Import the Provider
 import { Logger } from "@/lib/logger"; // Import Logger if needed for route-level logging
@@ -12,7 +12,7 @@ const ResponseSchema = z.object({
 
 // Removed the local cache map, TTL, and interval cleanup
 
-export const ServerRoute = createServerFileRoute('/api/generate-response').methods({
+export const ServerRoute = createServerFileRoute("/api/generate-response").methods({
   POST: async ({ request }) => {
     const reqId = `api_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     try {
@@ -22,17 +22,11 @@ export const ServerRoute = createServerFileRoute('/api/generate-response').metho
       // Use provided requestId or the generated reqId
       const effectiveRequestId = requestId || reqId;
 
-      apiLogger.info(
-        `[${effectiveRequestId}] Received request for /api/generate-response`
-      );
+      apiLogger.info(`[${effectiveRequestId}] Received request for /api/generate-response`);
 
       const provider = new AnthropicProvider();
 
-      const aiResult = await provider.generateResponse(
-        prompt,
-        ResponseSchema,
-        effectiveRequestId
-      );
+      const aiResult = await provider.generateResponse(prompt, ResponseSchema, effectiveRequestId);
 
       apiLogger.info(`[${effectiveRequestId}] Successfully generated response`);
 

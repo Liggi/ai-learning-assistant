@@ -10,7 +10,6 @@ async function clearDatabase() {
 
   // Delete Subject (no dependencies)
   await prisma.subject.deleteMany();
-
 }
 
 clearDatabase()

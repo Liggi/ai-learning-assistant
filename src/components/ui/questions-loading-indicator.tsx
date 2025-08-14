@@ -1,14 +1,14 @@
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { MessageSquareText } from "lucide-react";
+import type React from "react";
 
 interface QuestionsLoadingIndicatorProps {
   isLoading: boolean;
 }
 
-export const QuestionsLoadingIndicator: React.FC<
-  QuestionsLoadingIndicatorProps
-> = ({ isLoading }) => {
+export const QuestionsLoadingIndicator: React.FC<QuestionsLoadingIndicatorProps> = ({
+  isLoading,
+}) => {
   return (
     <AnimatePresence>
       {isLoading && (

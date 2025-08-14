@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { Prisma } from '@prisma/client';
+import { Prisma } from "@prisma/client";
+import { z } from "zod";
 
 /////////////////////////////////////////
 // HELPER FUNCTIONS
@@ -8,11 +8,17 @@ import { Prisma } from '@prisma/client';
 // JSON
 //------------------------------------------------------
 
-export type NullableJsonInput = Prisma.JsonValue | null | 'JsonNull' | 'DbNull' | Prisma.NullTypes.DbNull | Prisma.NullTypes.JsonNull;
+export type NullableJsonInput =
+  | Prisma.JsonValue
+  | null
+  | "JsonNull"
+  | "DbNull"
+  | Prisma.NullTypes.DbNull
+  | Prisma.NullTypes.JsonNull;
 
 export const transformJsonNull = (v?: NullableJsonInput) => {
-  if (!v || v === 'DbNull') return Prisma.DbNull;
-  if (v === 'JsonNull') return Prisma.JsonNull;
+  if (!v || v === "DbNull") return Prisma.DbNull;
+  if (v === "JsonNull") return Prisma.JsonNull;
   return v;
 };
 
@@ -30,7 +36,7 @@ export const JsonValueSchema: z.ZodType<Prisma.JsonValue> = z.lazy(() =>
 export type JsonValueType = z.infer<typeof JsonValueSchema>;
 
 export const NullableJsonValue = z
-  .union([JsonValueSchema, z.literal('DbNull'), z.literal('JsonNull')])
+  .union([JsonValueSchema, z.literal("DbNull"), z.literal("JsonNull")])
   .nullable()
   .transform((v) => transformJsonNull(v));
 
@@ -49,42 +55,129 @@ export const InputJsonValueSchema: z.ZodType<Prisma.InputJsonValue> = z.lazy(() 
 
 export type InputJsonValueType = z.infer<typeof InputJsonValueSchema>;
 
-
 /////////////////////////////////////////
 // ENUMS
 /////////////////////////////////////////
 
-export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
+export const TransactionIsolationLevelSchema = z.enum([
+  "ReadUncommitted",
+  "ReadCommitted",
+  "RepeatableRead",
+  "Serializable",
+]);
 
-export const SubjectScalarFieldEnumSchema = z.enum(['id','title','initiallyFamiliarConcepts','userId','createdAt','updatedAt']);
+export const SubjectScalarFieldEnumSchema = z.enum([
+  "id",
+  "title",
+  "initiallyFamiliarConcepts",
+  "userId",
+  "createdAt",
+  "updatedAt",
+]);
 
-export const LearningMapScalarFieldEnumSchema = z.enum(['id','subjectId','createdAt','updatedAt']);
+export const LearningMapScalarFieldEnumSchema = z.enum([
+  "id",
+  "subjectId",
+  "createdAt",
+  "updatedAt",
+]);
 
-export const ArticleScalarFieldEnumSchema = z.enum(['id','content','summary','takeaways','type','learningMapId','tooltips','isRoot','createdAt','updatedAt']);
+export const ArticleScalarFieldEnumSchema = z.enum([
+  "id",
+  "content",
+  "summary",
+  "takeaways",
+  "type",
+  "learningMapId",
+  "tooltips",
+  "isRoot",
+  "createdAt",
+  "updatedAt",
+]);
 
-export const QuestionScalarFieldEnumSchema = z.enum(['id','text','learningMapId','parentArticleId','childArticleId','createdAt','updatedAt']);
+export const QuestionScalarFieldEnumSchema = z.enum([
+  "id",
+  "text",
+  "learningMapId",
+  "parentArticleId",
+  "childArticleId",
+  "createdAt",
+  "updatedAt",
+]);
 
-export const UserScalarFieldEnumSchema = z.enum(['id','name','email','emailVerified','image','createdAt','updatedAt']);
+export const UserScalarFieldEnumSchema = z.enum([
+  "id",
+  "name",
+  "email",
+  "emailVerified",
+  "image",
+  "createdAt",
+  "updatedAt",
+]);
 
-export const SessionScalarFieldEnumSchema = z.enum(['id','expiresAt','token','createdAt','updatedAt','ipAddress','userAgent','userId']);
+export const SessionScalarFieldEnumSchema = z.enum([
+  "id",
+  "expiresAt",
+  "token",
+  "createdAt",
+  "updatedAt",
+  "ipAddress",
+  "userAgent",
+  "userId",
+]);
 
-export const AccountScalarFieldEnumSchema = z.enum(['id','accountId','providerId','userId','accessToken','refreshToken','idToken','accessTokenExpiresAt','refreshTokenExpiresAt','scope','password','createdAt','updatedAt']);
+export const AccountScalarFieldEnumSchema = z.enum([
+  "id",
+  "accountId",
+  "providerId",
+  "userId",
+  "accessToken",
+  "refreshToken",
+  "idToken",
+  "accessTokenExpiresAt",
+  "refreshTokenExpiresAt",
+  "scope",
+  "password",
+  "createdAt",
+  "updatedAt",
+]);
 
-export const VerificationScalarFieldEnumSchema = z.enum(['id','identifier','value','expiresAt','createdAt','updatedAt']);
+export const VerificationScalarFieldEnumSchema = z.enum([
+  "id",
+  "identifier",
+  "value",
+  "expiresAt",
+  "createdAt",
+  "updatedAt",
+]);
 
-export const SortOrderSchema = z.enum(['asc','desc']);
+export const SortOrderSchema = z.enum(["asc", "desc"]);
 
-export const NullableJsonNullValueInputSchema = z.enum(['DbNull','JsonNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.DbNull : value);
+export const NullableJsonNullValueInputSchema = z
+  .enum(["DbNull", "JsonNull"])
+  .transform((value) =>
+    value === "JsonNull" ? Prisma.JsonNull : value === "DbNull" ? Prisma.DbNull : value
+  );
 
-export const QueryModeSchema = z.enum(['default','insensitive']);
+export const QueryModeSchema = z.enum(["default", "insensitive"]);
 
-export const JsonNullValueFilterSchema = z.enum(['DbNull','JsonNull','AnyNull',]).transform((value) => value === 'JsonNull' ? Prisma.JsonNull : value === 'DbNull' ? Prisma.JsonNull : value === 'AnyNull' ? Prisma.AnyNull : value);
+export const JsonNullValueFilterSchema = z
+  .enum(["DbNull", "JsonNull", "AnyNull"])
+  .transform((value) =>
+    value === "JsonNull"
+      ? Prisma.JsonNull
+      : value === "DbNull"
+        ? Prisma.JsonNull
+        : value === "AnyNull"
+          ? Prisma.AnyNull
+          : value
+  );
 
-export const NullsOrderSchema = z.enum(['first','last']);
+export const NullsOrderSchema = z.enum(["first", "last"]);
 
-export const ArticleTypeSchema = z.enum(['DEEP_DIVE','OVERVIEW']);
+export const ArticleTypeSchema = z.enum(["DEEP_DIVE", "OVERVIEW"]);
 
-export type ArticleTypeType = `${z.infer<typeof ArticleTypeSchema>}`
+export type ArticleTypeType = `${z.infer<typeof ArticleTypeSchema>}`;
 
 /////////////////////////////////////////
 // MODELS
@@ -101,9 +194,9 @@ export const SubjectSchema = z.object({
   userId: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-})
+});
 
-export type Subject = z.infer<typeof SubjectSchema>
+export type Subject = z.infer<typeof SubjectSchema>;
 
 /////////////////////////////////////////
 // LEARNING MAP SCHEMA
@@ -114,9 +207,9 @@ export const LearningMapSchema = z.object({
   subjectId: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-})
+});
 
-export type LearningMap = z.infer<typeof LearningMapSchema>
+export type LearningMap = z.infer<typeof LearningMapSchema>;
 
 /////////////////////////////////////////
 // ARTICLE SCHEMA
@@ -133,9 +226,9 @@ export const ArticleSchema = z.object({
   isRoot: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-})
+});
 
-export type Article = z.infer<typeof ArticleSchema>
+export type Article = z.infer<typeof ArticleSchema>;
 
 /////////////////////////////////////////
 // QUESTION SCHEMA
@@ -149,9 +242,9 @@ export const QuestionSchema = z.object({
   childArticleId: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-})
+});
 
-export type Question = z.infer<typeof QuestionSchema>
+export type Question = z.infer<typeof QuestionSchema>;
 
 /////////////////////////////////////////
 // USER SCHEMA
@@ -165,9 +258,9 @@ export const UserSchema = z.object({
   image: z.string().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-})
+});
 
-export type User = z.infer<typeof UserSchema>
+export type User = z.infer<typeof UserSchema>;
 
 /////////////////////////////////////////
 // SESSION SCHEMA
@@ -182,9 +275,9 @@ export const SessionSchema = z.object({
   ipAddress: z.string().nullable(),
   userAgent: z.string().nullable(),
   userId: z.string(),
-})
+});
 
-export type Session = z.infer<typeof SessionSchema>
+export type Session = z.infer<typeof SessionSchema>;
 
 /////////////////////////////////////////
 // ACCOUNT SCHEMA
@@ -204,9 +297,9 @@ export const AccountSchema = z.object({
   password: z.string().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-})
+});
 
-export type Account = z.infer<typeof AccountSchema>
+export type Account = z.infer<typeof AccountSchema>;
 
 /////////////////////////////////////////
 // VERIFICATION SCHEMA
@@ -219,6 +312,6 @@ export const VerificationSchema = z.object({
   expiresAt: z.coerce.date(),
   createdAt: z.coerce.date().nullable(),
   updatedAt: z.coerce.date().nullable(),
-})
+});
 
-export type Verification = z.infer<typeof VerificationSchema>
+export type Verification = z.infer<typeof VerificationSchema>;

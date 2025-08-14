@@ -1,14 +1,14 @@
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import type React from "react";
 import { QuestionsLoadingIndicator } from "./questions-loading-indicator";
 
 interface LoadingIndicatorsContainerProps {
   isGeneratingQuestions: boolean;
 }
 
-export const LoadingIndicatorsContainer: React.FC<
-  LoadingIndicatorsContainerProps
-> = ({ isGeneratingQuestions }) => {
+export const LoadingIndicatorsContainer: React.FC<LoadingIndicatorsContainerProps> = ({
+  isGeneratingQuestions,
+}) => {
   const isAnyLoading = isGeneratingQuestions;
 
   return (

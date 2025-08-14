@@ -1,11 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import React, { act, JSX } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
-
-import { useArticleSummary } from "./use-article-summary";
+import type React from "react";
+import { act, type JSX } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { generateSummary } from "@/features/generators/article-summary";
-import { SerializedArticle } from "@/types/serialized";
+import type { SerializedArticle } from "@/types/serialized";
+import { useArticleSummary } from "./use-article-summary";
 
 vi.mock("@/features/generators/article-summary");
 vi.mock("@/lib/logger");
@@ -137,13 +137,10 @@ describe("useArticleSummary", () => {
       updatedAt: new Date().toISOString(),
     });
 
-    const { result, rerender } = renderHook(
-      ({ article }) => useArticleSummary(article),
-      {
-        initialProps: { article: articleNeedingSummary },
-        wrapper,
-      }
-    );
+    const { result, rerender } = renderHook(({ article }) => useArticleSummary(article), {
+      initialProps: { article: articleNeedingSummary },
+      wrapper,
+    });
 
     // Initially, no summary, and loading
     expect(result.current.data).toBeNull();
@@ -197,12 +194,9 @@ describe("useArticleSummary", () => {
 
     mockGenerateSummary.mockRejectedValueOnce(generationError); // Mock failed generation
 
-    const { result } = renderHook(
-      () => useArticleSummary(articleNeedingSummary),
-      {
-        wrapper,
-      }
-    );
+    const { result } = renderHook(() => useArticleSummary(articleNeedingSummary), {
+      wrapper,
+    });
 
     // Wait for generation attempt and loading state
     await waitFor(() => {
@@ -240,9 +234,7 @@ describe("useArticleSummary", () => {
     };
 
     // Allow us to control the timing of the generation
-    let resolveGeneration: (
-      value: { summary: string } | PromiseLike<{ summary: string }>
-    ) => void;
+    let resolveGeneration: (value: { summary: string } | PromiseLike<{ summary: string }>) => void;
     mockGenerateSummary.mockImplementationOnce(
       () =>
         new Promise((resolve) => {

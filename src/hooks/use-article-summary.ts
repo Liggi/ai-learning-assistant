@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
-import { SerializedArticle } from "@/types/serialized";
-import { generateSummary } from "@/features/generators/article-summary";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useState } from "react";
+import { generateSummary } from "@/features/generators/article-summary";
 import { Logger } from "@/lib/logger";
+import type { SerializedArticle } from "@/types/serialized";
 
 const logger = new Logger({ context: "useArticleSummary", enabled: false });
 
@@ -79,9 +79,7 @@ function getArticleSummaryStatus(
  *  - `loading`: Boolean indicating if summary generation is in progress.
  *  - `error`: An Error object if generation failed, otherwise null.
  */
-export function useArticleSummary(
-  article: SerializedArticle | null | undefined
-) {
+export function useArticleSummary(article: SerializedArticle | null | undefined) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [hasCompleted, setHasCompleted] = useState(false);
@@ -116,8 +114,7 @@ export function useArticleSummary(
         queryClient.invalidateQueries();
         setHasCompleted(true);
       } catch (err) {
-        const generationError =
-          err instanceof Error ? err : new Error(String(err));
+        const generationError = err instanceof Error ? err : new Error(String(err));
         logger.error("Summary generation failed", {
           articleId: articleToProcess.id,
           errorMessage: generationError.message,
@@ -142,12 +139,7 @@ export function useArticleSummary(
   }, [article?.id]);
 
   useEffect(() => {
-    const status = getArticleSummaryStatus(
-      article,
-      isLoading,
-      error,
-      hasCompleted
-    );
+    const status = getArticleSummaryStatus(article, isLoading, error, hasCompleted);
     const articleId = article?.id;
 
     if (

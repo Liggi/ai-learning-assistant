@@ -41,10 +41,7 @@ export function toPrismaJson<T>(data: T): Prisma.InputJsonValue {
 
       // Validate the data with our schema
       const result = jsonValueSchema.safeParse(plainData);
-      logger.info(
-        "Zod validation result:",
-        result.success ? "success" : "failure"
-      );
+      logger.info("Zod validation result:", result.success ? "success" : "failure");
 
       if (!result.success) {
         logger.error("Validation error:", result.error);
@@ -66,9 +63,7 @@ export function toPrismaJson<T>(data: T): Prisma.InputJsonValue {
   const result = jsonValueSchema.safeParse(JSON.parse(JSON.stringify(data)));
 
   if (!result.success) {
-    throw new Error(
-      `Cannot safely convert to Prisma JSON: ${result.error.message}`
-    );
+    throw new Error(`Cannot safely convert to Prisma JSON: ${result.error.message}`);
   }
 
   return result.data as Prisma.InputJsonValue;
@@ -78,9 +73,7 @@ export function toPrismaJson<T>(data: T): Prisma.InputJsonValue {
  * Safely handles null values for Prisma JSON fields
  * @returns Prisma.JsonNull for null values
  */
-export function toNullableJson<T>(
-  data: T | null
-): Prisma.InputJsonValue | typeof Prisma.JsonNull {
+export function toNullableJson<T>(data: T | null): Prisma.InputJsonValue | typeof Prisma.JsonNull {
   if (data === null) {
     return Prisma.JsonNull;
   }

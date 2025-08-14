@@ -1,12 +1,8 @@
-import { motion } from "framer-motion";
-import { SerializedSubject } from "@/types/serialized";
 import { Link } from "@tanstack/react-router";
+import { motion } from "framer-motion";
+import type { SerializedSubject } from "@/types/serialized";
 
-export default function RecentSubjects({
-  subjects,
-}: {
-  subjects: SerializedSubject[];
-}) {
+export default function RecentSubjects({ subjects }: { subjects: SerializedSubject[] }) {
   return (
     <motion.div
       className="absolute top-4 left-4 z-50 bg-card rounded-lg shadow-lg p-4 w-64"

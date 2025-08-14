@@ -1,13 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
+import OpenAI from "openai";
 import { z } from "zod";
 import { robustLLMCall } from "@/lib/robust-llm-call";
-import OpenAI from "openai";
 
 const generateImageInput = z.object({
   prompt: z.string().min(1),
-  size: z
-    .enum(["square", "landscape", "portrait", "auto"])
-    .default("landscape"),
+  size: z.enum(["square", "landscape", "portrait", "auto"]).default("landscape"),
   response_format: z.enum(["url", "b64_json"]).default("b64_json"),
 });
 
@@ -24,7 +22,7 @@ export const generateImage = createServerFn({ method: "POST" })
       defaultHeaders: {
         "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
         "Helicone-Property-Type": "image",
-      }
+      },
     });
 
     const sizeMap = {
@@ -33,25 +31,24 @@ export const generateImage = createServerFn({ method: "POST" })
       portrait: "1024x1792",
     } as const;
 
-    const sizeParam = size && size !== "auto"
-      ? sizeMap[size as keyof typeof sizeMap]
-      : undefined;
+    const sizeParam = size && size !== "auto" ? sizeMap[size as keyof typeof sizeMap] : undefined;
 
-    const response = await robustLLMCall<{data: Array<{url?: string; b64_json?: string}>}>(
-      () => openai.images.generate({
-        model: "dall-e-3",
-        prompt,
-        n: 1,
-        size: sizeParam,
-        response_format,
-      }),
+    const response = await robustLLMCall<{ data: Array<{ url?: string; b64_json?: string }> }>(
+      () =>
+        openai.images.generate({
+          model: "dall-e-3",
+          prompt,
+          n: 1,
+          size: sizeParam,
+          response_format,
+        }),
       {
-        provider: 'openai',
-        requestType: 'image-generation',
+        provider: "openai",
+        requestType: "image-generation",
         metadata: {
           promptLength: prompt.length,
           size: sizeParam,
-        }
+        },
       }
     );
 

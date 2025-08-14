@@ -1,6 +1,6 @@
+import { animate } from "framer-motion";
 import { useEffect, useState } from "react";
 import Loading from "@/components/ui/loading";
-import { animate } from "framer-motion";
 
 /**
  * A component that displays a loading animation with a progress bar

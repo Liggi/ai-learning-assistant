@@ -1,16 +1,15 @@
 import { z } from "zod";
 import { Logger } from "@/lib/logger";
-import {
-  SerializedSubject,
-  SerializedArticle,
-  ArticleMetadata,
-  ArticleMetadataSchema,
-  SerializedLearningMap,
-  SerializedQuestion,
-} from "./serialized";
-import { QuestionSchema, SubjectSchema } from "@/prisma/generated/zod";
-import { ArticleSchema } from "@/prisma/generated/zod";
+import { type ArticleSchema, type QuestionSchema, SubjectSchema } from "@/prisma/generated/zod";
 import { toPrismaJson } from "@/utils/json";
+import {
+  type ArticleMetadata,
+  ArticleMetadataSchema,
+  type SerializedArticle,
+  type SerializedLearningMap,
+  type SerializedQuestion,
+  type SerializedSubject,
+} from "./serialized";
 
 const logger = new Logger({ context: "Serializers", enabled: false });
 
@@ -82,9 +81,7 @@ export function serializeLearningMap(learningMap: any): SerializedLearningMap {
       ? learningMap.articles.map((article: any) => serializeArticle(article))
       : undefined,
     questions: learningMap.questions
-      ? learningMap.questions.map((question: any) =>
-          serializeQuestion(question)
-        )
+      ? learningMap.questions.map((question: any) => serializeQuestion(question))
       : undefined,
   };
 }
@@ -93,9 +90,7 @@ export function serializeLearningMap(learningMap: any): SerializedLearningMap {
  * Serializes a Question from the database to a client-friendly format
  * Converts Date objects to ISO strings
  */
-export function serializeQuestion(
-  question: PrismaQuestion
-): SerializedQuestion {
+export function serializeQuestion(question: PrismaQuestion): SerializedQuestion {
   logger.debug("Serializing question", { id: question.id });
 
   return {

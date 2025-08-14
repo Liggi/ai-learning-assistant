@@ -2,11 +2,11 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -67,63 +67,63 @@ module.exports = {
         },
         "text-shimmer": {
           from: {
-            "background-position": "0 0"
+            "background-position": "0 0",
           },
           to: {
-            "background-position": "-200% 0"
-          }
+            "background-position": "-200% 0",
+          },
         },
         "glow-pulse": {
           "0%, 100%": {
             opacity: 0.9,
             transform: "scale(1)",
-            filter: "brightness(1.2) blur(0px)"
+            filter: "brightness(1.2) blur(0px)",
           },
           "60%": {
             opacity: 0.6,
             transform: "scale(0.98)",
-            filter: "brightness(1) blur(3px)"
-          }
+            filter: "brightness(1) blur(3px)",
+          },
         },
         glow: {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(56,189,248,0.2)' },
-          '50%': { boxShadow: '0 0 30px rgba(56,189,248,0.4)' },
-        }
+          "0%, 100%": { boxShadow: "0 0 20px rgba(56,189,248,0.2)" },
+          "50%": { boxShadow: "0 0 30px rgba(56,189,248,0.4)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "text-shimmer": "text-shimmer 2.5s ease-out infinite",
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
-        glow: 'glow 2s ease-in-out infinite',
+        glow: "glow 2s ease-in-out infinite",
       },
       typography: {
         DEFAULT: {
           css: {
-            color: 'hsl(var(--foreground))',
-            maxWidth: 'none',
+            color: "hsl(var(--foreground))",
+            maxWidth: "none",
             code: {
-              backgroundColor: 'rgb(30 41 59 / 0.5)',
-              padding: '0.2em 0.4em',
-              borderRadius: '0.25rem',
-              fontWeight: '400',
+              backgroundColor: "rgb(30 41 59 / 0.5)",
+              padding: "0.2em 0.4em",
+              borderRadius: "0.25rem",
+              fontWeight: "400",
             },
-            'code::before': {
-              content: 'none'
+            "code::before": {
+              content: "none",
             },
-            'code::after': {
-              content: 'none'
+            "code::after": {
+              content: "none",
             },
-            'blockquote p:first-of-type::before': { content: 'none' },
-            'blockquote p:last-of-type::after': { content: 'none' },
-          }
-        }
-      }
+            "blockquote p:first-of-type::before": { content: "none" },
+            "blockquote p:last-of-type::after": { content: "none" },
+          },
+        },
+      },
     },
   },
   plugins: [
     require("@tailwindcss/typography"),
     require("tailwindcss-animate"),
-    require('tailwind-scrollbar'),
+    require("tailwind-scrollbar"),
   ],
-}
+};

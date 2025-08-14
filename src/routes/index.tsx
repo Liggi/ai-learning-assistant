@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import SubjectEntry from "@/features/subject-selection/subject-entry";
-import { useRouter } from "@tanstack/react-router";
-import { useSubjects } from "@/hooks/api/subjects";
-import { Logger } from "@/lib/logger";
-import RecentSubjects from "@/features/subject-selection/recent-subjects";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { UserNav } from "@/components/user-nav";
+import RecentSubjects from "@/features/subject-selection/recent-subjects";
+import SubjectEntry from "@/features/subject-selection/subject-entry";
+import { useSubjects } from "@/hooks/api/subjects";
 import { useSession } from "@/lib/auth-client";
+import { Logger } from "@/lib/logger";
 
 import "@xyflow/react/dist/style.css";
 

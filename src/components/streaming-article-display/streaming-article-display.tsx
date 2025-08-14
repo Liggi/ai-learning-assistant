@@ -1,29 +1,19 @@
-import React from "react";
-import { SerializedArticle, SerializedSubject } from "@/types/serialized";
-import MarkdownDisplay from "../markdown-display";
+import type React from "react";
 import { useStreamArticleContent } from "@/hooks/use-stream-article-content";
+import type { SerializedArticle, SerializedSubject } from "@/types/serialized";
+import MarkdownDisplay from "../markdown-display";
 
 interface StreamingArticleDisplayProps {
   article: SerializedArticle;
   subject: SerializedSubject;
 }
 
-const StreamingArticleDisplay: React.FC<StreamingArticleDisplayProps> = ({
-  article,
-  subject,
-}) => {
-  const { content, isStreaming } = useStreamArticleContent(
-    article,
-    subject.title
-  );
+const StreamingArticleDisplay: React.FC<StreamingArticleDisplayProps> = ({ article, subject }) => {
+  const { content, isStreaming } = useStreamArticleContent(article, subject.title);
 
   return (
     <div className="relative">
-      <MarkdownDisplay
-        content={content || ""}
-        tooltips={{}}
-        tooltipsReady={false}
-      />
+      <MarkdownDisplay content={content || ""} tooltips={{}} tooltipsReady={false} />
 
       {/* Show streaming indicator only when actually streaming */}
       {isStreaming && (

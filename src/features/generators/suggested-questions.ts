@@ -1,10 +1,10 @@
-import { z } from "zod";
-import { robustLLMCall } from "@/lib/robust-llm-call";
-import { extractJSON } from "@/features/llm-base";
-import { createPrompt } from "@/prompts/chat/suggested-questions";
-import { createServerFn } from "@tanstack/react-start";
-import { Logger } from "@/lib/logger";
 import Anthropic from "@anthropic-ai/sdk";
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { extractJSON } from "@/features/llm-base";
+import { Logger } from "@/lib/logger";
+import { robustLLMCall } from "@/lib/robust-llm-call";
+import { createPrompt } from "@/prompts/chat/suggested-questions";
 
 const logger = new Logger({ context: "SuggestedQuestionsGenerator", enabled: false });
 
@@ -25,14 +25,9 @@ export const generate = createServerFn({ method: "POST" })
       });
 
       const prompt = createPrompt(data);
-      logger.info(
-        `[${requestId}] Generated question prompt:`,
-        prompt.substring(0, 200) + "..."
-      );
+      logger.info(`[${requestId}] Generated question prompt:`, prompt.substring(0, 200) + "...");
 
-      logger.info(
-        `[${requestId}] Calling Anthropic API for question generation`
-      );
+      logger.info(`[${requestId}] Calling Anthropic API for question generation`);
 
       const anthropic = new Anthropic({
         apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -41,22 +36,23 @@ export const generate = createServerFn({ method: "POST" })
           "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
           "Helicone-Property-Type": "questions",
           "Helicone-Property-Subject": data.subject,
-        }
+        },
       });
 
       const response = await robustLLMCall(
-        () => anthropic.messages.create({
-          model: "claude-3-7-sonnet-latest",
-          max_tokens: 4096,
-          messages: [{ role: "user", content: prompt }],
-        }),
+        () =>
+          anthropic.messages.create({
+            model: "claude-3-7-sonnet-latest",
+            max_tokens: 4096,
+            messages: [{ role: "user", content: prompt }],
+          }),
         {
-          provider: 'anthropic',
-          requestType: 'questions',
+          provider: "anthropic",
+          requestType: "questions",
           metadata: {
             subject: data.subject,
             contentLength: data.currentMessage.length,
-          }
+          },
         }
       );
 

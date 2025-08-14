@@ -1,9 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
-import { SerializedArticle } from "@/types/serialized";
-import { extractTakeaways } from "@/lib/article-takeaway-parser";
-import { useUpdateArticle } from "@/hooks/api/articles";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useState } from "react";
+import { useUpdateArticle } from "@/hooks/api/articles";
+import { extractTakeaways } from "@/lib/article-takeaway-parser";
 import { Logger } from "@/lib/logger";
+import type { SerializedArticle } from "@/types/serialized";
 
 const logger = new Logger({ context: "useArticleTakeaways", enabled: false });
 
@@ -49,9 +49,7 @@ function getArticleTakeawaysStatus(
   return "ready_for_extraction";
 }
 
-export function useArticleTakeaways(
-  article: SerializedArticle | null | undefined
-) {
+export function useArticleTakeaways(article: SerializedArticle | null | undefined) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [hasCompleted, setHasCompleted] = useState(false);
@@ -88,9 +86,7 @@ export function useArticleTakeaways(
             },
             {
               onSuccess: () => {
-                logger.info(
-                  "Successfully updated takeaways and invalidating queries"
-                );
+                logger.info("Successfully updated takeaways and invalidating queries");
                 queryClient.invalidateQueries();
               },
             }
@@ -101,8 +97,7 @@ export function useArticleTakeaways(
 
         setHasCompleted(true);
       } catch (err) {
-        const extractionError =
-          err instanceof Error ? err : new Error(String(err));
+        const extractionError = err instanceof Error ? err : new Error(String(err));
         logger.error("Error extracting takeaways", {
           errorMessage: extractionError.message,
           stackTrace: extractionError.stack,
@@ -123,12 +118,7 @@ export function useArticleTakeaways(
   }, [article?.id]);
 
   useEffect(() => {
-    const status = getArticleTakeawaysStatus(
-      article,
-      isLoading,
-      error,
-      hasCompleted
-    );
+    const status = getArticleTakeawaysStatus(article, isLoading, error, hasCompleted);
     const articleId = article?.id;
 
     if (

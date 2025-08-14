@@ -29,11 +29,7 @@ Parameters:
     prompt += `<module_title>${moduleTitle}</module_title>
 <module_description>${moduleDescription}</module_description>
 `;
-  } else if (
-    contextType === "question" &&
-    triggeringQuestion &&
-    parentContent
-  ) {
+  } else if (contextType === "question" && triggeringQuestion && parentContent) {
     prompt += `<triggering_question>${triggeringQuestion}</triggering_question>
 <parent_content>
 ${parentContent}

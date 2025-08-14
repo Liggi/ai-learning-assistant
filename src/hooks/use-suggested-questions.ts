@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Logger } from "@/lib/logger";
-import { SerializedArticle, SerializedSubject } from "@/types/serialized";
 import { generate } from "@/features/generators/suggested-questions";
+import { Logger } from "@/lib/logger";
+import type { SerializedArticle, SerializedSubject } from "@/types/serialized";
 
 const logger = new Logger({ context: "useSuggestedQuestions", enabled: false });
 

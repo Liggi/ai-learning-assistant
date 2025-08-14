@@ -1,9 +1,9 @@
-import { useCallback, useMemo, useRef, useEffect } from "react";
-import { ReactFlowInstance, useNodesInitialized } from "@xyflow/react";
+import { type ReactFlowInstance, useNodesInitialized } from "@xyflow/react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { Logger } from "@/lib/logger";
 import { calculateElkLayout } from "@/services/layouts/elk";
 import { hasFinalPosition } from "./has-final-position";
 import type { MapEdge, MapNode } from "./types";
-import { Logger } from "@/lib/logger";
 
 const logger = new Logger({ context: "ElkLayout", enabled: false });
 
@@ -19,22 +19,23 @@ export function useElkLayout(
 
   const allNodesReady = useMemo(() => {
     const nodes = flow.getNodes();
-    return (
-      nodes.length > 0 &&
-      nodes.every((n) => n.measured?.width && n.measured?.height)
-    );
+    return nodes.length > 0 && nodes.every((n) => n.measured?.width && n.measured?.height);
   }, [flow, nodesInitialized]);
 
   const runLayout = useCallback(async () => {
     logger.info("runLayout called", {
       nodesInitialized,
       allNodesReady,
-      isLayouting: isLayouting.current
+      isLayouting: isLayouting.current,
     });
 
     if (!nodesInitialized || !allNodesReady || isLayouting.current) {
       logger.info("Skipping layout", {
-        reason: !nodesInitialized ? "nodes not initialized" : !allNodesReady ? "nodes not ready" : "already layouting"
+        reason: !nodesInitialized
+          ? "nodes not initialized"
+          : !allNodesReady
+            ? "nodes not ready"
+            : "already layouting",
       });
       return;
     }
@@ -44,9 +45,19 @@ export function useElkLayout(
 
     logger.info("Layout input", {
       currentNodesCount: currentNodes.length,
-      currentNodes: JSON.stringify(currentNodes.map(n => ({ id: n.id, type: n.type, position: n.position, finalPosition: n.finalPosition, opacity: n.style?.opacity }))),
+      currentNodes: JSON.stringify(
+        currentNodes.map((n) => ({
+          id: n.id,
+          type: n.type,
+          position: n.position,
+          finalPosition: n.finalPosition,
+          opacity: n.style?.opacity,
+        }))
+      ),
       currentEdgesCount: currentEdges.length,
-      currentEdges: JSON.stringify(currentEdges.map(e => ({ id: e.id, source: e.source, target: e.target })))
+      currentEdges: JSON.stringify(
+        currentEdges.map((e) => ({ id: e.id, source: e.source, target: e.target }))
+      ),
     });
 
     const layoutNodes = currentNodes.map((node) => {
@@ -55,7 +66,7 @@ export function useElkLayout(
         logger.info("Using finalPosition for hidden node", {
           nodeId: node.id,
           currentPosition: JSON.stringify(node.position),
-          finalPosition: JSON.stringify(node.finalPosition)
+          finalPosition: JSON.stringify(node.finalPosition),
         });
         return { ...node, position: node.finalPosition };
       }
@@ -63,7 +74,14 @@ export function useElkLayout(
     });
 
     logger.info("Layout nodes prepared", {
-      layoutNodes: JSON.stringify(layoutNodes.map(n => ({ id: n.id, type: n.type, position: n.position, opacity: n.style?.opacity })))
+      layoutNodes: JSON.stringify(
+        layoutNodes.map((n) => ({
+          id: n.id,
+          type: n.type,
+          position: n.position,
+          opacity: n.style?.opacity,
+        }))
+      ),
     });
 
     const oldPos = new Map(layoutNodes.map((n) => [n.id, { ...n.position }]));
@@ -72,13 +90,17 @@ export function useElkLayout(
     logger.info("Starting ELK layout calculation");
     const res = await calculateElkLayout(layoutNodes, currentEdges);
     isLayouting.current = false;
-    
+
     logger.info("ELK layout completed", {
       success: !!res,
-      resultNodes: res ? JSON.stringify(res.nodes.map(n => ({ id: n.id, position: n.position }))) : null,
-      resultEdges: res ? JSON.stringify(res.edges.map(e => ({ id: e.id, source: e.source, target: e.target }))) : null
+      resultNodes: res
+        ? JSON.stringify(res.nodes.map((n) => ({ id: n.id, position: n.position })))
+        : null,
+      resultEdges: res
+        ? JSON.stringify(res.edges.map((e) => ({ id: e.id, source: e.source, target: e.target })))
+        : null,
     });
-    
+
     if (!res) return;
 
     flow.setEdges(res.edges as MapEdge[]);
@@ -102,11 +124,12 @@ export function useElkLayout(
       if (t < 1) requestAnimationFrame(animate);
       else {
         logger.info("Layout animation completed, calling onLayoutComplete", {
-          finalNodes: JSON.stringify(nodes.map(n => ({ id: n.id, position: n.position }))),
-          finalEdges: JSON.stringify(currentEdges.map(e => ({ id: e.id, source: e.source, target: e.target })))
+          finalNodes: JSON.stringify(nodes.map((n) => ({ id: n.id, position: n.position }))),
+          finalEdges: JSON.stringify(
+            currentEdges.map((e) => ({ id: e.id, source: e.source, target: e.target }))
+          ),
         });
-        if (onLayoutComplete)
-          onLayoutComplete(nodes as MapNode[], currentEdges as MapEdge[]);
+        if (onLayoutComplete) onLayoutComplete(nodes as MapNode[], currentEdges as MapEdge[]);
       }
     };
     requestAnimationFrame(animate);
@@ -117,7 +140,7 @@ export function useElkLayout(
     logger.info("Auto-trigger layout effect", {
       nodesInitialized,
       allNodesReady,
-      willTrigger: nodesInitialized && allNodesReady
+      willTrigger: nodesInitialized && allNodesReady,
     });
     if (nodesInitialized && allNodesReady) {
       logger.info("Auto-triggering layout");

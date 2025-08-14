@@ -1,18 +1,18 @@
+import { useParams } from "@tanstack/react-router";
 import {
   Handle,
+  type NodeProps,
   Position,
+  type Node as ReactFlowNode,
   useReactFlow,
   useUpdateNodeInternals,
-  type NodeProps,
-  type Node as ReactFlowNode,
 } from "@xyflow/react";
-import { useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import debounce from "lodash/debounce";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { useArticle } from "@/hooks/api/articles";
 import { useArticleSummary } from "@/hooks/use-article-summary";
-import MarkdownDisplay from "../markdown-display";
 import { useArticleTakeaways } from "@/hooks/use-article-takeaways";
-import { useParams } from "@tanstack/react-router";
+import MarkdownDisplay from "../markdown-display";
 
 // Data shape for each conversation node, must extend Record<string, unknown> for NodeProps
 interface ConversationNodeData extends Record<string, unknown> {
@@ -42,7 +42,6 @@ const nodeStyles = {
 };
 
 export default function ConversationNode({ id, data }: ConversationNodeProps) {
-  
   const updateNodeInternals = useUpdateNodeInternals();
   const flow = useReactFlow();
 
@@ -53,8 +52,7 @@ export default function ConversationNode({ id, data }: ConversationNodeProps) {
   const urlArticleId = params.articleId;
 
   const isUrlSelected =
-    (!!urlArticleId && urlArticleId === data.id) ||
-    (!urlArticleId && data.isRoot === true);
+    (!!urlArticleId && urlArticleId === data.id) || (!urlArticleId && data.isRoot === true);
 
   const isQuestionType = data.isUser;
   const style = isQuestionType ? nodeStyles.question : nodeStyles.answer;
@@ -63,14 +61,11 @@ export default function ConversationNode({ id, data }: ConversationNodeProps) {
 
   const { data: article, isLoading: isLoadingArticle } = useArticle(data.id);
 
-  const { data: summary, loading: isLoadingSummary } =
-    useArticleSummary(article);
+  const { data: summary, loading: isLoadingSummary } = useArticleSummary(article);
 
-  const { data: takeaways, loading: isLoadingTakeaways } =
-    useArticleTakeaways(article);
+  const { data: takeaways, loading: isLoadingTakeaways } = useArticleTakeaways(article);
 
-  const isLoading =
-    isLoadingArticle || isLoadingSummary || !summary || isLoadingTakeaways;
+  const isLoading = isLoadingArticle || isLoadingSummary || !summary || isLoadingTakeaways;
 
   // Once the node's content is loaded, we need to update the node's size in React Flow and mark it as "ready"
   // This enables us to wait until the size is correctly measured before calculating the layout of the flow graph
@@ -140,16 +135,11 @@ export default function ConversationNode({ id, data }: ConversationNodeProps) {
         </div>
       ) : summary ? (
         <>
-          <div className="text-gray-100 text-sm font-medium mb-3">
-            {summary}
-          </div>
+          <div className="text-gray-100 text-sm font-medium mb-3">{summary}</div>
           {takeaways && takeaways.length > 0 && (
             <div className="space-y-1.5 pt-2 border-t border-slate-700/50">
               {takeaways.map((takeaway, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-2 text-xs text-slate-300"
-                >
+                <div key={index} className="flex items-start gap-2 text-xs text-slate-300">
                   <div className="mt-2 w-1.5 h-1.5 rounded-full bg-green-500/40 flex-shrink-0" />
                   <div>
                     <MarkdownDisplay content={takeaway} />

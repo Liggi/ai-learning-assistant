@@ -1,27 +1,20 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  type UseQueryResult,
-} from "@tanstack/react-query";
+import { type UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createArticle,
+  createArticleFromQuestion,
+  deleteArticle,
   getArticle,
   getArticlesByPersonalLearningMap,
-  updateArticle,
-  deleteArticle,
   getRootArticle,
-  createArticleFromQuestion,
+  updateArticle,
 } from "@/prisma/articles";
-import type { SerializedArticle } from "@/types/serialized";
 import type { Article } from "@/types/personal-learning-map";
+import type { SerializedArticle } from "@/types/serialized";
 
 /**
  * Hook to fetch an article by ID
  */
-export function useArticle(
-  id: string | null
-): UseQueryResult<SerializedArticle | null> {
+export function useArticle(id: string | null): UseQueryResult<SerializedArticle | null> {
   return useQuery<SerializedArticle | null>({
     queryKey: ["articles", id || "null"],
     queryFn: async () => {
@@ -53,9 +46,7 @@ export function useArticlesByPersonalLearningMap(
 /**
  * Hook to fetch the root article for a personal learning map
  */
-export function useRootArticle(
-  learningMapId: string | null
-): UseQueryResult<Article | null> {
+export function useRootArticle(learningMapId: string | null): UseQueryResult<Article | null> {
   return useQuery<Article | null>({
     queryKey: ["articles", "root", learningMapId || "null"],
     queryFn: async () => {
@@ -125,11 +116,7 @@ export function useCreateArticleFromQuestion() {
       queryClient.invalidateQueries({ queryKey: ["learningMaps"] });
 
       queryClient.invalidateQueries({
-        queryKey: [
-          "routeData",
-          "/learning/article/$articleId",
-          { articleId: newArticle.id },
-        ],
+        queryKey: ["routeData", "/learning/article/$articleId", { articleId: newArticle.id }],
       });
     },
   });

@@ -1,13 +1,13 @@
+import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
   TooltipPortal,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
-import ReactMarkdown from "react-markdown";
-import { motion, useAnimationControls, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState, useCallback } from "react";
 
 interface MarkdownDisplayProps {
   content: string;
@@ -24,8 +24,6 @@ const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
   onLearnMore,
   isCreatingArticle = false,
 }) => {
-  
-
   return (
     <div>
       <ReactMarkdown
@@ -72,9 +70,7 @@ const HeadingTwo: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   </h2>
 );
 
-const HeadingThree: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => (
+const HeadingThree: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <h3 className="relative pl-4 mb-3 text-base font-semibold text-white">
     <span className="absolute h-4 left-0 top-1 bottom-2 w-1 bg-cyan-400/60 rounded-full"></span>
     {children}
@@ -108,9 +104,7 @@ const PreBlock: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 const OrderedList: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <ol className="list-decimal list-inside space-y-2 mb-4 text-slate-300 pl-3">
-    {children}
-  </ol>
+  <ol className="list-decimal list-inside space-y-2 mb-4 text-slate-300 pl-3">{children}</ol>
 );
 
 const ListItem: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -148,9 +142,7 @@ const StrongText: React.FC<StrongTextProps> = ({
     <>
       <Tooltip onOpenChange={setIsOpen}>
         <TooltipTrigger asChild>
-          <span
-            className="font-bold text-white cursor-help relative border-b border-slate-400/30 hover:bg-white/5 transition-colors duration-200"
-          >
+          <span className="font-bold text-white cursor-help relative border-b border-slate-400/30 hover:bg-white/5 transition-colors duration-200">
             {children}
           </span>
         </TooltipTrigger>
@@ -210,9 +202,7 @@ const Blockquote: React.FC<{ children: React.ReactNode }> = ({ children }) => (
                            not-prose [&>div>p]:mb-0 [&>div>p:not(:last-child)]:mb-2"
   >
     <div className="text-xs font-medium mb-2 text-green-400">Key Takeaways</div>
-    <div className="space-y-2 pt-3 border-t border-slate-700/50">
-      {children}
-    </div>
+    <div className="space-y-2 pt-3 border-t border-slate-700/50">{children}</div>
   </blockquote>
 );
 

@@ -1,4 +1,4 @@
-import type { Node, Edge, XYPosition } from "@xyflow/react";
+import type { Edge, Node, XYPosition } from "@xyflow/react";
 
 export interface ArticleNodeData extends Record<string, unknown> {
   id: string;

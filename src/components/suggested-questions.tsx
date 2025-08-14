@@ -1,10 +1,10 @@
-import React from "react";
-import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
-import { Logger } from "@/lib/logger";
 import { useNavigate } from "@tanstack/react-router";
-import { useSuggestedQuestions } from "@/hooks/use-suggested-questions";
-import { SerializedArticle, SerializedSubject } from "@/types/serialized";
+import type React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
+import { useSuggestedQuestions } from "@/hooks/use-suggested-questions";
+import { Logger } from "@/lib/logger";
+import type { SerializedArticle, SerializedSubject } from "@/types/serialized";
 
 const logger = new Logger({
   context: "SuggestedQuestions",
@@ -24,10 +24,7 @@ const SuggestedQuestionsContent: React.FC<SuggestedQuestionsContentProps> = ({
   onArticleCreated,
   onQuestionCreated,
 }) => {
-  const { questions, isGeneratingQuestions } = useSuggestedQuestions(
-    subject,
-    article
-  );
+  const { questions, isGeneratingQuestions } = useSuggestedQuestions(subject, article);
 
   const createArticleMutation = useCreateArticleFromQuestion();
   const navigate = useNavigate();
@@ -38,12 +35,12 @@ const SuggestedQuestionsContent: React.FC<SuggestedQuestionsContentProps> = ({
       learningMapId: article.learningMapId,
       parentArticleId: article.id,
     });
-    
+
     // Call the onQuestionCreated callback immediately to add the question node to the map
     if (onQuestionCreated) {
       onQuestionCreated(question, article.id);
     }
-    
+
     createArticleMutation.mutate(
       {
         learningMapId: article.learningMapId,
@@ -85,9 +82,7 @@ const SuggestedQuestionsContent: React.FC<SuggestedQuestionsContentProps> = ({
           <button
             key={index}
             className={`px-4 py-2 rounded-lg border border-slate-800 bg-slate-900/90 hover:bg-slate-800/90 hover:border-slate-500 shadow-sm hover:shadow-md text-sm transition-all duration-300 ease-in-out ${
-              createArticleMutation.isPending
-                ? "opacity-50 cursor-not-allowed"
-                : ""
+              createArticleMutation.isPending ? "opacity-50 cursor-not-allowed" : ""
             }`}
             onClick={() => handleQuestionClick(question)}
             disabled={createArticleMutation.isPending}

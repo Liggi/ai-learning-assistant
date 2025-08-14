@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ButtonLoading } from "@/components/ui/button-loading";
+import { Input } from "@/components/ui/input";
 import { useCreateSubject } from "@/hooks/api/subjects";
 
 interface SubjectEntryProps {
@@ -11,11 +11,7 @@ interface SubjectEntryProps {
   onNext: (subjectId: string) => void;
 }
 
-export default function SubjectEntry({
-  subject,
-  onSubjectChange,
-  onNext,
-}: SubjectEntryProps) {
+export default function SubjectEntry({ subject, onSubjectChange, onNext }: SubjectEntryProps) {
   const createSubjectMutation = useCreateSubject();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -40,9 +36,7 @@ export default function SubjectEntry({
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3 }}
         >
-          <h2 className="text-2xl font-bold mb-6 text-center">
-            What do you want to learn about?
-          </h2>
+          <h2 className="text-2xl font-bold mb-6 text-center">What do you want to learn about?</h2>
           <Input
             placeholder="e.g. React"
             value={subject}
@@ -57,11 +51,7 @@ export default function SubjectEntry({
           {isSubmitting ? (
             <ButtonLoading className="w-full" />
           ) : (
-            <Button
-              className="w-full"
-              onClick={handleSubmit}
-              disabled={!subject.trim()}
-            >
+            <Button className="w-full" onClick={handleSubmit} disabled={!subject.trim()}>
               Next
             </Button>
           )}

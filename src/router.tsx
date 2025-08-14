@@ -1,14 +1,12 @@
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
 import { queryClient } from "./routes/__root";
+import { routeTree } from "./routeTree.gen";
 
 function NotFound() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-2">
       <h1 className="text-4xl font-bold">404 - Page Not Found</h1>
-      <p className="text-muted-foreground">
-        The page you're looking for doesn't exist.
-      </p>
+      <p className="text-muted-foreground">The page you're looking for doesn't exist.</p>
     </div>
   );
 }

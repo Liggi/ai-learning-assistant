@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from "zod";
 import { Logger } from "@/lib/logger";
 import { AnthropicProvider } from "./anthropic";
 import { OpenAIProvider } from "./openai";
@@ -38,11 +38,7 @@ export const responseCache = new Map<string, CacheEntry<any>>();
 export const CACHE_TTL = 60 * 60 * 1000;
 export const MAX_CACHE_SIZE = 100;
 
-export function generateCacheKey(
-  prompt: string,
-  provider: string,
-  model: string
-): string {
+export function generateCacheKey(prompt: string, provider: string, model: string): string {
   const combined = `${provider}:${model}:${prompt}`;
   let hash = 0;
   for (let i = 0; i < combined.length; i++) {
@@ -61,10 +57,9 @@ export function extractJSON(str: string): string {
     return match[1] || match[2];
   }
 
-  llmBaseLogger.warn(
-    "Could not extract JSON object using regex, returning raw string.",
-    { strPreview: str.slice(0, 50) }
-  );
+  llmBaseLogger.warn("Could not extract JSON object using regex, returning raw string.", {
+    strPreview: str.slice(0, 50),
+  });
   return str;
 }
 
@@ -97,9 +92,7 @@ export async function callLLM<T>(
 ): Promise<T> {
   const maxRetries = options?.maxRetries ?? 3;
   let attempt = 0;
-  const reqId =
-    requestId ||
-    `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  const reqId = requestId || `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
   const modelForCache = options?.model ?? "default_model";
 
@@ -127,9 +120,7 @@ export async function callLLM<T>(
         llmBaseLogger.debug(`[${reqId}] Cache entry expired`);
       }
     } else {
-      llmBaseLogger.debug(
-        `[${reqId}] Cache miss for ${providerName}:${modelForCache}`
-      );
+      llmBaseLogger.debug(`[${reqId}] Cache miss for ${providerName}:${modelForCache}`);
     }
   } else {
     llmBaseLogger.debug(`[${reqId}] Cache bypass requested`);
@@ -148,17 +139,15 @@ export async function callLLM<T>(
         provider = new OpenAIProvider();
         actualModelUsed = options?.model ?? "gpt-4o";
         break;
-      default:
+      default: {
         const _exhaustiveCheck: never = providerName;
-        throw new Error(
-          `[${reqId}] Unsupported LLM provider: ${providerName}g`
-        );
+        throw new Error(`[${reqId}] Unsupported LLM provider: ${providerName}g`);
+      }
     }
   } catch (initError: any) {
-    llmBaseLogger.error(
-      `[${reqId}] Failed to instantiate provider ${providerName}`,
-      { error: initError?.message || initError }
-    );
+    llmBaseLogger.error(`[${reqId}] Failed to instantiate provider ${providerName}`, {
+      error: initError?.message || initError,
+    });
     throw initError;
   }
 
@@ -177,12 +166,7 @@ export async function callLLM<T>(
         heliconeMetadata: options?.heliconeMetadata,
       };
 
-      const result = await provider.generateResponse(
-        prompt,
-        schema,
-        reqId,
-        providerOptions
-      );
+      const result = await provider.generateResponse(prompt, schema, reqId, providerOptions);
 
       if (!options?.bypassCache) {
         const cacheKey = generateCacheKey(prompt, providerName, finalModel);
@@ -190,9 +174,7 @@ export async function callLLM<T>(
           const oldestKey = responseCache.keys().next().value;
           if (oldestKey) {
             responseCache.delete(oldestKey);
-            llmBaseLogger.debug(
-              `[${reqId}] Cache full, removed oldest entry: ${oldestKey}`
-            );
+            llmBaseLogger.debug(`[${reqId}] Cache full, removed oldest entry: ${oldestKey}`);
           }
         }
         responseCache.set(cacheKey, {
@@ -218,10 +200,8 @@ export async function callLLM<T>(
         throw err;
       }
 
-      const delay = 1000 * Math.pow(2, attempt - 1) + Math.random() * 100;
-      llmBaseLogger.info(
-        `[${reqId}] Retrying after ${delay.toFixed(0)}ms delay.`
-      );
+      const delay = 1000 * 2 ** (attempt - 1) + Math.random() * 100;
+      llmBaseLogger.info(`[${reqId}] Retrying after ${delay.toFixed(0)}ms delay.`);
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }

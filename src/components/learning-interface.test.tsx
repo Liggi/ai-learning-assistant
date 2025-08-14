@@ -1,13 +1,13 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import LearningInterface from "./learning-interface";
-import { SerializedLearningMap, SerializedSubject } from "@/types/serialized";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render as rtlRender, RenderResult } from "@testing-library/react";
-import { act } from "react";
-import * as rootArticleHook from "@/hooks/use-root-article";
-import * as contextualTooltipsHook from "@/hooks/use-contextual-tooltips";
-import PersonalLearningMapFlow from "./personal-learning-map-flow";
 import * as reactRouter from "@tanstack/react-router";
+import { type RenderResult, render as rtlRender } from "@testing-library/react";
+import { act } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import * as contextualTooltipsHook from "@/hooks/use-contextual-tooltips";
+import * as rootArticleHook from "@/hooks/use-root-article";
+import type { SerializedLearningMap, SerializedSubject } from "@/types/serialized";
+import LearningInterface from "./learning-interface";
+import PersonalLearningMapFlow from "./personal-learning-map-flow";
 
 vi.mock("@tanstack/react-router", () => ({
   useNavigate: vi.fn().mockReturnValue(vi.fn()),
@@ -43,9 +43,7 @@ vi.mock("./personal-learning-map-flow", () => ({
 }));
 
 vi.mock("./suggested-questions", () => ({
-  SuggestedQuestions: vi.fn(() => (
-    <div data-testid="mock-suggested-questions" />
-  )),
+  SuggestedQuestions: vi.fn(() => <div data-testid="mock-suggested-questions" />),
 }));
 
 const mockNavigate = vi.fn();
@@ -119,10 +117,7 @@ describe("<LearningInterface />", () => {
     vi.clearAllMocks();
     mockServerResponses.clear();
     vi.mocked(reactRouter.useNavigate).mockReturnValue(mockNavigate);
-    mockServerResponses.set(
-      `getOrCreateLearningMap-${mockSubject.id}`,
-      mockLearningMap
-    );
+    mockServerResponses.set(`getOrCreateLearningMap-${mockSubject.id}`, mockLearningMap);
   });
 
   it("renders without errors", async () => {
@@ -161,15 +156,11 @@ describe("<LearningInterface />", () => {
       />
     );
 
-    let mapContainer = container.querySelector(
-      ".bg-slate-900.border-r.border-slate-800"
-    );
+    let mapContainer = container.querySelector(".bg-slate-900.border-r.border-slate-800");
     expect(mapContainer).toHaveClass("w-1/3");
     expect(mapContainer).not.toHaveClass("w-2/3");
 
-    const toggleButton = container.querySelector(
-      'button[aria-label="Expand map"]'
-    );
+    const toggleButton = container.querySelector('button[aria-label="Expand map"]');
     expect(toggleButton).toBeInTheDocument();
 
     if (toggleButton) {
@@ -177,15 +168,11 @@ describe("<LearningInterface />", () => {
         (toggleButton as HTMLButtonElement).click();
       });
 
-      mapContainer = container.querySelector(
-        ".bg-slate-900.border-r.border-slate-800"
-      );
+      mapContainer = container.querySelector(".bg-slate-900.border-r.border-slate-800");
       expect(mapContainer).toHaveClass("w-2/3");
       expect(mapContainer).not.toHaveClass("w-1/3");
 
-      const updatedToggleButton = container.querySelector(
-        'button[aria-label="Expand content"]'
-      );
+      const updatedToggleButton = container.querySelector('button[aria-label="Expand content"]');
       expect(updatedToggleButton).toBeInTheDocument();
     }
   });

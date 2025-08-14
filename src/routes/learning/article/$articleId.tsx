@@ -1,10 +1,9 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { ErrorDisplay } from "@/components/error-display";
 import LearningInterface from "@/components/learning-interface";
-import { getLearningMapAndSubjectForArticle } from "@/prisma/articles";
 import { Logger } from "@/lib/logger";
-import { useQuery } from "@tanstack/react-query";
-import { getArticle } from "@/prisma/articles";
+import { getArticle, getLearningMapAndSubjectForArticle } from "@/prisma/articles";
 import { getServerSession } from "@/server/getServerSession";
 
 const logger = new Logger({ context: "ArticleRouteLoader", enabled: false });
@@ -39,11 +38,7 @@ export const Route = createFileRoute("/learning/article/$articleId")({
     }
   },
   component: function ArticleRoute() {
-    const {
-      article: initialArticle,
-      learningMap,
-      subject,
-    } = Route.useLoaderData();
+    const { article: initialArticle, learningMap, subject } = Route.useLoaderData();
 
     const { data: article } = useQuery({
       queryKey: ["article", initialArticle.id],
@@ -52,11 +47,7 @@ export const Route = createFileRoute("/learning/article/$articleId")({
     });
 
     return (
-      <LearningInterface
-        subject={subject}
-        learningMap={learningMap}
-        activeArticle={article}
-      />
+      <LearningInterface subject={subject} learningMap={learningMap} activeArticle={article} />
     );
   },
   errorComponent: ({ error }) => {

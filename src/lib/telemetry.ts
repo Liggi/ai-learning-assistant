@@ -1,8 +1,5 @@
-import { trace, SpanKind, SpanStatusCode } from "@opentelemetry/api";
-import {
-  ATTR_SERVICE_NAME,
-  ATTR_SERVICE_VERSION,
-} from "@opentelemetry/semantic-conventions";
+import { SpanKind, type SpanStatusCode, trace } from "@opentelemetry/api";
+import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from "@opentelemetry/semantic-conventions";
 import * as fs from "fs";
 
 // Server-side imports (will be tree-shaken on client)
@@ -30,10 +27,7 @@ class FileSpanExporter {
         })),
       };
 
-      fs.appendFileSync(
-        "./traces.json",
-        JSON.stringify(traceData, null, 2) + "\n"
-      );
+      fs.appendFileSync("./traces.json", JSON.stringify(traceData, null, 2) + "\n");
       resultCallback({ code: 0 });
     } catch (error) {
       resultCallback({ code: 1, error });
@@ -72,7 +66,6 @@ class ClientTraceExporter {
         })),
       };
 
-
       resultCallback({ code: 0 });
     } catch (error) {
       resultCallback({ code: 1, error });
@@ -88,14 +81,11 @@ class ClientTraceExporter {
 async function loadServerDependencies() {
   if (typeof window === "undefined") {
     const nodeModule = await import("@opentelemetry/sdk-node");
-    const autoInstrumentationsModule = await import(
-      "@opentelemetry/auto-instrumentations-node"
-    );
+    const autoInstrumentationsModule = await import("@opentelemetry/auto-instrumentations-node");
     const traceModule = await import("@opentelemetry/sdk-trace-base");
 
     NodeSDK = nodeModule.NodeSDK;
-    getNodeAutoInstrumentations =
-      autoInstrumentationsModule.getNodeAutoInstrumentations;
+    getNodeAutoInstrumentations = autoInstrumentationsModule.getNodeAutoInstrumentations;
     ConsoleSpanExporter = traceModule.ConsoleSpanExporter;
   }
 }
@@ -181,10 +171,8 @@ export function createSpan(name: string, attributes?: Record<string, any>) {
   return {
     span,
     setAttributes: (attrs: Record<string, any>) => span.setAttributes(attrs),
-    addEvent: (name: string, attrs?: Record<string, any>) =>
-      span.addEvent(name, attrs),
-    setStatus: (code: SpanStatusCode, message?: string) =>
-      span.setStatus({ code, message }),
+    addEvent: (name: string, attrs?: Record<string, any>) => span.addEvent(name, attrs),
+    setStatus: (code: SpanStatusCode, message?: string) => span.setStatus({ code, message }),
     end: () => span.end(),
   };
 }

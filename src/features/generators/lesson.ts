@@ -1,16 +1,14 @@
+import Anthropic from "@anthropic-ai/sdk";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { Logger } from "@/lib/logger";
 import { robustLLMCall } from "@/lib/robust-llm-call";
 import { createPrompt } from "@/prompts/chat/lesson";
-import { Logger } from "@/lib/logger";
-import Anthropic from "@anthropic-ai/sdk";
 
 const logger = new Logger({ context: "LessonGenerator", enabled: false });
 
 const stripResponsePlanning = (text: string): string => {
-  return text
-    .replace(/<response_planning>[\s\S]*?<\/response_planning>/g, "")
-    .trim();
+  return text.replace(/<response_planning>[\s\S]*?<\/response_planning>/g, "").trim();
 };
 
 const lessonResponseSchema = z.object({
@@ -19,12 +17,8 @@ const lessonResponseSchema = z.object({
 
 export const generate = createServerFn({ method: "POST" })
   .validator(
-    (data: {
-      subject: string;
-      moduleTitle: string;
-      moduleDescription: string;
-      message: string;
-    }) => data
+    (data: { subject: string; moduleTitle: string; moduleDescription: string; message: string }) =>
+      data
   )
   .handler(async ({ data }) => {
     try {
@@ -42,22 +36,23 @@ export const generate = createServerFn({ method: "POST" })
           "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
           "Helicone-Property-Type": "lesson",
           "Helicone-Property-Subject": data.subject,
-        }
+        },
       });
 
       const response = await robustLLMCall(
-        () => anthropic.messages.create({
-          model: "claude-3-7-sonnet-latest",
-          max_tokens: 4096,
-          messages: [{ role: "user", content: prompt }],
-        }),
+        () =>
+          anthropic.messages.create({
+            model: "claude-3-7-sonnet-latest",
+            max_tokens: 4096,
+            messages: [{ role: "user", content: prompt }],
+          }),
         {
-          provider: 'anthropic',
-          requestType: 'lesson',
+          provider: "anthropic",
+          requestType: "lesson",
           metadata: {
             subject: data.subject,
             moduleTitle: data.moduleTitle,
-          }
+          },
         }
       );
 

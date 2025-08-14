@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest";
-import { calculateElkLayout } from "./elk";
 import type { Edge } from "@xyflow/react";
+import { describe, expect, it } from "vitest";
 import type { MeasuredNode } from "./elk";
+import { calculateElkLayout } from "./elk";
 
 describe("calculateElkLayout", () => {
   it("layouts a minimal graph and returns positions", async () => {
@@ -21,9 +21,7 @@ describe("calculateElkLayout", () => {
         measured: { width: 200, height: 100 },
       },
     ];
-    const edges: Edge<any>[] = [
-      { id: "e1", source: "n1", target: "n2", animated: true },
-    ];
+    const edges: Edge<any>[] = [{ id: "e1", source: "n1", target: "n2", animated: true }];
 
     const result = await calculateElkLayout(nodes, edges, {
       direction: "DOWN",

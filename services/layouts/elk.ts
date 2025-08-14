@@ -1,6 +1,6 @@
+import type { Edge, Node as FlowNode } from "@xyflow/react";
+import type { ElkExtendedEdge, ElkNode } from "elkjs";
 import ELK from "elkjs";
-import type { Node as FlowNode, Edge } from "@xyflow/react";
-import type { ElkNode, ElkExtendedEdge } from "elkjs";
 
 const ARTICLE_NODE_WIDTH = 350;
 const ARTICLE_NODE_HEIGHT = 350;
@@ -17,8 +17,7 @@ const elkLayoutOptions = {
 
 const elk = new ELK();
 
-export interface MeasuredNode<T extends Record<string, unknown>>
-  extends FlowNode<T> {
+export interface MeasuredNode<T extends Record<string, unknown>> extends FlowNode<T> {
   measured?: {
     width?: number;
     height?: number;
@@ -43,9 +42,7 @@ export async function calculateElkLayout<
 
   // Bail if any node is missing measured dimensions
   if (
-    !initialNodes.every(
-      (node) => node.measured?.width != null && node.measured?.height != null
-    )
+    !initialNodes.every((node) => node.measured?.width != null && node.measured?.height != null)
   ) {
     return null;
   }
@@ -82,9 +79,7 @@ export async function calculateElkLayout<
 
     // Determine the new absolute position returned by ELK (fallback to existing)
     const position =
-      elkNode?.x != null && elkNode?.y != null
-        ? { x: elkNode.x, y: elkNode.y }
-        : node.position;
+      elkNode?.x != null && elkNode?.y != null ? { x: elkNode.x, y: elkNode.y } : node.position;
 
     // ELK also returns width/height but we rely on the existing measured values for consistency
     const width = elkNode?.width ?? node.width;

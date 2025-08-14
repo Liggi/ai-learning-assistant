@@ -35,21 +35,13 @@ function QuestionNode({ data, selected = false }: QuestionNodeProps) {
         minWidth: "150px",
       }}
     >
-      <Handle
-        type="target"
-        position={Position.Top}
-        className="!bg-transparent !border-0"
-      />
+      <Handle type="target" position={Position.Top} className="!bg-transparent !border-0" />
 
       <div className="px-3 py-2">
         <p className="text-xl text-slate-300">{data.text}</p>
       </div>
 
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        className="!bg-transparent !border-0"
-      />
+      <Handle type="source" position={Position.Bottom} className="!bg-transparent !border-0" />
     </div>
   );
 }

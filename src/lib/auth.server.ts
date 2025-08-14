@@ -1,9 +1,9 @@
-import { betterAuth } from "better-auth"
-import { prismaAdapter } from "better-auth/adapters/prisma"
-import { reactStartCookies } from "better-auth/react-start"
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "@prisma/client";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { reactStartCookies } from "better-auth/react-start";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -22,16 +22,16 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 7,
     updateAge: 60 * 60 * 24,
-    cookieCache: { 
-      enabled: true, 
-      maxAge: 5 * 60
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
     },
     cookie: {
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      path: '/',
-    }
+      path: "/",
+    },
   },
   secret: process.env.BETTER_AUTH_SECRET!,
   baseURL: process.env.BETTER_AUTH_URL!,
@@ -43,4 +43,4 @@ export const auth = betterAuth({
     "http://localhost:3001",
   ],
   plugins: [reactStartCookies()],
-})
+});

@@ -1,11 +1,11 @@
-import { createFileRoute, useParams, useRouter, redirect } from "@tanstack/react-router";
-import { Logger } from "@/lib/logger";
-import Calibration from "@/components/calibration/calibration";
-import { useSubject, useUpdateSubject } from "@/hooks/api/subjects";
-import Loading from "@/components/ui/loading";
-import { toast } from "sonner";
-import { useSession } from "@/lib/auth-client";
+import { createFileRoute, redirect, useParams, useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { toast } from "sonner";
+import Calibration from "@/components/calibration/calibration";
+import Loading from "@/components/ui/loading";
+import { useSubject, useUpdateSubject } from "@/hooks/api/subjects";
+import { useSession } from "@/lib/auth-client";
+import { Logger } from "@/lib/logger";
 
 const logger = new Logger({ context: "CalibrationRoute", enabled: false });
 
@@ -61,8 +61,7 @@ export const Route = createFileRoute("/calibration/$subjectId")({
         });
 
         toast.error("Failed to save calibration", {
-          description:
-            "Please try again or contact support if the problem persists.",
+          description: "Please try again or contact support if the problem persists.",
         });
       }
     };

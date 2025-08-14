@@ -1,10 +1,10 @@
-import React from "react";
-import { SerializedArticle, SerializedSubject } from "@/types/serialized";
-import MarkdownDisplay from "./markdown-display";
-import { useContextualTooltips } from "@/hooks/use-contextual-tooltips";
-import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
 import { useNavigate } from "@tanstack/react-router";
+import type React from "react";
+import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
+import { useContextualTooltips } from "@/hooks/use-contextual-tooltips";
 import { Logger } from "@/lib/logger";
+import type { SerializedArticle, SerializedSubject } from "@/types/serialized";
+import MarkdownDisplay from "./markdown-display";
 
 const logger = new Logger({ context: "ArticleContent", enabled: false });
 
@@ -13,12 +13,8 @@ interface ArticleContentProps {
   subject: SerializedSubject;
 }
 
-const ArticleContent: React.FC<ArticleContentProps> = ({
-  article,
-  subject,
-}) => {
-  const { tooltips, tooltipsReady } =
-    useContextualTooltips(article, subject);
+const ArticleContent: React.FC<ArticleContentProps> = ({ article, subject }) => {
+  const { tooltips, tooltipsReady } = useContextualTooltips(article, subject);
 
   const createArticleMutation = useCreateArticleFromQuestion();
   const navigate = useNavigate();
@@ -44,10 +40,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
       },
       {
         onSuccess: (data) => {
-          logger.info(
-            "Successfully created article from 'Tell me more':",
-            data
-          );
+          logger.info("Successfully created article from 'Tell me more':", data);
           navigate({
             to: "/learning/article/$articleId",
             params: { articleId: data.id },

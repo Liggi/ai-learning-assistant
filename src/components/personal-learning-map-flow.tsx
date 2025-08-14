@@ -1,10 +1,13 @@
 import React, { useCallback, useMemo } from "react";
-import LearningMap, { LearningMapHandle } from "./learning-map";
+import type {
+  SerializedArticle,
+  SerializedLearningMap,
+  SerializedQuestion,
+} from "@/types/serialized";
+import LearningMap, { type LearningMapHandle } from "./learning-map";
 import ArticleNode from "./learning-map/article-node";
 import QuestionNode from "./learning-map/question-node";
-import { SerializedLearningMap } from "@/types/serialized";
-import type { MapNode, MapEdge } from "./learning-map/types";
-import type { SerializedArticle, SerializedQuestion } from "@/types/serialized";
+import type { MapEdge, MapNode } from "./learning-map/types";
 
 interface PersonalLearningMapFlowProps {
   onNodeClick?: (nodeId: string) => void;
@@ -100,7 +103,6 @@ const PersonalLearningMapFlow: React.FC<PersonalLearningMapFlowProps> = ({
   learningMap,
   ref,
 }) => {
-  
   const { nodes, edges } = useMemo(() => {
     if (!learningMap) {
       return { nodes: [], edges: [] };

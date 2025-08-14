@@ -3,10 +3,7 @@ import { useRef } from "react";
 import LearningMap, { type LearningMapHandle } from "@/components/learning-map";
 import ArticleNode from "@/components/learning-map/article-node";
 import QuestionNode from "@/components/learning-map/question-node";
-import type {
-  QuestionNodeData,
-  ArticleNodeData,
-} from "@/components/learning-map/types";
+import type { ArticleNodeData, QuestionNodeData } from "@/components/learning-map/types";
 
 const nodeTypes = {
   articleNode: ArticleNode,
@@ -64,8 +61,7 @@ function MapPlaygroundPage() {
     const articleData: ArticleNodeData = {
       id: "", // Will be set by addNode
       content: {
-        summary:
-          "Modern sausage production techniques and quality control measures.",
+        summary: "Modern sausage production techniques and quality control measures.",
         takeaways: [
           "Industrial sausage production uses automated machinery",
           "Quality control includes temperature monitoring and pH testing",
@@ -87,8 +83,7 @@ function MapPlaygroundPage() {
     const articleData: ArticleNodeData = {
       id: "sample-article",
       content: {
-        summary:
-          "Historical evolution of sausage recipes and preservation techniques.",
+        summary: "Historical evolution of sausage recipes and preservation techniques.",
         takeaways: [
           "Ancient sausages were often smoked or dried for preservation",
           "Regional spices influenced flavor and shelf life",

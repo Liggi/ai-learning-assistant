@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import { Logger } from "@/lib/logger";
-import { SerializedArticle, SerializedSubject } from "@/types/serialized";
-import extractBoldFromMarkdown from "@/lib/extract-bolded-from-markdown";
-import { generate } from "@/features/generators/tooltips";
-import { useUpdateArticle } from "./api/articles";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
+import { generate } from "@/features/generators/tooltips";
+import extractBoldFromMarkdown from "@/lib/extract-bolded-from-markdown";
+import { Logger } from "@/lib/logger";
+import type { SerializedArticle, SerializedSubject } from "@/types/serialized";
+import { useUpdateArticle } from "./api/articles";
 
 const logger = new Logger({ context: "useContextualTooltips", enabled: false });
 
@@ -49,7 +49,6 @@ export function useContextualTooltips(
       return;
     }
 
-
     tooltipGenerationAttempted.current = true;
 
     const generateTooltips = async () => {
@@ -74,14 +73,16 @@ export function useContextualTooltips(
         setTooltips(result.tooltips);
         setTooltipsReady(true);
 
-        updateArticleMutation.mutateAsync({
-          id: article.id,
-          tooltips: result.tooltips,
-        }).catch((dbError) => {
-          logger.error("Failed to save tooltips to database", {
-            errorMessage: dbError instanceof Error ? dbError.message : String(dbError),
+        updateArticleMutation
+          .mutateAsync({
+            id: article.id,
+            tooltips: result.tooltips,
+          })
+          .catch((dbError) => {
+            logger.error("Failed to save tooltips to database", {
+              errorMessage: dbError instanceof Error ? dbError.message : String(dbError),
+            });
           });
-        });
       } catch (error) {
         logger.error("Tooltip generation failed", {
           errorMessage: error instanceof Error ? error.message : String(error),
@@ -91,13 +92,7 @@ export function useContextualTooltips(
     };
 
     generateTooltips();
-  }, [
-    article?.id,
-    article?.content,
-    subject.title,
-    updateArticleMutation,
-    queryClient,
-  ]);
+  }, [article?.id, article?.content, subject.title, updateArticleMutation, queryClient]);
 
   useEffect(() => {
     if (tooltipGenerationAttempted.current) {

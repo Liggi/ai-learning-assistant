@@ -1,10 +1,5 @@
-import {
-  Handle,
-  Position,
-  type NodeProps,
-  type Node as ReactFlowNode,
-} from "@xyflow/react";
 import { useParams } from "@tanstack/react-router";
+import { Handle, type NodeProps, Position, type Node as ReactFlowNode } from "@xyflow/react";
 import MarkdownDisplay from "../markdown-display";
 import { Skeleton } from "../ui/skeleton";
 
@@ -32,7 +27,6 @@ const nodeStyles = {
 };
 
 export default function ArticleNode({ data }: ArticleNodeProps) {
-  
   const params = useParams({ strict: false }) as {
     articleId?: string;
     subjectId?: string;
@@ -40,14 +34,14 @@ export default function ArticleNode({ data }: ArticleNodeProps) {
   const urlArticleId = params.articleId;
 
   const isUrlSelected =
-    (!!urlArticleId && urlArticleId === data.id) ||
-    (!urlArticleId && data.isRoot === true);
+    (!!urlArticleId && urlArticleId === data.id) || (!urlArticleId && data.isRoot === true);
 
   const isQuestionType = data.isUser;
   const style = isQuestionType ? nodeStyles.question : nodeStyles.answer;
-  
+
   // Show loading skeleton if article has no summary (content is streaming)
-  const isLoading = !isQuestionType && (!data.content.summary || data.content.summary.trim() === "");
+  const isLoading =
+    !isQuestionType && (!data.content.summary || data.content.summary.trim() === "");
 
   return (
     <div
@@ -81,7 +75,7 @@ export default function ArticleNode({ data }: ArticleNodeProps) {
             <Skeleton className="h-4 w-4/5 bg-slate-700/50" />
             <Skeleton className="h-4 w-3/4 bg-slate-700/50" />
           </div>
-          
+
           {/* Loading skeleton for takeaways */}
           <div className="space-y-2 pt-2 border-t border-slate-700/50">
             <div className="flex items-start gap-2">
@@ -100,17 +94,12 @@ export default function ArticleNode({ data }: ArticleNodeProps) {
         </>
       ) : (
         <>
-          <div className="text-gray-100 text-sm font-medium mb-3">
-            {data.content.summary}
-          </div>
-          
+          <div className="text-gray-100 text-sm font-medium mb-3">{data.content.summary}</div>
+
           {data.content.takeaways && data.content.takeaways.length > 0 && (
             <div className="space-y-1.5 pt-2 border-t border-slate-700/50">
               {data.content.takeaways.map((takeaway, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-2 text-xs text-slate-300"
-                >
+                <div key={index} className="flex items-start gap-2 text-xs text-slate-300">
                   <div className="mt-2 w-1.5 h-1.5 rounded-full bg-green-500/40 flex-shrink-0" />
                   <div>
                     <MarkdownDisplay content={takeaway} />

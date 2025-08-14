@@ -65,9 +65,7 @@ export function extractSummary(content: string): string {
     // Skip headings and empty paragraphs
     if (!paragraph.startsWith("#") && paragraph.trim().length > 0) {
       // Limit to a reasonable length for a summary
-      const summary =
-        paragraph.trim().substring(0, 150) +
-        (paragraph.length > 150 ? "..." : "");
+      const summary = paragraph.trim().substring(0, 150) + (paragraph.length > 150 ? "..." : "");
 
       logger.info(`Extracted summary: "${summary}"`);
       return summary;

@@ -20,12 +20,8 @@ export class Logger {
     return this.enabled ?? true;
   }
 
-  private getStyledLog(
-    level: string,
-    message: string
-  ): [string, string, string] {
-    const baseStyle =
-      "font-weight: bold; padding: 2px 4px; border-radius: 2px;";
+  private getStyledLog(level: string, message: string): [string, string, string] {
+    const baseStyle = "font-weight: bold; padding: 2px 4px; border-radius: 2px;";
 
     let levelStyle: string;
     switch (level) {
@@ -49,9 +45,7 @@ export class Logger {
         levelStyle = "";
     }
 
-    const label = `[${level.toUpperCase()}]${
-      this.context ? ` [${this.context}]` : ""
-    }`;
+    const label = `[${level.toUpperCase()}]${this.context ? ` [${this.context}]` : ""}`;
     const formattedLabel = `%c${label}%c ${message}`;
     const style1 = baseStyle + levelStyle; // style for the label
     const style2 = ""; // reset style for the actual message
@@ -60,10 +54,7 @@ export class Logger {
 
   debug(message: string, ...args: any[]) {
     if (!this.shouldLog()) return;
-    const [formattedLabel, style1, style2] = this.getStyledLog(
-      "debug",
-      message
-    );
+    const [formattedLabel, style1, style2] = this.getStyledLog("debug", message);
     console.debug(formattedLabel, style1, style2, ...args);
   }
 
@@ -82,10 +73,7 @@ export class Logger {
   error(message: string, ...args: any[]) {
     // Always using the same shouldLog logic for consistency.
     if (!this.shouldLog()) return;
-    const [formattedLabel, style1, style2] = this.getStyledLog(
-      "error",
-      message
-    );
+    const [formattedLabel, style1, style2] = this.getStyledLog("error", message);
     console.error(formattedLabel, style1, style2, ...args);
   }
 

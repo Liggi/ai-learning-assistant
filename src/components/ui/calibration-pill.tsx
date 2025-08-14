@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const levelColors = {
   "No calibration": "from-[#374151] to-[#1F2937]",

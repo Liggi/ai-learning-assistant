@@ -1,16 +1,6 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  type UseQueryResult,
-} from "@tanstack/react-query";
-import {
-  createSubject,
-  getSubject,
-  getAllSubjects,
-  updateSubject,
-} from "@/prisma/subjects";
-import { SerializedSubject } from "@/types/serialized";
+import { type UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createSubject, getAllSubjects, getSubject, updateSubject } from "@/prisma/subjects";
+import type { SerializedSubject } from "@/types/serialized";
 
 export function useSubjects() {
   return useQuery<SerializedSubject[]>({
@@ -21,9 +11,7 @@ export function useSubjects() {
   });
 }
 
-export function useSubject(
-  subjectId: string
-): UseQueryResult<SerializedSubject | null> {
+export function useSubject(subjectId: string): UseQueryResult<SerializedSubject | null> {
   return useQuery<SerializedSubject | null>({
     queryKey: ["subjects", subjectId],
     queryFn: async () => {
@@ -41,7 +29,7 @@ export function useCreateSubject() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
-    }
+    },
   });
 }
 

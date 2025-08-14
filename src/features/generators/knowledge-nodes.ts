@@ -1,10 +1,10 @@
-import { createServerFn } from "@tanstack/react-start";
-import { generateKnowledgeNodesPrompt } from "@/prompts/roadmap/generate-knowledge-nodes";
-import { robustLLMCall } from "@/lib/robust-llm-call";
-import { extractJSON } from "@/features/llm-base";
-import { z } from "zod";
-import { Logger } from "@/lib/logger";
 import Anthropic from "@anthropic-ai/sdk";
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { extractJSON } from "@/features/llm-base";
+import { Logger } from "@/lib/logger";
+import { robustLLMCall } from "@/lib/robust-llm-call";
+import { generateKnowledgeNodesPrompt } from "@/prompts/roadmap/generate-knowledge-nodes";
 
 const logger = new Logger({ context: "KnowledgeNodes", enabled: false });
 
@@ -12,13 +12,7 @@ const knowledgeNodesSchema = z.object({
   nodes: z.array(
     z.object({
       name: z.string(),
-      complexity: z.enum([
-        "basic",
-        "intermediate",
-        "advanced",
-        "expert",
-        "master",
-      ]),
+      complexity: z.enum(["basic", "intermediate", "advanced", "expert", "master"]),
     })
   ),
 });
@@ -42,21 +36,22 @@ export const generate = createServerFn({ method: "POST" })
           "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
           "Helicone-Property-Type": "knowledge-nodes",
           "Helicone-Property-Subject": data.subject,
-        }
+        },
       });
 
       const response = await robustLLMCall(
-        () => anthropic.messages.create({
-          model: "claude-3-7-sonnet-latest",
-          max_tokens: 4096,
-          messages: [{ role: "user", content: prompt }],
-        }),
+        () =>
+          anthropic.messages.create({
+            model: "claude-3-7-sonnet-latest",
+            max_tokens: 4096,
+            messages: [{ role: "user", content: prompt }],
+          }),
         {
-          provider: 'anthropic',
-          requestType: 'knowledge-nodes',
+          provider: "anthropic",
+          requestType: "knowledge-nodes",
           metadata: {
             subject: data.subject,
-          }
+          },
         }
       );
 
@@ -64,9 +59,7 @@ export const generate = createServerFn({ method: "POST" })
       const parsedResponse = JSON.parse(jsonString);
       const validatedResponse = knowledgeNodesSchema.parse(parsedResponse);
 
-      logger.info(
-        `Successfully generated ${validatedResponse.nodes.length} knowledge nodes`
-      );
+      logger.info(`Successfully generated ${validatedResponse.nodes.length} knowledge nodes`);
 
       const sortedNodes = [...validatedResponse.nodes].sort((a, b) => {
         const complexityOrder = {

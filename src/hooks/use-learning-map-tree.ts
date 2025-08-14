@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import {
-  SerializedLearningMap,
+import type {
   SerializedArticle,
+  SerializedLearningMap,
   SerializedQuestion,
 } from "@/types/serialized";
 
@@ -87,10 +87,7 @@ export function useLearningMapTree(
       const parentQuestions = questionsByParentId.get(articleId) || [];
 
       for (const question of parentQuestions) {
-        const childArticle = buildArticleNode(
-          question.childArticleId,
-          newVisitedIds
-        );
+        const childArticle = buildArticleNode(question.childArticleId, newVisitedIds);
 
         outgoingQuestions.push({
           id: question.id,

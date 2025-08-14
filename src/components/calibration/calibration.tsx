@@ -1,15 +1,12 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import {
-  CalibrationPill,
-  type CalibrationLevel,
-} from "@/components/ui/calibration-pill";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { type CalibrationLevel, CalibrationPill } from "@/components/ui/calibration-pill";
 import { useKnowledgeNodes } from "@/features/queries";
-import { SerializedSubject } from "@/types/serialized";
-import { CalibrationLoading } from "./loading";
+import type { SerializedSubject } from "@/types/serialized";
 import { KnowledgeNode } from "./knowledge-node";
+import { CalibrationLoading } from "./loading";
 
 interface ExistingKnowledgeCalibrationProps {
   subject: SerializedSubject;
@@ -22,15 +19,9 @@ export default function Calibration({
   onBack,
   onNext,
 }: ExistingKnowledgeCalibrationProps) {
-  const {
-    data: knowledgeNodes,
-    isLoading,
-    error,
-  } = useKnowledgeNodes(subject.title);
+  const { data: knowledgeNodes, isLoading, error } = useKnowledgeNodes(subject.title);
 
-  const [selectedKnowledgeNodes, setSelectedKnowledgeNodes] = useState<
-    Set<string>
-  >(new Set());
+  const [selectedKnowledgeNodes, setSelectedKnowledgeNodes] = useState<Set<string>>(new Set());
 
   const toggleKnowledgeNode = (id: string) => {
     setSelectedKnowledgeNodes((prev) => {
@@ -113,8 +104,7 @@ const CalibrationHeader = ({
       >
         <h2 className="text-3xl font-semibold mb-2">Calibration</h2>
         <p className="text-gray-400 mb-6">
-          Select concepts you're familiar with to help me calibrate to your
-          current level.
+          Select concepts you're familiar with to help me calibrate to your current level.
         </p>
         <div className="flex flex-col items-center gap-3">
           <CalibrationPill
@@ -127,8 +117,7 @@ const CalibrationHeader = ({
             }
           />
           <div className="inline-block bg-[#1C1F26] rounded-full px-4 py-2 text-gray-400">
-            {selectedKnowledgeNodes.size} of {totalKnowledgeNodes} concepts
-            selected
+            {selectedKnowledgeNodes.size} of {totalKnowledgeNodes} concepts selected
           </div>
         </div>
       </motion.div>
@@ -148,21 +137,11 @@ const CalibrationFooter = ({
   return (
     <div className="border-t border-gray-800 p-4 bg-[#0B0D11]">
       <div className="max-w-[900px] mx-auto flex justify-between">
-        <Button
-          variant="outline"
-          onClick={onBack}
-          className="text-gray-400 hover:text-white"
-        >
+        <Button variant="outline" onClick={onBack} className="text-gray-400 hover:text-white">
           <ChevronLeft className="mr-2 h-4 w-4" /> Back
         </Button>
-        <Button
-          onClick={onNext}
-          variant="outline"
-          className="text-gray-400 hover:text-white"
-        >
-          {selectedKnowledgeNodes.size > 0
-            ? "Continue with selection"
-            : "Continue"}
+        <Button onClick={onNext} variant="outline" className="text-gray-400 hover:text-white">
+          {selectedKnowledgeNodes.size > 0 ? "Continue with selection" : "Continue"}
           <ChevronRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
@@ -175,11 +154,7 @@ const ErrorState = ({ onBack }: { onBack: () => void }) => {
     <div className="w-full h-screen flex items-center justify-center bg-[#0B0D11] text-white">
       <div className="text-center text-red-400">
         <p>Error loading knowledge nodes. Please try again.</p>
-        <Button
-          onClick={onBack}
-          variant="outline"
-          className="mt-4 text-gray-400 hover:text-white"
-        >
+        <Button onClick={onBack} variant="outline" className="mt-4 text-gray-400 hover:text-white">
           Back
         </Button>
       </div>

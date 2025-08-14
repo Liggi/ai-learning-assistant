@@ -1,20 +1,20 @@
-import React, { useEffect, useCallback, useRef } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { SuggestedQuestions } from "./suggested-questions";
-import PersonalLearningMapFlow from "./personal-learning-map-flow";
-import {
-  SerializedSubject,
+import React, { useCallback, useEffect, useRef } from "react";
+import { useMapReconciliation } from "@/hooks/use-map-reconciliation";
+import { useStableLearningMap } from "@/hooks/use-stable-learning-map";
+import { Logger } from "@/lib/logger";
+import type {
   SerializedArticle,
   SerializedLearningMap,
+  SerializedSubject,
 } from "@/types/serialized";
-import { Logger } from "@/lib/logger";
-import StreamingArticleDisplay from "./streaming-article-display/streaming-article-display";
-import { useNavigate } from "@tanstack/react-router";
 import ArticleContent from "./article-content";
 import { CustomQuestionInput } from "./custom-question-input";
-import { useStableLearningMap } from "@/hooks/use-stable-learning-map";
-import { useMapReconciliation } from "@/hooks/use-map-reconciliation";
-import { LearningMapHandle } from "./learning-map";
+import type { LearningMapHandle } from "./learning-map";
+import PersonalLearningMapFlow from "./personal-learning-map-flow";
+import StreamingArticleDisplay from "./streaming-article-display/streaming-article-display";
+import { SuggestedQuestions } from "./suggested-questions";
 
 const logger = new Logger({ context: "LearningInterface", enabled: false });
 
@@ -36,9 +36,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
   });
 
   // Keep track of the current active article ID to detect changes
-  const prevArticleIdRef = React.useRef<string | null>(
-    activeArticle?.id || null
-  );
+  const prevArticleIdRef = React.useRef<string | null>(activeArticle?.id || null);
   React.useEffect(() => {
     // Check if the article ID has changed
     if (activeArticle?.id && prevArticleIdRef.current !== activeArticle.id) {
@@ -56,7 +54,6 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
 
   // Only changes when the ID / updatedAt changes
   const stableLearningMap = useStableLearningMap(learningMap);
-
 
   // Handle reconciliation between server state and map state
   useMapReconciliation(stableLearningMap, mapRef);
@@ -95,21 +92,18 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
     [navigate]
   );
 
-  const handleQuestionCreated = useCallback(
-    (questionText: string, parentArticleId: string) => {
-      logger.info("Question created, will be added via reconciliation", {
-        questionText,
-        parentArticleId,
-      });
-    },
-    []
-  );
+  const handleQuestionCreated = useCallback((questionText: string, parentArticleId: string) => {
+    logger.info("Question created, will be added via reconciliation", {
+      questionText,
+      parentArticleId,
+    });
+  }, []);
 
   if (!learningMap || !activeArticle) {
-    logger.warn(
-      "Missing learning map or root article despite no loading/error state",
-      { learningMapId: learningMap?.id, rootArticleId: activeArticle?.id }
-    );
+    logger.warn("Missing learning map or root article despite no loading/error state", {
+      learningMapId: learningMap?.id,
+      rootArticleId: activeArticle?.id,
+    });
     return <div>Error initializing the learning interface.</div>;
   }
 
@@ -156,10 +150,7 @@ const LearningInterface: React.FC<LearningInterfaceProps> = ({
                   {activeArticle.content ? (
                     <ArticleContent article={activeArticle} subject={subject} />
                   ) : (
-                    <StreamingArticleDisplay
-                      article={activeArticle}
-                      subject={subject}
-                    />
+                    <StreamingArticleDisplay article={activeArticle} subject={subject} />
                   )}
                 </>
               ) : (

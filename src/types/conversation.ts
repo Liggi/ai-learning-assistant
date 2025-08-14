@@ -1,4 +1,4 @@
-import { Node, Edge } from "@xyflow/react";
+import type { Edge, Node } from "@xyflow/react";
 import { z } from "zod";
 
 // Node data interface

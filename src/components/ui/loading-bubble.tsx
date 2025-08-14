@@ -1,5 +1,5 @@
-import React from "react";
 import { motion } from "framer-motion";
+import type React from "react";
 
 export const LoadingBubble: React.FC = () => {
   return (
@@ -15,9 +15,7 @@ export const LoadingBubble: React.FC = () => {
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
     >
-      <p className="text-[13px] leading-relaxed text-white/70 relative z-10">
-        AI is thinking
-      </p>
+      <p className="text-[13px] leading-relaxed text-white/70 relative z-10">AI is thinking</p>
       <div className="relative w-6 h-6 z-10">
         <div className="absolute inset-0 border border-slate-700/50 rounded-full" />
         <motion.div

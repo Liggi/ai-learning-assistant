@@ -1,7 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useSession } from "@/lib/auth-client";
 import { useEffect } from "react";
 import Loading from "@/components/ui/loading";
+import { useSession } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/loading")({
   component: LoadingTest,

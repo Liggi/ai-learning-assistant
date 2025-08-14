@@ -6,10 +6,7 @@ interface ButtonLoadingProps {
   children?: React.ReactNode;
 }
 
-export function ButtonLoading({
-  className,
-  children = "Please wait",
-}: ButtonLoadingProps) {
+export function ButtonLoading({ className, children = "Please wait" }: ButtonLoadingProps) {
   return (
     <Button disabled className={className}>
       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

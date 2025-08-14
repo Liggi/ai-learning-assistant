@@ -1,11 +1,11 @@
-import { createServerFn } from "@tanstack/react-start";
-import { generateSummaryPrompt } from "@/prompts/chat/summary";
-import { robustLLMCall } from "@/lib/robust-llm-call";
-import { extractJSON } from "@/features/llm-base";
 import Anthropic from "@anthropic-ai/sdk";
+import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { extractJSON } from "@/features/llm-base";
 import { Logger } from "@/lib/logger";
+import { robustLLMCall } from "@/lib/robust-llm-call";
 import prisma from "@/prisma/client";
+import { generateSummaryPrompt } from "@/prompts/chat/summary";
 import { serializeArticle } from "@/types/serializers";
 
 const logger = new Logger({ context: "ArticleSummary", enabled: false });
@@ -66,9 +66,7 @@ export const generateSummary = createServerFn({ method: "POST" })
       const parsedResponse = JSON.parse(jsonString);
       const validatedResponse = summarySchema.parse(parsedResponse);
 
-      logger.info(
-        `Successfully generated summary: "${validatedResponse.summary}"`
-      );
+      logger.info(`Successfully generated summary: "${validatedResponse.summary}"`);
 
       const updatedArticle = await prisma.article.update({
         where: { id: data.articleId },

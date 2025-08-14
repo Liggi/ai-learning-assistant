@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getOrCreateLearningMap } from "@/prisma/learning-maps";
-import { SerializedLearningMap } from "@/types/serialized";
+import type { SerializedLearningMap } from "@/types/serialized";
 
 /**
  * Hook to find or create a learning map for a subject

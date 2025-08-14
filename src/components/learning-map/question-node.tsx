@@ -1,9 +1,4 @@
-import {
-  Handle,
-  Position,
-  type NodeProps,
-  type Node as ReactFlowNode,
-} from "@xyflow/react";
+import { Handle, type NodeProps, Position, type Node as ReactFlowNode } from "@xyflow/react";
 
 interface QuestionNodeData extends Record<string, unknown> {
   id: string;
@@ -27,13 +22,9 @@ export default function QuestionNode({ data }: QuestionNodeProps) {
         rounded-xl backdrop-blur-sm min-w-[200px] max-w-[200px]
       "
     >
-      <div className="text-xs font-medium mb-2 text-blue-400">
-        Question
-      </div>
+      <div className="text-xs font-medium mb-2 text-blue-400">Question</div>
 
-      <div className="text-gray-100 text-sm font-medium">
-        {data.text}
-      </div>
+      <div className="text-gray-100 text-sm font-medium">{data.text}</div>
 
       <Handle
         type="target"

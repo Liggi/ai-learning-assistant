@@ -1,11 +1,11 @@
-import { z } from "zod";
-import prisma from "@/prisma/client";
 import { createServerFn } from "@tanstack/react-start";
 import { getWebRequest } from "@tanstack/react-start/server";
-import { Logger } from "@/lib/logger";
-import { SerializedSubject } from "@/types/serialized";
-import { serializeSubject } from "@/types/serializers";
+import { z } from "zod";
 import { auth } from "@/lib/auth.server";
+import { Logger } from "@/lib/logger";
+import prisma from "@/prisma/client";
+import type { SerializedSubject } from "@/types/serialized";
+import { serializeSubject } from "@/types/serializers";
 
 const logger = new Logger({ context: "SubjectsService", enabled: false });
 
@@ -17,13 +17,13 @@ export const createSubject = createServerFn({ method: "POST" })
   .validator((data: unknown) => createSubjectSchema.parse(data))
   .handler(async ({ data, context }): Promise<SerializedSubject> => {
     logger.info("Creating subject", { title: data.title });
-    
+
     const { headers } = getWebRequest()!;
     const session = await auth.api.getSession({ headers });
     if (!session) {
       throw new Error("Unauthorized");
     }
-    
+
     try {
       const subject = await prisma.subject.create({
         data: {
@@ -56,7 +56,7 @@ export const updateSubject = createServerFn({ method: "POST" })
     const { id, ...updateData } = data;
 
     logger.info("Updating subject", { id, ...updateData });
-    
+
     const { headers } = getWebRequest()!;
     const session = await auth.api.getSession({ headers });
     if (!session) {
@@ -91,18 +91,21 @@ export const getAllSubjects = createServerFn({ method: "GET" })
   })
   .handler(async ({ context }) => {
     logger.info("Fetching all subjects");
-    
+
     const { headers } = getWebRequest()!;
     const session = await auth.api.getSession({ headers });
     if (!session) {
       throw new Error("Unauthorized");
     }
-    
+
     try {
       const subjects = await prisma.subject.findMany({
         where: { userId: session.user.id },
       });
-      logger.info("Subjects fetched successfully", { count: subjects.length, userId: session.user.id });
+      logger.info("Subjects fetched successfully", {
+        count: subjects.length,
+        userId: session.user.id,
+      });
       return subjects.map(serializeSubject);
     } catch (error) {
       logger.error("Failed to fetch subjects", {
@@ -121,13 +124,13 @@ export const getSubject = createServerFn({ method: "GET" })
   .validator((data: unknown) => getSubjectSchema.parse(data))
   .handler(async ({ data, context }): Promise<SerializedSubject | null> => {
     logger.info("Fetching subject", { id: data.id });
-    
+
     const { headers } = getWebRequest()!;
     const session = await auth.api.getSession({ headers });
     if (!session) {
       throw new Error("Unauthorized");
     }
-    
+
     try {
       const subject = await prisma.subject.findUnique({
         where: { id: data.id, userId: session.user.id },

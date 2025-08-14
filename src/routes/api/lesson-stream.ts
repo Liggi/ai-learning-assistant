@@ -1,11 +1,11 @@
-import { createServerFileRoute } from '@tanstack/react-start/server'
+import { createServerFileRoute } from "@tanstack/react-start/server";
 import { AnthropicProvider } from "@/features/anthropic";
-import { createPrompt } from "@/prompts/chat/lesson";
 import { Logger } from "@/lib/logger";
+import { createPrompt } from "@/prompts/chat/lesson";
 
 const streamLogger = new Logger({ context: "API:/api/lesson-stream", enabled: false });
 
-export const ServerRoute = createServerFileRoute('/api/lesson-stream').methods({
+export const ServerRoute = createServerFileRoute("/api/lesson-stream").methods({
   POST: async ({ request }) => {
     const reqId = `stream_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     try {
@@ -14,13 +14,10 @@ export const ServerRoute = createServerFileRoute('/api/lesson-stream').methods({
       // Validate request integrity
       if (!request.body) {
         streamLogger.error(`[${reqId}] Request body is null`);
-        return new Response(
-          JSON.stringify({ error: "Request body is missing" }),
-          {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        return new Response(JSON.stringify({ error: "Request body is missing" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
       }
 
       // Parse request data
@@ -29,10 +26,7 @@ export const ServerRoute = createServerFileRoute('/api/lesson-stream').methods({
         requestData = await request.json();
         streamLogger.debug(`[${reqId}] Parsed request data`);
       } catch (parseError) {
-        streamLogger.error(
-          `[${reqId}] Failed to parse request body`,
-          parseError
-        );
+        streamLogger.error(`[${reqId}] Failed to parse request body`, parseError);
         return new Response(
           JSON.stringify({
             error: "Failed to parse request body",
@@ -59,13 +53,10 @@ export const ServerRoute = createServerFileRoute('/api/lesson-stream').methods({
 
       // Validate required fields based on context type
       if (!subject || !message) {
-        streamLogger.error(
-          `[${reqId}] Missing required fields: subject or message`
-        );
+        streamLogger.error(`[${reqId}] Missing required fields: subject or message`);
         return new Response(
           JSON.stringify({
-            error:
-              "Missing required fields: subject and message are always required",
+            error: "Missing required fields: subject and message are always required",
           }),
           {
             status: 400,
@@ -75,42 +66,28 @@ export const ServerRoute = createServerFileRoute('/api/lesson-stream').methods({
       }
 
       // Context-specific validation
-      if (
-        contextType === "introduction" &&
-        (!moduleTitle || !moduleDescription)
-      ) {
-        streamLogger.error(
-          `[${reqId}] Missing required fields for introduction context:`,
-          {
-            moduleTitle,
-            moduleDescription,
-          }
-        );
+      if (contextType === "introduction" && (!moduleTitle || !moduleDescription)) {
+        streamLogger.error(`[${reqId}] Missing required fields for introduction context:`, {
+          moduleTitle,
+          moduleDescription,
+        });
         return new Response(
           JSON.stringify({
-            error:
-              "Introduction context requires moduleTitle and moduleDescription",
+            error: "Introduction context requires moduleTitle and moduleDescription",
           }),
           {
             status: 400,
             headers: { "Content-Type": "application/json" },
           }
         );
-      } else if (
-        contextType === "question" &&
-        (!triggeringQuestion || !parentContent)
-      ) {
-        streamLogger.error(
-          `[${reqId}] Missing required fields for question context:`,
-          {
-            triggeringQuestion,
-            hasParentContent: !!parentContent,
-          }
-        );
+      } else if (contextType === "question" && (!triggeringQuestion || !parentContent)) {
+        streamLogger.error(`[${reqId}] Missing required fields for question context:`, {
+          triggeringQuestion,
+          hasParentContent: !!parentContent,
+        });
         return new Response(
           JSON.stringify({
-            error:
-              "Question context requires triggeringQuestion and parentContent",
+            error: "Question context requires triggeringQuestion and parentContent",
           }),
           {
             status: 400,
@@ -153,17 +130,11 @@ export const ServerRoute = createServerFileRoute('/api/lesson-stream').methods({
         provider = new AnthropicProvider();
         streamLogger.info(`[${reqId}] AnthropicProvider initialized`);
       } catch (providerError) {
-        streamLogger.error(
-          `[${reqId}] Failed to initialize provider`,
-          providerError
-        );
-        return new Response(
-          JSON.stringify({ error: "API configuration error" }),
-          {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        streamLogger.error(`[${reqId}] Failed to initialize provider`, providerError);
+        return new Response(JSON.stringify({ error: "API configuration error" }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        });
       }
 
       // Create a streaming response using ReadableStream
@@ -188,32 +159,23 @@ export const ServerRoute = createServerFileRoute('/api/lesson-stream').methods({
             let totalBytes = 0;
 
             for await (const event of messageStream) {
-              if (
-                event.type === "content_block_delta" &&
-                event.delta.type === "text_delta"
-              ) {
+              if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
                 const text = event.delta.text;
                 const encoded = new TextEncoder().encode(text);
                 totalBytes += encoded.length;
                 chunkCount++;
 
                 if (chunkCount % 20 === 0) {
-                  streamLogger.debug(
-                    `[${reqId}] Streamed ${chunkCount} chunks`
-                  );
+                  streamLogger.debug(`[${reqId}] Streamed ${chunkCount} chunks`);
                 }
 
                 controller.enqueue(encoded);
               } else if (event.type === "message_stop") {
-                streamLogger.info(
-                  `[${reqId}] Stream finished by message_stop event.`
-                );
+                streamLogger.info(`[${reqId}] Stream finished by message_stop event.`);
               }
             }
 
-            streamLogger.info(
-              `[${reqId}] Stream complete. Total chunks: ${chunkCount}`
-            );
+            streamLogger.info(`[${reqId}] Stream complete. Total chunks: ${chunkCount}`);
             controller.close();
           } catch (error: any) {
             streamLogger.error(`[${reqId}] Stream error`, {

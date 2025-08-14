@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useUpdateArticle } from "@/hooks/api/articles";
-import { Logger } from "@/lib/logger";
-import { useQuestionByChildArticleId } from "@/hooks/api/questions";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useUpdateArticle } from "@/hooks/api/articles";
+import { useQuestionByChildArticleId } from "@/hooks/api/questions";
+import { Logger } from "@/lib/logger";
 
 const logger = new Logger({
   context: "useStreamArticleContent",
@@ -116,8 +116,7 @@ export function useStreamArticleContent(
   const [content, setContent] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamComplete, setStreamComplete] = useState(false);
-  const [abortController, setAbortController] =
-    useState<AbortController | null>(null);
+  const [abortController, setAbortController] = useState<AbortController | null>(null);
 
   // Track the previous article ID to detect changes
   const previousArticleId = useRef<string | null>(null);
@@ -208,7 +207,6 @@ export function useStreamArticleContent(
         content: fullContent,
       });
 
-      
       // Invalidate React Query cache for article data
       queryClient.invalidateQueries({
         queryKey: ["article", currentArticleId],
@@ -219,10 +217,7 @@ export function useStreamArticleContent(
 
       setStreamComplete(true);
     } catch (error) {
-      if (
-        error.name !== "AbortError" &&
-        error.message !== "Streaming aborted"
-      ) {
+      if (error.name !== "AbortError" && error.message !== "Streaming aborted") {
         logger.error("Streaming error:", error);
       } else {
         logger.info("Streaming aborted or interrupted");
@@ -303,8 +298,7 @@ export function useStreamArticleContent(
 
     if (currentArticleId) {
       // We have a valid, stable article ID
-      const articleHasContent =
-        article?.content && article.content.trim() !== "";
+      const articleHasContent = article?.content && article.content.trim() !== "";
 
       if (articleHasContent) {
         // Article has content - set local state if it differs
@@ -321,16 +315,15 @@ export function useStreamArticleContent(
       } else {
         // Article has NO content - attempt to stream if not already complete
         if (!streamComplete) {
-          logger.info(
-            "🎯 Effect 2: TRIGGERING STREAM for empty article",
-            { articleId: currentArticleId, timestamp: Date.now() }
-          );
+          logger.info("🎯 Effect 2: TRIGGERING STREAM for empty article", {
+            articleId: currentArticleId,
+            timestamp: Date.now(),
+          });
           startStreaming();
         } else {
-          logger.debug(
-            "Effect 2: Skipping stream start, already marked complete",
-            { articleId: currentArticleId }
-          );
+          logger.debug("Effect 2: Skipping stream start, already marked complete", {
+            articleId: currentArticleId,
+          });
         }
       }
     } else {

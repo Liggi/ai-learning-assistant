@@ -1,14 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { ErrorDisplay } from "@/components/error-display";
 import LearningInterface from "@/components/learning-interface";
-import { getSubject } from "@/prisma/subjects";
-import { getOrCreateLearningMap } from "@/prisma/learning-maps";
-import { createArticle, getArticle } from "@/prisma/articles";
-import { Logger } from "@/lib/logger";
-import { useQuery } from "@tanstack/react-query";
-import { useSession } from "@/lib/auth-client";
-import { useEffect } from "react";
 import Loading from "@/components/ui/loading";
+import { useSession } from "@/lib/auth-client";
+import { Logger } from "@/lib/logger";
+import { createArticle, getArticle } from "@/prisma/articles";
+import { getOrCreateLearningMap } from "@/prisma/learning-maps";
+import { getSubject } from "@/prisma/subjects";
 
 const logger = new Logger({ context: "LearningRouteLoader", enabled: false });
 
@@ -37,8 +37,7 @@ export const Route = createFileRoute("/learning/$subjectId")({
       articleCount: learningMap.articles?.length || 0,
     });
 
-    const rootArticleExists =
-      learningMap.articles?.some((article) => article.isRoot) ?? false;
+    const rootArticleExists = learningMap.articles?.some((article) => article.isRoot) ?? false;
 
     if (!rootArticleExists) {
       logger.info("Root article does not exist, creating...", {
@@ -103,8 +102,7 @@ export const Route = createFileRoute("/learning/$subjectId")({
       return null;
     }
 
-    const initialRootArticle =
-      learningMap.articles?.find((article) => article.isRoot) || null;
+    const initialRootArticle = learningMap.articles?.find((article) => article.isRoot) || null;
 
     // Add this React Query hook
     const { data: rootArticle } = useQuery({
@@ -115,11 +113,7 @@ export const Route = createFileRoute("/learning/$subjectId")({
     });
 
     return (
-      <LearningInterface
-        subject={subject}
-        learningMap={learningMap}
-        activeArticle={rootArticle}
-      />
+      <LearningInterface subject={subject} learningMap={learningMap} activeArticle={rootArticle} />
     );
   },
   errorComponent: ({ error }) => {

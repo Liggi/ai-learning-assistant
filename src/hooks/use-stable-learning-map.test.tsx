@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
 import { renderHook } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import type { SerializedLearningMap } from "@/types/serialized";
 import { useStableLearningMap } from "./use-stable-learning-map";
 
@@ -13,20 +13,18 @@ const makeMap = (updatedAt: number): SerializedLearningMap => ({
 
 describe("useStableLearningMap", () => {
   it("reuses the same object when id & updatedAt stay constant", () => {
-    const { result, rerender } = renderHook(
-      ({ m }) => useStableLearningMap(m),
-      { initialProps: { m: makeMap(1) } }
-    );
+    const { result, rerender } = renderHook(({ m }) => useStableLearningMap(m), {
+      initialProps: { m: makeMap(1) },
+    });
     const first = result.current;
     rerender({ m: makeMap(1) });
     expect(result.current).toBe(first);
   });
 
   it("returns a new object when updatedAt changes", () => {
-    const { result, rerender } = renderHook(
-      ({ m }) => useStableLearningMap(m),
-      { initialProps: { m: makeMap(1) } }
-    );
+    const { result, rerender } = renderHook(({ m }) => useStableLearningMap(m), {
+      initialProps: { m: makeMap(1) },
+    });
     const first = result.current;
     rerender({ m: makeMap(2) });
     expect(result.current).not.toBe(first);

@@ -1,11 +1,11 @@
-import { describe, it, expect } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { useLearningMapTree } from "./use-learning-map-tree";
+import { describe, expect, it } from "vitest";
 import type {
-  SerializedLearningMap,
   SerializedArticle,
+  SerializedLearningMap,
   SerializedQuestion,
 } from "@/types/serialized";
+import { useLearningMapTree } from "./use-learning-map-tree";
 
 // --- Mock Data ---
 
@@ -82,9 +82,7 @@ describe("useLearningMapTree", () => {
     const { result: resultNull } = renderHook(() => useLearningMapTree(null));
     expect(resultNull.current).toBeNull();
 
-    const { result: resultUndefined } = renderHook(() =>
-      useLearningMapTree(undefined)
-    );
+    const { result: resultUndefined } = renderHook(() => useLearningMapTree(undefined));
     expect(resultUndefined.current).toBeNull();
   });
 
@@ -158,18 +156,14 @@ describe("useLearningMapTree", () => {
     expect(result.current?.outgoingQuestions).toHaveLength(2);
 
     // Check branch 1 (A1 -> Q1 -> A2)
-    const questionNode1 = result.current?.outgoingQuestions.find(
-      (q) => q.id === "q1"
-    );
+    const questionNode1 = result.current?.outgoingQuestions.find((q) => q.id === "q1");
     expect(questionNode1).toBeDefined();
     expect(questionNode1?.childArticle?.id).toBe("a2");
     expect(questionNode1?.childArticle?.data).toEqual(mockArticle2);
     expect(questionNode1?.childArticle?.outgoingQuestions).toHaveLength(0);
 
     // Check branch 2 (A1 -> Q2 -> A3)
-    const questionNode2 = result.current?.outgoingQuestions.find(
-      (q) => q.id === "q2"
-    );
+    const questionNode2 = result.current?.outgoingQuestions.find((q) => q.id === "q2");
     expect(questionNode2).toBeDefined();
     expect(questionNode2?.childArticle?.id).toBe("a3");
     expect(questionNode2?.childArticle?.data).toEqual(mockArticle3);
@@ -249,10 +243,9 @@ describe("useLearningMapTree", () => {
       articles: [mockArticle1, mockArticle2],
       questions: [mockQuestion1_2],
     };
-    const { result, rerender } = renderHook(
-      ({ map }) => useLearningMapTree(map),
-      { initialProps: { map: initialMap } }
-    );
+    const { result, rerender } = renderHook(({ map }) => useLearningMapTree(map), {
+      initialProps: { map: initialMap },
+    });
 
     // Initial state check
     expect(result.current?.id).toBe("a1");
@@ -271,12 +264,8 @@ describe("useLearningMapTree", () => {
     // Updated state check
     expect(result.current?.id).toBe("a1");
     expect(result.current?.outgoingQuestions).toHaveLength(2); // Now has two questions
-    const questionNode1 = result.current?.outgoingQuestions.find(
-      (q) => q.id === "q1"
-    );
-    const questionNode2 = result.current?.outgoingQuestions.find(
-      (q) => q.id === "q2"
-    );
+    const questionNode1 = result.current?.outgoingQuestions.find((q) => q.id === "q1");
+    const questionNode2 = result.current?.outgoingQuestions.find((q) => q.id === "q2");
     expect(questionNode1?.childArticle?.id).toBe("a2");
     expect(questionNode2?.childArticle?.id).toBe("a3");
   });

@@ -1,15 +1,10 @@
-import React, { useCallback } from "react";
-import {
-  ReactFlowProvider,
-  ReactFlow,
-  Background,
-  Controls,
-  Edge,
-} from "@xyflow/react";
+import { Background, Controls, Edge, ReactFlow, ReactFlowProvider } from "@xyflow/react";
+import type React from "react";
+import { useCallback } from "react";
+import { useLearningMapElkLayout } from "@/hooks/use-react-flow-layout";
+import type { SerializedLearningMap } from "@/types/serialized";
 import ConversationNode from "./react-flow/conversation-node";
 import QuestionNode from "./react-flow/question-node";
-import { SerializedLearningMap } from "@/types/serialized";
-import { useLearningMapElkLayout } from "@/hooks/use-react-flow-layout";
 
 interface LearningMapFlowProps {
   learningMap: SerializedLearningMap | null | undefined;
@@ -29,10 +24,9 @@ const LearningMapFlow: React.FC<LearningMapFlowProps> = ({
   layoutDirection = "DOWN",
 }) => {
   // Use the ELK layout algorithm to automatically position nodes
-  const { nodes, edges, isLayouting, error } = useLearningMapElkLayout(
-    learningMap,
-    { direction: layoutDirection }
-  );
+  const { nodes, edges, isLayouting, error } = useLearningMapElkLayout(learningMap, {
+    direction: layoutDirection,
+  });
 
   const handleNodeClick = useCallback(
     (event: React.MouseEvent, node: any) => {

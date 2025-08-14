@@ -1,14 +1,9 @@
-import {
-  Outlet,
-  createRootRouteWithContext,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import { ReactFlowProvider } from "@xyflow/react";
 import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ReactFlowProvider } from "@xyflow/react";
 import cssUrl from "@/styles/globals.css?url";
 
 export const queryClient = new QueryClient();
