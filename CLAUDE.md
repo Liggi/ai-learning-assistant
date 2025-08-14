@@ -188,5 +188,6 @@ Session logs for this project should be saved to: `~/.claude/logs/personal/`
 ## Development Guidelines
 - Use existing patterns and conventions from the codebase
 - Follow the established commit message format: `[category] lowercase description`
+- Keep commit messages as one-liners - no multi-line or detailed descriptions
 - Run type checking and linting before committing changes
 - Test authentication flows thoroughly before deploying
