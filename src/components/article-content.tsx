@@ -2,7 +2,6 @@ import React from "react";
 import { SerializedArticle, SerializedSubject } from "@/types/serialized";
 import MarkdownDisplay from "./markdown-display";
 import { useContextualTooltips } from "@/hooks/use-contextual-tooltips";
-import { TooltipLoadingIndicator } from "./ui/tooltip-loading-indicator";
 import { useCreateArticleFromQuestion } from "@/hooks/api/articles";
 import { useNavigate } from "@tanstack/react-router";
 import { Logger } from "@/lib/logger";
@@ -18,7 +17,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
   article,
   subject,
 }) => {
-  const { tooltips, isGeneratingTooltips, tooltipsReady } =
+  const { tooltips, tooltipsReady } =
     useContextualTooltips(article, subject);
 
   const createArticleMutation = useCreateArticleFromQuestion();
@@ -64,12 +63,6 @@ const ArticleContent: React.FC<ArticleContentProps> = ({
 
   return (
     <div className="relative">
-      <div className="absolute top-0 right-0 z-10">
-        <TooltipLoadingIndicator
-          isLoading={isGeneratingTooltips || createArticleMutation.isPending}
-        />
-      </div>
-
       <MarkdownDisplay
         content={article.content}
         onLearnMore={handleLearnMoreRequest}

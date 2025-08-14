@@ -13,7 +13,6 @@ export function useContextualTooltips(
   subject: SerializedSubject
 ) {
   const [tooltips, setTooltips] = useState<Record<string, string>>({});
-  const [isGeneratingTooltips, setIsGeneratingTooltips] = useState(false);
   const [tooltipsReady, setTooltipsReady] = useState(false);
 
   const queryClient = useQueryClient();
@@ -29,9 +28,8 @@ export function useContextualTooltips(
       return;
     }
 
-    if (isGeneratingTooltips || tooltipGenerationAttempted.current) {
-      logger.debug("Tooltip generation already in progress or attempted", {
-        isGeneratingTooltips,
+    if (tooltipGenerationAttempted.current) {
+      logger.debug("Tooltip generation already attempted", {
         tooltipGenerationAttempted: tooltipGenerationAttempted.current,
       });
       return;
@@ -53,7 +51,6 @@ export function useContextualTooltips(
 
 
     tooltipGenerationAttempted.current = true;
-    setIsGeneratingTooltips(true);
 
     const generateTooltips = async () => {
       try {
@@ -76,7 +73,6 @@ export function useContextualTooltips(
 
         setTooltips(result.tooltips);
         setTooltipsReady(true);
-        setIsGeneratingTooltips(false);
 
         updateArticleMutation.mutateAsync({
           id: article.id,
@@ -91,7 +87,6 @@ export function useContextualTooltips(
           errorMessage: error instanceof Error ? error.message : String(error),
         });
         setTooltipsReady(true);
-        setIsGeneratingTooltips(false);
       }
     };
 
@@ -100,7 +95,6 @@ export function useContextualTooltips(
     article?.id,
     article?.content,
     subject.title,
-    isGeneratingTooltips,
     updateArticleMutation,
     queryClient,
   ]);
@@ -118,7 +112,6 @@ export function useContextualTooltips(
 
   return {
     tooltips,
-    isGeneratingTooltips,
     tooltipsReady,
   };
 }

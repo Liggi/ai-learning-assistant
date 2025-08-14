@@ -1,17 +1,15 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { TooltipLoadingIndicator } from "./tooltip-loading-indicator";
 import { QuestionsLoadingIndicator } from "./questions-loading-indicator";
 
 interface LoadingIndicatorsContainerProps {
-  isGeneratingTooltips: boolean;
   isGeneratingQuestions: boolean;
 }
 
 export const LoadingIndicatorsContainer: React.FC<
   LoadingIndicatorsContainerProps
-> = ({ isGeneratingTooltips, isGeneratingQuestions }) => {
-  const isAnyLoading = isGeneratingTooltips || isGeneratingQuestions;
+> = ({ isGeneratingQuestions }) => {
+  const isAnyLoading = isGeneratingQuestions;
 
   return (
     <AnimatePresence>
@@ -36,7 +34,6 @@ export const LoadingIndicatorsContainer: React.FC<
             },
           }}
         >
-          <TooltipLoadingIndicator isLoading={isGeneratingTooltips} />
           <QuestionsLoadingIndicator isLoading={isGeneratingQuestions} />
         </motion.div>
       )}
