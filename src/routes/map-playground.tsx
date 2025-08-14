@@ -120,30 +120,35 @@ function MapPlaygroundPage() {
         <h1 className="text-white font-semibold">Map Playground</h1>
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={addQuestionNode}
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
           >
             Add Question
           </button>
           <button
+            type="button"
             onClick={addArticleNode}
             className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
           >
             Add Article
           </button>
           <button
+            type="button"
             onClick={runLayout}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
           >
             Run Layout
           </button>
           <button
+            type="button"
             onClick={showHiddenNodes}
             className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
           >
             Show Hidden
           </button>
           <button
+            type="button"
             onClick={replaceArticleNode}
             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
           >
