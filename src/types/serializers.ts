@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { Logger } from "@/lib/logger";
-import { type ArticleSchema, type QuestionSchema, SubjectSchema } from "@/prisma/generated/zod";
+import {
+  type ArticleSchema,
+  type LearningMapSchema,
+  type QuestionSchema,
+  SubjectSchema,
+} from "@/prisma/generated/zod";
 import { toPrismaJson } from "@/utils/json";
 import {
   type ArticleMetadata,
@@ -16,6 +21,7 @@ const logger = new Logger({ context: "Serializers", enabled: false });
 type PrismaSubject = z.infer<typeof SubjectSchema>;
 type PrismaArticle = z.infer<typeof ArticleSchema>;
 type PrismaQuestion = z.infer<typeof QuestionSchema>;
+type PrismaLearningMap = z.infer<typeof LearningMapSchema>;
 
 /**
  * Schema for validating serialized subjects
@@ -70,7 +76,7 @@ export function validateAndFormatMetadata(metadata: ArticleMetadata) {
  * Serializes a LearningMap from the database to a client-friendly format
  * Converts Date objects to ISO strings and serializes nested articles
  */
-export function serializeLearningMap(learningMap: any): SerializedLearningMap {
+export function serializeLearningMap(learningMap: PrismaLearningMap): SerializedLearningMap {
   logger.debug("Serializing learning map", { id: learningMap.id });
 
   return {
@@ -78,10 +84,10 @@ export function serializeLearningMap(learningMap: any): SerializedLearningMap {
     createdAt: learningMap.createdAt.toISOString(),
     updatedAt: learningMap.updatedAt.toISOString(),
     articles: learningMap.articles
-      ? learningMap.articles.map((article: any) => serializeArticle(article))
+      ? learningMap.articles.map((article) => serializeArticle(article))
       : undefined,
     questions: learningMap.questions
-      ? learningMap.questions.map((question: any) => serializeQuestion(question))
+      ? learningMap.questions.map((question) => serializeQuestion(question))
       : undefined,
   };
 }

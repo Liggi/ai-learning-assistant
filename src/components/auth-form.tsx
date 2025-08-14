@@ -1,12 +1,15 @@
 "use client";
 
 import { useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { getSession, signIn } from "../lib/auth-client";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 export function AuthForm() {
+  const nameId = useId();
+  const emailId = useId();
+  const passwordId = useId();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -185,11 +188,11 @@ export function AuthForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {mode === "signup" && (
           <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1 text-slate-300">
+            <label htmlFor={nameId} className="block text-sm font-medium mb-1 text-slate-300">
               Name
             </label>
             <Input
-              id="name"
+              id={nameId}
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -201,11 +204,11 @@ export function AuthForm() {
         )}
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-1 text-slate-300">
+          <label htmlFor={emailId} className="block text-sm font-medium mb-1 text-slate-300">
             Email
           </label>
           <Input
-            id="email"
+            id={emailId}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -216,14 +219,14 @@ export function AuthForm() {
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium mb-1 text-slate-300">
+          <label htmlFor={passwordId} className="block text-sm font-medium mb-1 text-slate-300">
             Password{" "}
             {mode === "signup" && (
               <span className="text-xs text-slate-400">(minimum 8 characters)</span>
             )}
           </label>
           <Input
-            id="password"
+            id={passwordId}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

@@ -5,7 +5,6 @@ import { Tooltip, TooltipContent, TooltipPortal, TooltipTrigger } from "@/compon
 interface MarkdownDisplayProps {
   content: string;
   tooltips?: Record<string, string>;
-  tooltipsReady?: boolean;
   onLearnMore?: (concept: string) => void;
   isCreatingArticle?: boolean;
 }
@@ -13,7 +12,6 @@ interface MarkdownDisplayProps {
 const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
   content,
   tooltips = {},
-  tooltipsReady = false,
   onLearnMore,
   isCreatingArticle = false,
 }) => {
@@ -35,7 +33,6 @@ const MarkdownDisplay: React.FC<MarkdownDisplayProps> = ({
             <StrongText
               {...props}
               tooltips={tooltips}
-              tooltipsReady={tooltipsReady}
               onLearnMore={onLearnMore}
               isCreatingArticle={isCreatingArticle}
             />
@@ -110,7 +107,6 @@ const ListItem: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 interface StrongTextProps {
   children?: React.ReactNode;
   tooltips: Record<string, string>;
-  tooltipsReady: boolean;
   onLearnMore?: (concept: string) => void;
   isCreatingArticle: boolean;
 }
@@ -118,7 +114,6 @@ interface StrongTextProps {
 const StrongText: React.FC<StrongTextProps> = ({
   children,
   tooltips,
-  tooltipsReady,
   onLearnMore,
   isCreatingArticle,
 }) => {
@@ -149,6 +144,7 @@ const StrongText: React.FC<StrongTextProps> = ({
           </ReactMarkdown>
           <div className="mt-3 pt-3 border-t border-slate-700/50">
             <button
+              type="button"
               className={`px-3 py-1.5 rounded-full text-xs transition-colors flex items-center gap-1.5 ${
                 isCreatingArticle
                   ? "bg-slate-700 text-slate-400 cursor-not-allowed"
@@ -171,6 +167,7 @@ const StrongText: React.FC<StrongTextProps> = ({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
+                  <title>Information icon</title>
                   <circle cx="12" cy="12" r="10"></circle>
                   <path d="M12 16v-4"></path>
                   <path d="M12 8h.01"></path>

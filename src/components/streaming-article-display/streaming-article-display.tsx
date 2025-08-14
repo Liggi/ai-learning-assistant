@@ -13,7 +13,7 @@ const StreamingArticleDisplay: React.FC<StreamingArticleDisplayProps> = ({ artic
 
   return (
     <div className="relative">
-      <MarkdownDisplay content={content || ""} tooltips={{}} tooltipsReady={false} />
+      <MarkdownDisplay content={content || ""} tooltips={{}} />
 
       {/* Show streaming indicator only when actually streaming */}
       {isStreaming && (

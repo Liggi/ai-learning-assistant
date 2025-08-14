@@ -51,7 +51,7 @@ export function toPrismaJson<T>(data: T): Prisma.InputJsonValue {
         logger.info(
           "Is plain object:",
           result.data instanceof Object &&
-            !(result.data instanceof Array) &&
+            !Array.isArray(result.data) &&
             !(result.data instanceof Date)
         );
       }

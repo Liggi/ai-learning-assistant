@@ -14,7 +14,7 @@ interface ArticleContentProps {
 }
 
 const ArticleContent: React.FC<ArticleContentProps> = ({ article, subject }) => {
-  const { tooltips, tooltipsReady } = useContextualTooltips(article, subject);
+  const { tooltips } = useContextualTooltips(article, subject);
 
   const createArticleMutation = useCreateArticleFromQuestion();
   const navigate = useNavigate();
@@ -60,7 +60,6 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ article, subject }) => 
         content={article.content}
         onLearnMore={handleLearnMoreRequest}
         tooltips={tooltips}
-        tooltipsReady={tooltipsReady}
         isCreatingArticle={createArticleMutation.isPending}
       />
       {createArticleMutation.isError && (

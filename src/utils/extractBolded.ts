@@ -5,11 +5,13 @@ export function extractBoldedSegments(markdownText: string): string[] {
   const matches: string[] = [];
   let match: RegExpExecArray | null;
 
-  while ((match = boldRegex.exec(markdownText)) !== null) {
+  match = boldRegex.exec(markdownText);
+  while (match !== null) {
     const captured = match[1].trim();
     if (!matches.includes(captured)) {
       matches.push(captured);
     }
+    match = boldRegex.exec(markdownText);
   }
   return matches;
 }

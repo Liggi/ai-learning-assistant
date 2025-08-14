@@ -6,7 +6,7 @@ import {
   ReactFlowProvider,
   useReactFlow,
 } from "@xyflow/react";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useCallback, useImperativeHandle } from "react";
 import type { SerializedLearningMap } from "@/types/serialized";
 import type {
   MapEdge,
@@ -49,7 +49,7 @@ const LearningMapCore = forwardRef<LearningMapHandle, Omit<LearningMapProps, "cl
       onLayoutComplete
     );
 
-    const getNodes = () => flow.getNodes();
+    const getNodes = useCallback(() => flow.getNodes(), [flow]);
 
     useImperativeHandle(
       ref,

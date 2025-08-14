@@ -13,7 +13,7 @@ async function clearDatabase() {
 }
 
 clearDatabase()
-  .catch((error) => {
+  .catch(() => {
     process.exit(1);
   })
   .finally(async () => {

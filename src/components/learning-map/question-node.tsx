@@ -11,7 +11,15 @@ type QuestionNodeProps = NodeProps<ReactFlowNode<QuestionNodeData>>;
 export default function QuestionNode({ data }: QuestionNodeProps) {
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={() => data.onClick?.(data)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          data.onClick?.(data);
+        }
+      }}
       style={{
         background: "rgba(59, 130, 246, 0.1)",
         border: "1px solid rgba(59, 130, 246, 0.2)",
