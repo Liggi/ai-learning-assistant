@@ -16,6 +16,11 @@
   },
   "linter": {
     "enabled": true,
+    "includes": [
+      "**",
+      "!src/generated/**",
+      "!src/routeTree.gen.ts"
+    ],
     "rules": {
       "recommended": true,
       "correctness": {
@@ -50,6 +55,16 @@
       "indentWidth": 2
     }
   },
+  "overrides": [
+    {
+      "includes": ["src/styles/**/*.css"],
+      "css": {
+        "linter": {
+          "enabled": false
+        }
+      }
+    }
+  ],
   "assist": {
     "enabled": true,
     "actions": {
