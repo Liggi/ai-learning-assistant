@@ -288,7 +288,7 @@ export function useMapCore(
       // Track the newly added node for auto-show after layout
       newlyAddedNodeId.current = id;
     },
-    [flow, runLayout]
+    [flow]
   );
 
   const replaceNode = useCallback(

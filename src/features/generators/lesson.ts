@@ -29,8 +29,13 @@ export const generate = createServerFn({ method: "POST" })
         message: data.message,
       });
 
+      const apiKey = process.env.ANTHROPIC_API_KEY;
+      if (!apiKey) {
+        throw new Error("ANTHROPIC_API_KEY is not configured");
+      }
+
       const anthropic = new Anthropic({
-        apiKey: process.env.ANTHROPIC_API_KEY!,
+        apiKey,
         baseURL: "https://anthropic.helicone.ai/",
         defaultHeaders: {
           "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,

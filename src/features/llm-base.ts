@@ -34,7 +34,7 @@ export type CacheEntry<T> = {
   result: T;
 };
 
-export const responseCache = new Map<string, CacheEntry<any>>();
+export const responseCache = new Map<string, CacheEntry<unknown>>();
 export const CACHE_TTL = 60 * 60 * 1000;
 export const MAX_CACHE_SIZE = 100;
 
@@ -126,7 +126,7 @@ export async function callLLM<T>(
     llmBaseLogger.debug(`[${reqId}] Cache bypass requested`);
   }
 
-  let provider: LLMProvider<any>;
+  let provider: LLMProvider<unknown>;
   let actualModelUsed: string;
 
   try {
@@ -144,9 +144,9 @@ export async function callLLM<T>(
         throw new Error(`[${reqId}] Unsupported LLM provider: ${providerName}g`);
       }
     }
-  } catch (initError: any) {
+  } catch (initError: unknown) {
     llmBaseLogger.error(`[${reqId}] Failed to instantiate provider ${providerName}`, {
-      error: initError?.message || initError,
+      error: initError instanceof Error ? initError.message : String(initError),
     });
     throw initError;
   }
@@ -187,10 +187,10 @@ export async function callLLM<T>(
       }
 
       return result;
-    } catch (err: any) {
+    } catch (err: unknown) {
       llmBaseLogger.error(
         `[${reqId}] Attempt ${attempt}/${maxRetries} failed for ${providerName}:${finalModel}`,
-        { error: err?.message || err }
+        { error: err instanceof Error ? err.message : String(err) }
       );
 
       if (attempt >= maxRetries) {

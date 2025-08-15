@@ -16,8 +16,13 @@ export const generateImage = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { prompt, size, response_format } = data as GenerateImageInput;
 
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error("OPENAI_API_KEY is not configured");
+    }
+
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY!,
+      apiKey,
       baseURL: "https://oai.helicone.ai/v1",
       defaultHeaders: {
         "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,

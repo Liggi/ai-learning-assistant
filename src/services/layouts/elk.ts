@@ -2,10 +2,11 @@ import type { Edge, Node as FlowNode } from "@xyflow/react";
 import type { ElkExtendedEdge, ElkNode } from "elkjs";
 import ELK from "elkjs";
 
-const ARTICLE_NODE_WIDTH = 350;
-const ARTICLE_NODE_HEIGHT = 350;
-const QUESTION_NODE_WIDTH = 200;
-const QUESTION_NODE_HEIGHT = 100;
+// These constants are kept for potential future use in dynamic node sizing
+const _ARTICLE_NODE_WIDTH = 350;
+const _ARTICLE_NODE_HEIGHT = 350;
+const _QUESTION_NODE_WIDTH = 200;
+const _QUESTION_NODE_HEIGHT = 100;
 
 const elkLayoutOptions = {
   "elk.algorithm": "layered",

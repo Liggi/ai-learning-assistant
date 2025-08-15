@@ -105,19 +105,21 @@ export class AnthropicProvider implements LLMProvider<AnthropicProviderOptions> 
       const jsonString = extractJSON(stringResponse);
       parsedResponse = JSON.parse(jsonString);
       anthropicLogger.debug(`[${requestId}] Successfully parsed JSON response`);
-    } catch (parseError: any) {
+    } catch (parseError: unknown) {
       anthropicLogger.error(`[${requestId}] JSON parsing failed`, {
         error: parseError,
         responseSnippet: stringResponse.slice(0, 100),
       });
-      throw new Error(`Failed to parse JSON response: ${parseError.message}`);
+      throw new Error(
+        `Failed to parse JSON response: ${parseError instanceof Error ? parseError.message : String(parseError)}`
+      );
     }
 
     try {
       const result = schema.parse(parsedResponse);
       anthropicLogger.debug(`[${requestId}] Response passed schema validation`);
       return result;
-    } catch (validationError: any) {
+    } catch (validationError: unknown) {
       anthropicLogger.error(`[${requestId}] Schema validation failed`, {
         error: validationError,
       });
@@ -194,9 +196,9 @@ export async function callAnthropic<T>(
       }
 
       return result;
-    } catch (err: any) {
+    } catch (err: unknown) {
       anthropicLogger.error(`[${reqId}] Attempt ${attempt}/${maxRetries} failed`, {
-        error: err?.message || err,
+        error: err instanceof Error ? err.message : String(err),
       });
 
       if (attempt >= maxRetries) {

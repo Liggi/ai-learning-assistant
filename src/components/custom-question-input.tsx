@@ -91,6 +91,7 @@ export const CustomQuestionInput: React.FC<CustomQuestionInputProps> = ({
               viewBox="0 0 24 24"
               aria-label="Creating article..."
             >
+              <title>Loading spinner</title>
               <circle
                 className="opacity-25"
                 cx="12"

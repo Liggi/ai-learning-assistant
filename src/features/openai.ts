@@ -100,24 +100,26 @@ export class OpenAIProvider implements LLMProvider<OpenAIProviderOptions> {
       throw new Error("Received empty response from OpenAI API");
     }
 
-    let parsedResponse;
+    let parsedResponse: unknown;
     try {
       const jsonString = extractJSON(stringResponse);
       parsedResponse = JSON.parse(jsonString);
       openaiLogger.debug(`[${requestId}] Successfully parsed JSON response`);
-    } catch (parseError: any) {
+    } catch (parseError: unknown) {
       openaiLogger.error(`[${requestId}] JSON parsing failed`, {
         error: parseError,
         responseSnippet: stringResponse.slice(0, 100),
       });
-      throw new Error(`Failed to parse JSON response: ${parseError.message}`);
+      throw new Error(
+        `Failed to parse JSON response: ${parseError instanceof Error ? parseError.message : String(parseError)}`
+      );
     }
 
     try {
       const result = schema.parse(parsedResponse);
       openaiLogger.debug(`[${requestId}] Response passed schema validation`);
       return result;
-    } catch (validationError: any) {
+    } catch (validationError: unknown) {
       openaiLogger.error(`[${requestId}] Schema validation failed`, {
         error: validationError,
       });
@@ -282,9 +284,9 @@ export async function callOpenAI<T>(
       }
 
       return result;
-    } catch (err: any) {
+    } catch (err: unknown) {
       openaiLogger.error(`[${reqId}] Attempt ${attempt}/${maxRetries} failed`, {
-        error: err?.message || err,
+        error: err instanceof Error ? err.message : String(err),
       });
 
       if (attempt >= maxRetries) {

@@ -5,7 +5,7 @@ import { calculateElkLayout } from "./elk";
 
 describe("calculateElkLayout", () => {
   it("layouts a minimal graph and returns positions", async () => {
-    const nodes: MeasuredNode<any>[] = [
+    const nodes: MeasuredNode<Record<string, unknown>>[] = [
       {
         id: "n1",
         type: "conversationNode",
@@ -21,7 +21,7 @@ describe("calculateElkLayout", () => {
         measured: { width: 200, height: 100 },
       },
     ];
-    const edges: Edge<any>[] = [{ id: "e1", source: "n1", target: "n2", animated: true }];
+    const edges: Edge<Record<string, unknown>>[] = [{ id: "e1", source: "n1", target: "n2", animated: true }];
 
     const result = await calculateElkLayout(nodes, edges, {
       direction: "DOWN",

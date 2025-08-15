@@ -93,7 +93,15 @@ export default function ConversationNode({ id, data }: ConversationNodeProps) {
   return (
     <div
       ref={containerRef}
+      role="button"
+      tabIndex={0}
       onClick={() => data.onClick?.(data)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          data.onClick?.(data);
+        }
+      }}
       style={style}
       className={`
         p-4 transition-all duration-200 cursor-pointer
