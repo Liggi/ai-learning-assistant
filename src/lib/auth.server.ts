@@ -5,6 +5,14 @@ import { reactStartCookies } from "better-auth/react-start";
 
 const prisma = new PrismaClient();
 
+function requireEnvVar(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Required environment variable ${name} is not set`);
+  }
+  return value;
+}
+
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
@@ -15,8 +23,8 @@ export const auth = betterAuth({
   },
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      clientId: requireEnvVar("GITHUB_CLIENT_ID"),
+      clientSecret: requireEnvVar("GITHUB_CLIENT_SECRET"),
     },
   },
   session: {
@@ -33,8 +41,8 @@ export const auth = betterAuth({
       path: "/",
     },
   },
-  secret: process.env.BETTER_AUTH_SECRET!,
-  baseURL: process.env.BETTER_AUTH_URL!,
+  secret: requireEnvVar("BETTER_AUTH_SECRET"),
+  baseURL: requireEnvVar("BETTER_AUTH_URL"),
   trustedOrigins: [
     "https://*.vercel.app",
     "https://thekg.io",

@@ -10,9 +10,8 @@ type QuestionNodeProps = NodeProps<ReactFlowNode<QuestionNodeData>>;
 
 export default function QuestionNode({ data }: QuestionNodeProps) {
   return (
+    // biome-ignore lint/a11y/useSemanticElements: React Flow nodes must be divs for proper positioning
     <div
-      role="button"
-      tabIndex={0}
       onClick={() => data.onClick?.(data)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -20,6 +19,8 @@ export default function QuestionNode({ data }: QuestionNodeProps) {
           data.onClick?.(data);
         }
       }}
+      role="button"
+      tabIndex={0}
       style={{
         background: "rgba(59, 130, 246, 0.1)",
         border: "1px solid rgba(59, 130, 246, 0.2)",

@@ -92,7 +92,7 @@ export function useContextualTooltips(
     };
 
     generateTooltips();
-  }, [article?.id, article?.content, subject.title, updateArticleMutation]);
+  }, [article?.id, article?.content, article.tooltips, subject.title, updateArticleMutation]);
 
   useEffect(() => {
     if (tooltipGenerationAttempted.current) {

@@ -28,7 +28,7 @@ export function extractTakeaways(content: string): string[] {
     // Look for lines that start with '>' and contain a dash
     if (trimmedLine.startsWith(">") && trimmedLine.includes("-")) {
       const bulletMatch = trimmedLine.match(/>\s*-\s*(.*)/);
-      if (bulletMatch && bulletMatch[1]) {
+      if (bulletMatch?.[1]) {
         const takeaway = bulletMatch[1].trim();
         takeaways.push(takeaway);
       }

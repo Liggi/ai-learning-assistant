@@ -1,3 +1,4 @@
+import type { Edge } from "@xyflow/react";
 import { useEffect } from "react";
 import type { LearningMapHandle } from "@/components/learning-map";
 import type { MapNode } from "@/components/learning-map/types";
@@ -8,10 +9,10 @@ const logger = new Logger({ context: "MapReconciliation", enabled: false });
 
 function convertLearningMapToNodes(learningMap: SerializedLearningMap): {
   nodes: MapNode[];
-  edges: any[];
+  edges: Edge[];
 } {
   const nodes: MapNode[] = [];
-  const edges: any[] = [];
+  const edges: Edge[] = [];
 
   // Convert articles to article nodes
   if (learningMap.articles) {

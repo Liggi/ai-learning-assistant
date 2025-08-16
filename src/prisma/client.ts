@@ -127,11 +127,11 @@ type PrismaExtendedClient = typeof prisma;
 
 declare global {
   // eslint-disable-next-line no-var
-  var prisma: PrismaExtendedClient | undefined;
+  var globalPrisma: PrismaExtendedClient | undefined;
 }
 
 if (process.env.NODE_ENV !== "production") {
-  global.prisma = global.prisma ?? prisma;
+  global.globalPrisma = global.globalPrisma ?? prisma;
 }
 
 export { prisma };

@@ -88,6 +88,14 @@ export const Route = createFileRoute("/learning/$subjectId")({
     const router = useRouter();
     const { data: session, isPending, isRefetching } = useSession();
 
+    const initialRootArticle = learningMap.articles?.find((article) => article.isRoot) || null;
+    const { data: rootArticle } = useQuery({
+      queryKey: ["article", initialRootArticle?.id],
+      queryFn: () => getArticle({ data: { id: initialRootArticle?.id ?? "" } }),
+      initialData: initialRootArticle,
+      enabled: !!initialRootArticle?.id,
+    });
+
     useEffect(() => {
       if (!isPending && !isRefetching && !session) {
         router.navigate({ to: "/auth" });
@@ -101,16 +109,6 @@ export const Route = createFileRoute("/learning/$subjectId")({
     if (!session) {
       return null;
     }
-
-    const initialRootArticle = learningMap.articles?.find((article) => article.isRoot) || null;
-
-    // Add this React Query hook
-    const { data: rootArticle } = useQuery({
-      queryKey: ["article", initialRootArticle?.id],
-      queryFn: () => getArticle({ data: { id: initialRootArticle?.id ?? "" } }),
-      initialData: initialRootArticle,
-      enabled: !!initialRootArticle?.id,
-    });
 
     return (
       <LearningInterface subject={subject} learningMap={learningMap} activeArticle={rootArticle} />

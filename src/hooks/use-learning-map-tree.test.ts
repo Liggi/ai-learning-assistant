@@ -255,8 +255,8 @@ describe("useLearningMapTree", () => {
     // New map with an additional branch
     const updatedMap: SerializedLearningMap = {
       ...initialMap,
-      articles: [...initialMap.articles!, mockArticle3],
-      questions: [...initialMap.questions!, mockQuestion1_3], // Add Q1 -> A3
+      articles: [...(initialMap.articles || []), mockArticle3],
+      questions: [...(initialMap.questions || []), mockQuestion1_3], // Add Q1 -> A3
     };
 
     rerender({ map: updatedMap });

@@ -21,7 +21,15 @@ export const ServerRoute = createServerFileRoute("/api/lesson-stream").methods({
       }
 
       // Parse request data
-      let requestData;
+      let requestData: {
+        subject: string;
+        message: string;
+        contextType?: string;
+        moduleTitle?: string;
+        moduleDescription?: string;
+        triggeringQuestion?: string;
+        parentContent?: string;
+      };
       try {
         requestData = await request.json();
         streamLogger.debug(`[${reqId}] Parsed request data`);
@@ -97,7 +105,7 @@ export const ServerRoute = createServerFileRoute("/api/lesson-stream").methods({
       }
 
       // Generate the prompt with appropriate context
-      let prompt;
+      let prompt: string;
       try {
         prompt = createPrompt({
           subject,

@@ -35,7 +35,7 @@ export class TimeoutError extends LLMError {
 }
 
 export class ParseError extends LLMError {
-  constructor(provider: string, response: any) {
+  constructor(provider: string, _response: any) {
     super(`Failed to parse response from ${provider}`, provider, "parse-error", undefined, false);
     this.name = "ParseError";
   }

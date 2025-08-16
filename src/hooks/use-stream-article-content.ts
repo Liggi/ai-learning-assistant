@@ -22,7 +22,15 @@ const streamContentFromAPI = async (
   let fullContent = "";
 
   try {
-    let requestData;
+    let requestData: {
+      subject: string;
+      contextType: string;
+      triggeringQuestion?: string;
+      parentContent?: string;
+      message: string;
+      moduleTitle?: string;
+      moduleDescription?: string;
+    };
 
     if (context?.triggeringQuestion && context?.parentArticleContent) {
       // If we have a contextual prompt, use it

@@ -16,16 +16,11 @@ function QuestionNode({ data, selected = false }: QuestionNodeProps) {
   const [_isHovered, setIsHovered] = useState(false);
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: React Flow nodes require interactive divs for diagram functionality
     <div
-      role="button"
-      tabIndex={0}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-        }
-      }}
+      role="presentation"
       className={`
         max-w-[400px] rounded-xl overflow-hidden flex flex-col p-3 font-semibold
         shadow-md backdrop-blur-sm

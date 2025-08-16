@@ -9,7 +9,7 @@ import { getServerSession } from "@/server/getServerSession";
 const logger = new Logger({ context: "ArticleRouteLoader", enabled: false });
 
 export const Route = createFileRoute("/learning/article/$articleId")({
-  beforeLoad: async ({ context }) => {
+  beforeLoad: async ({ context: _ }) => {
     const session = await getServerSession();
 
     if (!session) {

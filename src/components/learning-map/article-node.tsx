@@ -44,9 +44,8 @@ export default function ArticleNode({ data }: ArticleNodeProps) {
     !isQuestionType && (!data.content.summary || data.content.summary.trim() === "");
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: React Flow nodes must be divs for proper positioning
     <div
-      role="button"
-      tabIndex={0}
       onClick={() => data.onClick?.(data)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -54,6 +53,8 @@ export default function ArticleNode({ data }: ArticleNodeProps) {
           data.onClick?.(data);
         }
       }}
+      role="button"
+      tabIndex={0}
       style={style}
       className={`
         p-4 transition-all duration-200 cursor-pointer

@@ -19,10 +19,11 @@ export function useElkLayout(
 
   // nodesInitialized dependency is critical - without it, the memo won't recalculate
   // when React Flow finishes initializing nodes, causing layout to never trigger
+  // biome-ignore lint/correctness/useExhaustiveDependencies: nodesInitialized is required for React Flow initialization
   const allNodesReady = useMemo(() => {
     const nodes = flow.getNodes();
     return nodes.length > 0 && nodes.every((n) => n.measured?.width && n.measured?.height);
-  }, [flow, nodesInitialized]); // biome-ignore lint/correctness/useExhaustiveDependencies: nodesInitialized is required for React Flow initialization
+  }, [flow, nodesInitialized]);
 
   const runLayout = useCallback(async () => {
     logger.info("runLayout called", {

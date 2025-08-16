@@ -21,7 +21,9 @@ describe("calculateElkLayout", () => {
         measured: { width: 200, height: 100 },
       },
     ];
-    const edges: Edge<Record<string, unknown>>[] = [{ id: "e1", source: "n1", target: "n2", animated: true }];
+    const edges: Edge<Record<string, unknown>>[] = [
+      { id: "e1", source: "n1", target: "n2", animated: true },
+    ];
 
     const result = await calculateElkLayout(nodes, edges, {
       direction: "DOWN",
