@@ -5,6 +5,7 @@ import { act, type JSX } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useUpdateArticle } from "@/hooks/api/articles";
 import { extractTakeaways } from "@/lib/article-takeaway-parser";
+import type { Article } from "@/types/personal-learning-map";
 import type { SerializedArticle } from "@/types/serialized";
 import { useArticleTakeaways } from "./use-article-takeaways";
 
@@ -42,7 +43,21 @@ describe("useArticleTakeaways", () => {
     mockUseUpdateArticle.mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: false,
-    } as any);
+      isError: false,
+      isSuccess: false,
+      mutate: vi.fn(),
+      reset: vi.fn(),
+      status: "idle" as const,
+      error: null,
+      data: undefined,
+      variables: undefined,
+      context: undefined,
+      failureCount: 0,
+      failureReason: null,
+      isIdle: true,
+      isPaused: false,
+      submittedAt: 0,
+    });
     vi.clearAllMocks();
   });
 
@@ -238,7 +253,7 @@ describe("useArticleTakeaways", () => {
     };
 
     // Instead of making extractTakeaways async, make the mutation async
-    let resolveMutation: (value: any) => void;
+    let resolveMutation: (value: Article) => void;
     mockExtractTakeaways.mockReturnValueOnce(["Finally done"]);
     mockMutateAsync.mockImplementationOnce(() => {
       return new Promise((resolve) => {

@@ -4,8 +4,8 @@
  * @param defaultValue Optional default value if the field is null/undefined
  * @returns A plain JavaScript object
  */
-export function fromPrismaJson<T = Record<string, any>>(
-  jsonField: any,
+export function fromPrismaJson<T = Record<string, unknown>>(
+  jsonField: unknown,
   defaultValue: T = {} as T
 ): T {
   if (!jsonField) {

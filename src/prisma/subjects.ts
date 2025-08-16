@@ -15,10 +15,14 @@ const createSubjectSchema = z.object({
 
 export const createSubject = createServerFn({ method: "POST" })
   .validator((data: unknown) => createSubjectSchema.parse(data))
-  .handler(async ({ data, context }): Promise<SerializedSubject> => {
+  .handler(async ({ data }): Promise<SerializedSubject> => {
     logger.info("Creating subject", { title: data.title });
 
-    const { headers } = getWebRequest()!;
+    const webRequest = getWebRequest();
+    if (!webRequest) {
+      throw new Error("No web request context available");
+    }
+    const { headers } = webRequest;
     const session = await auth.api.getSession({ headers });
     if (!session) {
       throw new Error("Unauthorized");
@@ -52,12 +56,16 @@ const updateSubjectSchema = z.object({
 
 export const updateSubject = createServerFn({ method: "POST" })
   .validator((data: unknown) => updateSubjectSchema.parse(data))
-  .handler(async ({ data, context }): Promise<SerializedSubject> => {
+  .handler(async ({ data }): Promise<SerializedSubject> => {
     const { id, ...updateData } = data;
 
     logger.info("Updating subject", { id, ...updateData });
 
-    const { headers } = getWebRequest()!;
+    const webRequest = getWebRequest();
+    if (!webRequest) {
+      throw new Error("No web request context available");
+    }
+    const { headers } = webRequest;
     const session = await auth.api.getSession({ headers });
     if (!session) {
       throw new Error("Unauthorized");
@@ -89,10 +97,14 @@ export const getAllSubjects = createServerFn({ method: "GET" })
     }
     return data;
   })
-  .handler(async ({ context }) => {
+  .handler(async () => {
     logger.info("Fetching all subjects");
 
-    const { headers } = getWebRequest()!;
+    const webRequest = getWebRequest();
+    if (!webRequest) {
+      throw new Error("No web request context available");
+    }
+    const { headers } = webRequest;
     const session = await auth.api.getSession({ headers });
     if (!session) {
       throw new Error("Unauthorized");
@@ -122,10 +134,14 @@ const getSubjectSchema = z.object({
 
 export const getSubject = createServerFn({ method: "GET" })
   .validator((data: unknown) => getSubjectSchema.parse(data))
-  .handler(async ({ data, context }): Promise<SerializedSubject | null> => {
+  .handler(async ({ data }): Promise<SerializedSubject | null> => {
     logger.info("Fetching subject", { id: data.id });
 
-    const { headers } = getWebRequest()!;
+    const webRequest = getWebRequest();
+    if (!webRequest) {
+      throw new Error("No web request context available");
+    }
+    const { headers } = webRequest;
     const session = await auth.api.getSession({ headers });
     if (!session) {
       throw new Error("Unauthorized");

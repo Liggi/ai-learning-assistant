@@ -8,7 +8,7 @@ interface LLMCallOptions {
   timeout?: number;
   provider?: "openai" | "anthropic";
   requestType?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface LLMResponse {
@@ -23,7 +23,7 @@ interface LLMResponse {
 }
 
 export async function robustLLMCall<T = LLMResponse>(
-  fn: () => Promise<any>,
+  fn: () => Promise<unknown>,
   options: LLMCallOptions = {}
 ): Promise<T> {
   const {
@@ -66,8 +66,8 @@ export async function robustLLMCall<T = LLMResponse>(
           provider,
           requestType,
           duration,
-          tokens: (parsed as any).usage?.totalTokens,
-          model: (parsed as any).model,
+          tokens: (parsed as LLMResponse).usage?.totalTokens,
+          model: (parsed as LLMResponse).model,
         });
 
         return parsed;
@@ -101,7 +101,7 @@ export async function robustLLMCall<T = LLMResponse>(
   );
 }
 
-function parseResponse(response: any, _provider?: string): LLMResponse {
+function parseResponse(response: unknown, _provider?: string): LLMResponse {
   // OpenAI format
   if (response?.choices?.[0]?.message?.content) {
     return {
@@ -136,10 +136,10 @@ function parseResponse(response: any, _provider?: string): LLMResponse {
 
   // Anthropic multiple content blocks
   if (response?.content && Array.isArray(response.content)) {
-    const textBlocks = response.content.filter((block: any) => block.type === "text");
+    const textBlocks = response.content.filter((block: { type: string }) => block.type === "text");
     if (textBlocks.length > 0) {
       return {
-        content: textBlocks.map((block: any) => block.text).join(""),
+        content: textBlocks.map((block: { text: string }) => block.text).join(""),
         usage: response.usage
           ? {
               promptTokens: response.usage.input_tokens,
@@ -166,31 +166,47 @@ function parseResponse(response: any, _provider?: string): LLMResponse {
   throw new Error(`Unable to parse LLM response: ${JSON.stringify(response).substring(0, 200)}`);
 }
 
-function isRetriableError(error: any): boolean {
+function isRetriableError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const err = error as Record<string, unknown>;
+
   // Network errors, timeouts, rate limits, server errors
-  if (error.code === "ECONNRESET" || error.code === "ETIMEDOUT") return true;
-  if (error.status >= 500) return true; // Server errors
-  if (error.status === 429) return true; // Rate limit
-  if (error.message?.includes("timeout")) return true;
-  if (error.message?.includes("network")) return true;
-  if (error.message?.includes("ENOTFOUND")) return true;
+  if (err.code === "ECONNRESET" || err.code === "ETIMEDOUT") return true;
+  if (typeof err.status === "number" && err.status >= 500) return true;
+  if (err.status === 429) return true;
+  if (typeof err.message === "string" && err.message.includes("timeout")) return true;
+  if (typeof err.message === "string" && err.message.includes("network")) return true;
+  if (typeof err.message === "string" && err.message.includes("ENOTFOUND")) return true;
 
   // Don't retry on authentication errors, invalid requests, etc.
-  if (error.status === 401 || error.status === 403) return false;
-  if (error.status === 400) return false;
+  if (err.status === 401 || err.status === 403) return false;
+  if (err.status === 400) return false;
 
   return false;
 }
 
-function isRateLimitError(error: any): boolean {
-  return error.status === 429 || error.message?.toLowerCase().includes("rate limit");
+function isRateLimitError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const err = error as Record<string, unknown>;
+
+  return (
+    err.status === 429 ||
+    (typeof err.message === "string" && err.message.toLowerCase().includes("rate limit"))
+  );
 }
 
-function extractRetryAfter(error: any): number | null {
-  const retryAfter = error.headers?.["retry-after"] || error.response?.headers?.["retry-after"];
-  if (retryAfter) {
+function extractRetryAfter(error: unknown): number | null {
+  if (!error || typeof error !== "object") return null;
+  const err = error as Record<string, unknown>;
+
+  const headers =
+    (err.headers as Record<string, unknown>) ||
+    ((err.response as Record<string, unknown>)?.headers as Record<string, unknown>);
+  const retryAfter = headers?.["retry-after"];
+
+  if (retryAfter && typeof retryAfter === "string") {
     const seconds = parseInt(retryAfter, 10);
-    return seconds * 1000; // Convert to milliseconds
+    return seconds * 1000;
   }
 
   // Default backoff for rate limits

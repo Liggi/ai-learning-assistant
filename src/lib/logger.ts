@@ -52,25 +52,25 @@ export class Logger {
     return [formattedLabel, style1, style2];
   }
 
-  debug(message: string, ...args: any[]) {
+  debug(message: string, ...args: unknown[]) {
     if (!this.shouldLog()) return;
     const [formattedLabel, style1, style2] = this.getStyledLog("debug", message);
     console.debug(formattedLabel, style1, style2, ...args);
   }
 
-  info(message: string, ...args: any[]) {
+  info(message: string, ...args: unknown[]) {
     if (!this.shouldLog()) return;
     const [formattedLabel, style1, style2] = this.getStyledLog("info", message);
     console.info(formattedLabel, style1, style2, ...args);
   }
 
-  warn(message: string, ...args: any[]) {
+  warn(message: string, ...args: unknown[]) {
     if (!this.shouldLog()) return;
     const [formattedLabel, style1, style2] = this.getStyledLog("warn", message);
     console.warn(formattedLabel, style1, style2, ...args);
   }
 
-  error(message: string, ...args: any[]) {
+  error(message: string, ...args: unknown[]) {
     // Always using the same shouldLog logic for consistency.
     if (!this.shouldLog()) return;
     const [formattedLabel, style1, style2] = this.getStyledLog("error", message);

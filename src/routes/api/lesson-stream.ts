@@ -185,7 +185,7 @@ export const ServerRoute = createServerFileRoute("/api/lesson-stream").methods({
 
             streamLogger.info(`[${reqId}] Stream complete. Total chunks: ${chunkCount}`);
             controller.close();
-          } catch (error: any) {
+          } catch (error: unknown) {
             streamLogger.error(`[${reqId}] Stream error`, {
               name: error.name,
               message: error.message,
@@ -203,7 +203,7 @@ export const ServerRoute = createServerFileRoute("/api/lesson-stream").methods({
           "Content-Type": "text/plain; charset=utf-8",
         },
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       streamLogger.error(`[${reqId}] Fatal error in endpoint handler`, err);
       streamLogger.error(`[${reqId}] Error stack:`, err.stack);
       return new Response(

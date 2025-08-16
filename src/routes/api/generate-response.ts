@@ -35,7 +35,7 @@ export const ServerRoute = createServerFileRoute("/api/generate-response").metho
           "Content-Type": "application/json",
         },
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       apiLogger.error(`[${reqId}] Error in generate-response:`, error);
       return new Response(
         JSON.stringify({

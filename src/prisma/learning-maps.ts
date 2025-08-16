@@ -118,7 +118,11 @@ export const getOrCreateLearningMap = createServerFn({ method: "POST" })
         },
       });
 
-      return serializeLearningMap(updatedMap!);
+      if (!updatedMap) {
+        throw new Error(`Learning map not found after update: ${learningMapId}`);
+      }
+
+      return serializeLearningMap(updatedMap);
     }
 
     logger.info("Creating new learning map for subject", { subjectId });

@@ -385,7 +385,7 @@ export const getLearningMapAndSubjectForArticle = createServerFn({
         }
 
         const { learningMap } = article;
-        const { subject, ...learningMapWithoutSubject } = learningMap;
+        const { subject } = learningMap;
 
         // Ensure all articles in the learning map have summaries and takeaways
         await ensureLearningMapContent(learningMap.id);
@@ -399,9 +399,13 @@ export const getLearningMapAndSubjectForArticle = createServerFn({
           },
         });
 
+        if (!updatedLearningMap) {
+          throw new Error(`Learning map not found after update: ${learningMap.id}`);
+        }
+
         return {
           article: serializeArticle(article),
-          learningMap: serializeLearningMap(updatedLearningMap!),
+          learningMap: serializeLearningMap(updatedLearningMap),
           subject: serializeSubject(subject),
         };
       } catch (error) {
