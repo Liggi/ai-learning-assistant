@@ -1,0 +1,18 @@
+echo "🔍 Running pre-commit checks..."
+
+echo "📋 Checking code with biome..."
+npx biome check .
+
+BIOME_EXIT_CODE=$?
+
+if [ $BIOME_EXIT_CODE -ne 0 ]; then
+  echo ""
+  echo "❌ Pre-commit hook failed!"
+  echo "🚫 Biome found linting errors or warnings."
+  echo "🔧 Please fix all issues before committing:"
+  echo "   npx biome check . --fix"
+  echo ""
+  exit 1
+fi
+
+echo "✅ All pre-commit checks passed!"
