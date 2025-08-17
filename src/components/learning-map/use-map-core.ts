@@ -1,3 +1,4 @@
+import { useParams } from "@tanstack/react-router";
 import type { ReactFlowInstance } from "@xyflow/react";
 import { useCallback, useRef } from "react";
 import { Logger } from "@/lib/logger";
@@ -62,6 +63,10 @@ export function useMapCore(
   flow: ReactFlowInstance,
   onLayoutComplete?: (nodes: MapNode[], edges: MapEdge[]) => void
 ) {
+  const params = useParams({ strict: false }) as {
+    articleId?: string;
+    subjectId?: string;
+  };
   const newlyAddedNodeId = useRef<string | null>(null);
   const newlyAddedNodeIds = useRef<string[]>([]);
   const hasCompletedFirstLayout = useRef<boolean>(false);
@@ -128,25 +133,33 @@ export function useMapCore(
       if (!hasCompletedFirstLayout.current) {
         logger.info("First layout - showing all nodes");
 
-        // Center viewport on the root article before making nodes visible
+        // Center viewport on the active article from URL (or root if no articleId)
         const allNodes = flow.getNodes();
-        const rootNode = allNodes.find((node) => node.data?.isRoot === true);
-        if (rootNode) {
-          logger.info("Centering viewport on root node", {
-            rootNodeId: rootNode.id,
-            position: rootNode.position,
-            measured: rootNode.measured,
-            width: rootNode.width,
-            height: rootNode.height,
+        const urlArticleId = params.articleId;
+
+        // Find the active article node (from URL) or fall back to root
+        const activeNode = urlArticleId
+          ? allNodes.find((node) => node.id === urlArticleId)
+          : allNodes.find((node) => node.data?.isRoot === true);
+
+        if (activeNode) {
+          logger.info("Centering viewport on active article node", {
+            activeNodeId: activeNode.id,
+            urlArticleId,
+            isRoot: activeNode.data?.isRoot,
+            position: activeNode.position,
+            measured: activeNode.measured,
+            width: activeNode.width,
+            height: activeNode.height,
           });
 
           // Calculate the center of the node
-          const nodeWidth = rootNode.width || rootNode.measured?.width || 350;
-          const nodeHeight = rootNode.height || rootNode.measured?.height || 350;
-          const centerX = rootNode.position.x + nodeWidth / 2;
-          const centerY = rootNode.position.y + nodeHeight / 2;
+          const nodeWidth = activeNode.width || activeNode.measured?.width || 350;
+          const nodeHeight = activeNode.height || activeNode.measured?.height || 350;
+          const centerX = activeNode.position.x + nodeWidth / 2;
+          const centerY = activeNode.position.y + nodeHeight / 2;
 
-          logger.info("Calculated node center", {
+          logger.info("Calculated active node center", {
             centerX,
             centerY,
             nodeWidth,
@@ -154,6 +167,11 @@ export function useMapCore(
           });
 
           flow.setCenter(centerX, centerY, { zoom: 0.8, duration: 100 });
+        } else {
+          logger.warn("No active article node found to center on", {
+            urlArticleId,
+            availableNodeIds: allNodes.map((n) => n.id),
+          });
         }
 
         const updatedNodes = flow.getNodes().map((node) => ({
@@ -290,7 +308,7 @@ export function useMapCore(
         onLayoutComplete(nodes, edges);
       }
     },
-    [flow, onLayoutComplete, centerOnArticleNode]
+    [flow, onLayoutComplete, centerOnArticleNode, params.articleId]
   );
 
   const runLayout = useElkLayout(flow, handleLayoutComplete);
