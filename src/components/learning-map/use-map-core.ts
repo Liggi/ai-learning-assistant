@@ -66,6 +66,54 @@ export function useMapCore(
   const newlyAddedNodeIds = useRef<string[]>([]);
   const hasCompletedFirstLayout = useRef<boolean>(false);
 
+  const centerOnArticleNode = useCallback(
+    (nodes: MapNode[], nodeIds: string[]) => {
+      const articleNode = nodes.find(
+        (node) => nodeIds.includes(node.id) && node.type === "articleNode"
+      );
+
+      if (articleNode) {
+        logger.info("Centering viewport on article node", {
+          nodeId: articleNode.id,
+          position: articleNode.position,
+          measured: articleNode.measured,
+          width: articleNode.width,
+          height: articleNode.height,
+        });
+
+        const nodeWidth = articleNode.width || articleNode.measured?.width || 350;
+        const nodeHeight = articleNode.height || articleNode.measured?.height || 350;
+
+        if (!articleNode.width && !articleNode.measured?.width) {
+          logger.warn("Using fallback width for centering - node not measured yet", {
+            nodeId: articleNode.id,
+            fallbackWidth: 350,
+          });
+        }
+        if (!articleNode.height && !articleNode.measured?.height) {
+          logger.warn("Using fallback height for centering - node not measured yet", {
+            nodeId: articleNode.id,
+            fallbackHeight: 350,
+          });
+        }
+        const centerX = articleNode.position.x + nodeWidth / 2;
+        const centerY = articleNode.position.y + nodeHeight / 2;
+
+        logger.info("Calculated article node center", {
+          centerX,
+          centerY,
+          nodeWidth,
+          nodeHeight,
+        });
+
+        flow.setCenter(centerX, centerY, { zoom: 0.8, duration: 300 });
+      } else {
+        logger.info("No article node found to center on", { nodeIds });
+      }
+    },
+    [flow]
+  );
+
   const handleLayoutComplete = useCallback(
     (nodes: MapNode[], edges: MapEdge[]) => {
       logger.info("handleLayoutComplete called", {
@@ -181,6 +229,10 @@ export function useMapCore(
         flow.setNodes(updatedNodes);
         flow.setEdges(updatedEdges);
 
+        if (newlyAddedNodeId.current) {
+          centerOnArticleNode(updatedNodes, [newlyAddedNodeId.current]);
+        }
+
         newlyAddedNodeId.current = null;
       }
       // Show newly added nodes from chain
@@ -226,6 +278,8 @@ export function useMapCore(
         flow.setNodes(updatedNodes);
         flow.setEdges(updatedEdges);
 
+        centerOnArticleNode(updatedNodes, newlyAddedNodeIds.current);
+
         newlyAddedNodeIds.current = [];
       } else {
         logger.info("Layout complete but no visibility changes needed");
@@ -236,7 +290,7 @@ export function useMapCore(
         onLayoutComplete(nodes, edges);
       }
     },
-    [flow, onLayoutComplete]
+    [flow, onLayoutComplete, centerOnArticleNode]
   );
 
   const runLayout = useElkLayout(flow, handleLayoutComplete);
