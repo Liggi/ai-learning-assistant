@@ -72,14 +72,11 @@ const response = await fetch('/api/auth/sign-up/email', {
 ```env
 BETTER_AUTH_SECRET=your-secret-here
 BETTER_AUTH_URL=http://localhost:3000
-GITHUB_CLIENT_ID=your-github-client-id
-GITHUB_CLIENT_SECRET=your-github-client-secret
 DATABASE_URL=postgresql://user@localhost:5432/learning_assistant
 ```
 
 ### Auth Features
 - ✅ Email/password authentication
-- ✅ GitHub OAuth
 - ✅ Session management with cookies
 - ✅ Email verification disabled (requireEmailVerification: false)
 - ✅ PostgreSQL session storage
@@ -115,7 +112,6 @@ npm run clear-db     # Clear database (development)
 - Sign-in works with Better Auth React client
 - Sign-up requires direct fetch calls (see Known Issues)
 - Test with invalid credentials to verify error handling
-- GitHub OAuth requires proper environment variables
 
 ## Code Patterns & Conventions
 
@@ -150,7 +146,6 @@ if (result.error) {
 1. **Signup hanging**: Use direct fetch instead of Better Auth client
 2. **No error messages**: Check error state management and UI display
 3. **Session issues**: Verify session polling logic (max 10 attempts)
-4. **OAuth failures**: Check environment variables and callback URLs
 
 ### Database Issues
 1. **Connection errors**: Verify DATABASE_URL format
@@ -173,14 +168,12 @@ if (result.error) {
 - CSRF protection via Better Auth
 - Session cookies are httpOnly and sameSite
 - Secrets stored in environment variables
-- GitHub OAuth configured with proper redirect URIs
 
 ## Future Improvements
 - [ ] Fix Better Auth React client signup issue (upgrade or report bug)
 - [ ] Add email verification flow
 - [ ] Implement password reset functionality  
 - [ ] Add rate limiting for auth endpoints
-- [ ] Consider adding more OAuth providers
 
 ## Logging
 Session logs for this project should be saved to: `~/.claude/logs/personal/`
